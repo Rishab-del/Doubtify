@@ -1,7 +1,15 @@
-import React from 'react'
+import React from "react";
+import Navbar from "./Navbar";
+import "./home.css";
 
 export default function Home() {
   return (
-    <h1> Welcome to Doubtify! Main page 🚀</h1>
-  )
+    <div>
+      <Navbar />
+
+      <div className="main-content">
+        
+      </div>
+    </div>
+  );
 }

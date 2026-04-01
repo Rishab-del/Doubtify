@@ -1,0 +1,12 @@
+.main-content {
+  min-height: 100vh;
+  background: linear-gradient(150deg,white , #89f7fe, #66a6ff , skyblue ,  #66a6ff, #89f7fe, white);
+}
+
+h1{
+    color: black;
+    font-size: 48px;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+}
