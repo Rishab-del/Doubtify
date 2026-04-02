@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
-import Splash from "./components/Splash";
+import Splash from "./components/Splash"
 
 function App() {
   return (
