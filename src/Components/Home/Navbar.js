@@ -12,16 +12,14 @@ export default function Navbar() {
   data-bs-toggle="offcanvas"
   data-bs-target="#sidebar"
 >
-  Doubtify
+  Doubtify 
 </button>
       {/* Links */}
-      <ul className="nav-links">
-        <li><Link to="/home">Home</Link></li>
-        <li><Link to="#">Features</Link></li>
-        <li><Link to="#">How It Works</Link></li>
-        <li><Link to="/login">Login</Link></li>
-      </ul>
-
+   <ul className="nav-links">
+  <li><Link to="/">Home</Link></li>          {/* landing */}
+  <li><Link to="/features">Features</Link></li>
+  <li><Link to="/dashboard">Dashboard</Link></li> {/* actual app */}
+</ul>
       {/* Button */}
       <button className="get-btn">Get Started</button>
 

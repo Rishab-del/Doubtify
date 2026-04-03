@@ -1,0 +1,6 @@
+.page {
+  padding-top: 120px;
+  text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f7fa, #66a6ff);
+}

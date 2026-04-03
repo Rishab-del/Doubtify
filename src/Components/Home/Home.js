@@ -1,17 +1,12 @@
-import Hero from "./Hero";
-import "./home.css";
+import React from "react";
 import Navbar from "./Navbar";
-import Offcanvas from "./Offcanvas";
+import Hero from "./Hero";
 
 export default function Home() {
   return (
-    <div className="main-content">
+    <>
       <Navbar />
       <Hero />
-      <Offcanvas />
-      <div className="content">
-      </div>
-
-    </div>
+    </>
   );
 }

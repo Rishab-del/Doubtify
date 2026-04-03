@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -11,14 +11,16 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // basic validation (optional)
     if (!email || !password) {
       alert("Please fill all fields");
       return;
     }
 
-    // redirect
-    navigate("/home");
+    // ✅ login success
+    setIsLoggedIn(true);
+
+    // 👉 dashboard pe bhej do
+    navigate("/dashboard");
   };
 
   return (
@@ -27,14 +29,12 @@ export default function Login() {
       <h1 className="welcome">Welcome to Doubtify 🚀</h1>
 
       <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>  
 
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
         />
         
         <input
@@ -42,12 +42,12 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
         />
 
         <button type="submit">
           Login
         </button>
+
       </form>
 
     </div>

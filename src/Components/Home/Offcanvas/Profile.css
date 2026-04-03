@@ -1,0 +1,53 @@
+.page {
+  padding-top: 120px;
+  min-height: 100vh;
+  text-align: center;
+
+  background: linear-gradient(
+    135deg,
+    #e0f7fa,
+    #89f7fe,
+    #66a6ff,
+    #89f7fe,
+    #e0f7fa
+  );
+}
+
+.page h1 {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.page p {
+  font-size: 16px;
+  color: #333;
+}
+
+.profile-card {
+  width: 320px;
+  margin: 30px auto;
+  padding: 30px;
+
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.profile-avatar {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+.profile-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.profile-email {
+  font-size: 14px;
+  color: #555;
+}
