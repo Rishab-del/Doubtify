@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+body.dark {
+  background: #121212;
+  color: white;
+}
+
+/* Cards dark */
+body.dark .settings-container {
+  background: rgba(0,0,0,0.4);
+  color: white;
+}
+
+/* Text */
+body.dark .setting-item {
+  color: white;
+}
+
+/* Input */
+body.dark .timer-input {
+  background: #222;
+  color: white;
+}

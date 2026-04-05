@@ -15,10 +15,18 @@ import Splash from "./components/Splash/Splash";
 import Plans from "./components/Plans/Plans";
 import Offcanvas from "./components/Home/Offcanvas/Offcanvas";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AIOptions from "./components/Dashboard/AIOptions";
+import AIchat from "./components/Dashboard/AIchat";
+import Discussion from "./components/Dashboard/Discussion";
+
 import "./App.css";
 
 function App() {
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} />
     <BrowserRouter>
       <Offcanvas />
       <Routes>
@@ -36,8 +44,12 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
 
+        <Route path="/dashboard/ai-options" element={<AIOptions />} />
+        <Route path="/dashboard/aichat" element={<AIchat />} />
+        <Route path="/dashboard/discussion" element={<Discussion />} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
 

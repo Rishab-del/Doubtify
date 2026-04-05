@@ -1,0 +1,43 @@
+.ai-options {
+  text-align: center;
+  margin-top: 100px;
+  color: whitesmoke;
+  min-height: 100vh;
+  
+}
+
+.options-container {
+  margin-top: 180px;
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  max-height: 500px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.option-card {
+  width: 300px;          /* bigger */
+  height: 200px;         /* proper ratio */
+  padding: 25px;
+
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+
+  text-align: center;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  transition: 0.3s;
+}
+
+.option-card:hover {
+  transform: scale(1.05);
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}

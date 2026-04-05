@@ -1,6 +1,7 @@
 import React from "react";
 import "./Notes.css";
 import BackButton from "./BackButton";
+import Navbar from "../Navbar";
 
 
 export default function Notes() {
@@ -15,6 +16,7 @@ export default function Notes() {
 
   return (
     <>
+      <Navbar />
       <BackButton />
 
       <div className="dashboard">

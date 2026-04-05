@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./MyDoubts.css";
 import BackButton from "./BackButton";
+import Navbar from "../Navbar";
 
 export default function MyDoubts() {
 
@@ -13,6 +14,7 @@ export default function MyDoubts() {
 
   return (
     <>
+      <Navbar />
       <BackButton />
 
       <div className="doubts-page">

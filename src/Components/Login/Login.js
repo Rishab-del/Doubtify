@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // 🔥 error state
 
   const navigate = useNavigate();
 
@@ -14,28 +15,28 @@ export default function Login() {
     e.preventDefault();
 
     if (!email || !password) {
-      alert("Please fill all fields");
+      toast.error("⚠️ Please fill all fields");
       return;
     }
+
+    toast.success("✅ Login successful!");
     navigate("/dashboard");
   };
 
-  // 🔥 Forgot Password
   const handleForgotPassword = () => {
     if (!email) {
-      alert("Enter your email first 📧");
+      toast.error("📧 Please enter your email first");
     } else {
-      alert("Reset link sent to " + email);
+      toast.success("✅ Reset link sent to " + email);
     }
   };
 
-  // 🔥 Social Login (dummy)
   const handleGoogleLogin = () => {
-    alert("Google login coming soon 🚀");
+    toast.error("🚀 Google login coming soon");
   };
 
   const handleFacebookLogin = () => {
-    alert("Facebook login coming soon 🚀");
+    toast.error("🚀 Facebook login coming soon");
   };
 
   return (
@@ -45,21 +46,29 @@ export default function Login() {
 
       <form className="login-form" onSubmit={handleSubmit}>
 
+        {/* 🔥 ERROR MESSAGE UI */}
+        {error && <div className="error-msg">{error}</div>}
+
         <input
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setError(""); // typing pe error remove
+          }}
         />
         
         <input
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setError("");
+          }}
         />
 
-        {/* 🔥 Forgot Password */}
         <div className="forgot">
           <span onClick={handleForgotPassword}>
             Forgot Password?
@@ -70,25 +79,22 @@ export default function Login() {
           Login
         </button>
 
-        {/* Divider */}
         <div className="divider">
           <span>OR</span>
-          
           <span className="line">continue with </span>
         </div>
 
-       <div className="social-login">
-  <button type="button" className="google-btn" onClick={handleGoogleLogin}>
-    <FaGoogle /> Google
-  </button>
+        <div className="social-login">
+          <button type="button" className="google-btn" onClick={handleGoogleLogin}>
+            <FaGoogle /> Google
+          </button>
 
-  <button type="button" className="fb-btn" onClick={handleFacebookLogin}>
-    <FaFacebook />Facebook
-  </button>
-</div>
+          <button type="button" className="fb-btn" onClick={handleFacebookLogin}>
+            <FaFacebook /> Facebook
+          </button>
+        </div>
 
       </form>
-
     </div>
   );
 }

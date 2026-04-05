@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
 
-  background: linear-gradient(135deg,white, #89f7fe, #66a6ff,#89f7fe, white);
+  background: linear-gradient(135deg,#89f7fe, #66a6ff,#89f7fe);
 }
 
 .welcome {
@@ -17,7 +17,7 @@
 }
 
 .login-form {
-  background: white;
+  background: linear-gradient(135deg , skyblue , white );
   padding: 30px;
   border-radius: 15px;
   width: 300px;
@@ -149,4 +149,13 @@
 .fb-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+.error-msg {
+  background: #ffe0e0;
+  color: #d8000c;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
 }

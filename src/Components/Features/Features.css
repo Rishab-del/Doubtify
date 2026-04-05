@@ -1,59 +1,73 @@
-.feature-card {
-  background: linear-gradient(135deg , white, skyblue, white);
-  backdrop-filter: blur(10px);
-  padding: 25px;
-  border-radius: 18px;
+.features-page {
+  min-height: 100vh;
+  padding-top: 100px;
   text-align: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  cursor: pointer;
-  border: 0.5px solid black;
+
+  background: linear-gradient(
+    135deg,
+    #89f7fe,
+    #66a6ff,
+    #89f7fe
+  );
+  font-family: "Poppins", sans-serif;
 }
 
-/* Hover effect */
+.features-title {
+  font-size: 42px;
+  color: white;
+}
+
+.features-subtitle {
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 40px;
+  font-size: 20px;
+}
+
+/* Grid */
+.features-container {
+  display: grid;
+  background-color: transparent;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* Card */
+.feature-card {
+  padding: 25px;
+  border-radius: 18px;
+
+  background: linear-gradient(135deg, skyblue, white);
+  backdrop-filter: blur(10px);
+
+  text-align: left;
+  transition: 0.3s;
+}
+
 .feature-card:hover {
-  transform: translateY(-10px) scale(1.04);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  transform: translateY(-8px);
 }
 
 /* Icon */
 .feature-icon {
-  font-size: 40px;
-  color: rgb(97,97,189);
-  margin-bottom: 12px;
+  font-size: 35px;
+  color: rgb(72, 76, 201);
   transition: 0.3s;
+  align-items: center;
 }
 
-/* Icon animation */
-.feature-card:hover .feature-icon {
-  transform: scale(1.2);
+/* Text */
+.feature-card h3 {
+  margin-top: 10px;
 }
 
-.features-page {
-  padding-top: 120px;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #e0f7fa, #89f7fe, #66a6ff, #89f7fe, #e0f7fa)  ;
+.short {
+  font-weight: 500;
+  margin: 8px 0;
 }
 
-/* 🔥 MAIN FIX */
-.features-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
-
-  width: 80%;           /* 👈 IMPORTANT */
-  margin: 40px auto;    /* center align */
-}
-
-/* card */
-.feature-card {
-  min-height: 180px;    /* equal size */
-}
-
-.features-title {
-  font-size: 32px;
-  font-weight: bold;
-  text-align: center;
-  color: whitesmoke;
-  margin-bottom: 40px;
+.detail {
+  font-size: 14px;
+  opacity: 0.8;
 }

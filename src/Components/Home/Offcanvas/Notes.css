@@ -2,10 +2,12 @@
   padding: 40px;
   text-align: center;
   color: white;
+  background: linear-gradient(135deg,#89f7fe, #66a6ff, #89f7fe);
 }
 
 .dashboard-title {
-  font-size: 40px;
+  margin-top: 60px;
+  font-size: 32px;
   margin-bottom: 40px;
 }
 
@@ -21,7 +23,7 @@
   padding: 30px;
   border-radius: 15px;
 
-  background: linear-gradient(135deg, white, skyblue, white);
+  background: linear-gradient(135deg,skyblue, white);
   backdrop-filter: blur(20px);
 
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -47,4 +49,33 @@
 
 .dashboard-card p {
   opacity: 0.9;
+}
+/* 🔥 Container */
+.notes-container {
+  min-height: 100vh;
+  padding-top: 100px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  font-family: "Poppins", sans-serif;
+}
+
+/* 🔥 Title */
+.notes-title {
+  font-size: 36px;
+  color: white;
+  margin-bottom: 40px;
+}
+
+/* 🔥 Grid Layout */
+.notes-grid {
+  width: 100%;
+  max-width: 1000px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
 }

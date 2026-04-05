@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, Tooltip,
   BarChart, Bar, XAxis, YAxis, CartesianGrid
 } from "recharts";
+import Navbar from "../Navbar";
 
 export default function Progress() {
 
@@ -32,6 +33,7 @@ export default function Progress() {
   return (
     <>
       <BackButton />
+      <Navbar />
 
       <div className="dashboard">
 

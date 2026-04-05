@@ -2,7 +2,7 @@
 .profile-container {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg,white, #89f7fe, #66a6ff,#89f7fe, white);
+  background: linear-gradient(135deg,#89f7fe, #66a6ff,#89f7fe);
   padding-top: 80px;
 }
 /* Avatar image */
