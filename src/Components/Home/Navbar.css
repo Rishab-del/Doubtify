@@ -13,8 +13,8 @@
 
   padding: 12px 25px;
 
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(25px);
+  background: rgba(0,0,0, 0.14);
+  backdrop-filter: blur(25px) ;
   -webkit-backdrop-filter: blur(25px);
 
   border-radius: 25px;
@@ -54,7 +54,7 @@
 
 .nav-links a {
   text-decoration: none;
-  color: #222;
+  color: whitesmoke;
   font-weight: 500;
   position: relative;
   transition: 0.3s;

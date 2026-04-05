@@ -18,7 +18,6 @@ export default function Offcanvas() {
       id="sidebar"
     >
       <div className="offcanvas-header">
-        <h5>Doubtify</h5>
         <button className="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
       </div>
 

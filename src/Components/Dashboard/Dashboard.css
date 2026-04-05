@@ -14,7 +14,7 @@
   font-size: 32px;
   font-weight: bold;
   text-align: center;
-  color: #222;
+  color: whitesmoke;
   margin-bottom: 40px;
 }
 
@@ -50,7 +50,7 @@
 /* ICON */
 .card-icon {
   font-size: 40px;
-  color: #0072ff;
+  color: rgb(97, 97, 189);
   margin-bottom: 12px;
   transition: 0.3s;
 }
@@ -60,3 +60,10 @@
   transform: scale(1.2);
 }
 
+.dashboard-card {
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px) scale(1.03);
+}

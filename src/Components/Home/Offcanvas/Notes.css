@@ -1,6 +1,50 @@
-.page {
-  padding-top: 120px;
+.dashboard {
+  padding: 40px;
   text-align: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #e0f7fa, #66a6ff);
+  color: white;
+}
+
+.dashboard-title {
+  font-size: 40px;
+  margin-bottom: 40px;
+}
+
+/* SAME GRID */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+/* SAME CARD */
+.dashboard-card {
+  padding: 30px;
+  border-radius: 15px;
+
+  background: linear-gradient(135deg, white, skyblue, white);
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  transition: 0.3s;
+  cursor: pointer;
+  color : black;
+  border : 0.5px solid black;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px) scale(1.03);
+}
+
+.dashboard-card:active {
+  transform: scale(0.95);
+}
+
+.dashboard-card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.dashboard-card p {
+  opacity: 0.9;
 }

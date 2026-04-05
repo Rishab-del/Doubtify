@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import "./login.css";
 import { useNavigate } from "react-router-dom";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 
-export default function Login({ setIsLoggedIn }) {
+
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,12 +17,25 @@ export default function Login({ setIsLoggedIn }) {
       alert("Please fill all fields");
       return;
     }
-
-    // ✅ login success
-    setIsLoggedIn(true);
-
-    // 👉 dashboard pe bhej do
     navigate("/dashboard");
+  };
+
+  // 🔥 Forgot Password
+  const handleForgotPassword = () => {
+    if (!email) {
+      alert("Enter your email first 📧");
+    } else {
+      alert("Reset link sent to " + email);
+    }
+  };
+
+  // 🔥 Social Login (dummy)
+  const handleGoogleLogin = () => {
+    alert("Google login coming soon 🚀");
+  };
+
+  const handleFacebookLogin = () => {
+    alert("Facebook login coming soon 🚀");
   };
 
   return (
@@ -44,9 +59,33 @@ export default function Login({ setIsLoggedIn }) {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button type="submit">
+        {/* 🔥 Forgot Password */}
+        <div className="forgot">
+          <span onClick={handleForgotPassword}>
+            Forgot Password?
+          </span>
+        </div>
+
+        <button type="submit" className="login-btn">
           Login
         </button>
+
+        {/* Divider */}
+        <div className="divider">
+          <span>OR</span>
+          
+          <span className="line">continue with </span>
+        </div>
+
+       <div className="social-login">
+  <button type="button" className="google-btn" onClick={handleGoogleLogin}>
+    <FaGoogle /> Google
+  </button>
+
+  <button type="button" className="fb-btn" onClick={handleFacebookLogin}>
+    <FaFacebook />Facebook
+  </button>
+</div>
 
       </form>
 

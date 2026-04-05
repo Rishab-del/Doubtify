@@ -3,11 +3,11 @@
   color: white;
   width: 260px;
   backdrop-filter: blur(10px);
-  box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .offcanvas-header {
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .offcanvas-header h5 {
@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: black;
+  color: whitesmoke;
   text-decoration: none;
   padding: 12px 15px;
   border-radius: 12px;
@@ -78,7 +78,7 @@
   width: 100%;
   background: none;
   border: none;
-  color: #e2e8f0;
+  color: red;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -90,5 +90,24 @@
 
 .logout-btn:hover {
   background: linear-gradient(45deg, #ff4d4d, #ff0000);
+  color: red;
+}
+.sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
   color: white;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.sidebar-menu li a:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateX(5px);
+}
+
+.sidebar-menu li a.active {
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
 }

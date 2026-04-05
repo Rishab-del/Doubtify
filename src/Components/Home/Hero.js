@@ -14,14 +14,15 @@ export default function Hero() {
       </p>
 
       <div className="buttons">
-        <button className="try-btn" onClick={() => navigate("/home")}>
-        Try Now
-      </button>
 
       <button className="upload-btn" onClick={() => navigate("/upload")}>
-        Ask Doubt
+        Ask Doubt 🤖
       </button>
-      
+
+      <button className="upload-btn" onClick={() => navigate("/features")}>
+        Explore Features ✨
+      </button>
+
       </div>
     </div>
     

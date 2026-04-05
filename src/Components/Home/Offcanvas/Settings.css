@@ -1,55 +1,90 @@
-.page {
-  padding-top: 120px;
-  min-height: 100vh;
-  text-align: center;
-
-  background: linear-gradient(
-    135deg,
-    #e0f7fa,
-    #89f7fe,
-    #66a6ff,
-    #89f7fe,
-    #e0f7fa
-  );
-}
-
-.page h1 {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #222;
-}
-
-.page p {
-  font-size: 16px;
-  color: #333;
-}
-
 .settings-container {
-  width: 320px;
-  margin: 30px auto;
+  max-width: 600px;
+  margin: auto;
+  padding: 30px;
 
-  background: rgba(255,255,255,0.4);
-  backdrop-filter: blur(12px);
+  background: linear-gradient(135deg,white,skyblue,white);
+  backdrop-filter: blur(20px);
 
-  padding: 25px;
-  border-radius: 25px;
-
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.3);
 }
 
+/* ITEM */
 .setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  margin: 15px 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: black;
 }
 
-.setting-item span {
-  font-size: 16px;
+/* SWITCH */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 25px;
 }
 
-.setting-item input {
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
   cursor: pointer;
+  background: #ccc;
+  border-radius: 25px;
+  inset: 0;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3.5px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background: linear-gradient(135deg, #6C63FF, #00C9A7);
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+/* TIMER */
+.timer-input {
+  width: 80px;
+  padding: 5px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* RESET */
+.reset-btn {
+  width: 100%;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #ff4d4d, #ff0000);
+  color: white;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reset-btn:hover {
+  transform: scale(1.05);
 }
