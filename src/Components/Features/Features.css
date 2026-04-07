@@ -1,5 +1,5 @@
 .features-page {
-  min-height: 100vh;
+  min-height: 120vh;
   padding-top: 100px;
   text-align: center;
 
@@ -43,6 +43,7 @@
 
   text-align: left;
   transition: 0.3s;
+  border: 0.5px solid white;
 }
 
 .feature-card:hover {
@@ -70,4 +71,9 @@
 .detail {
   font-size: 14px;
   opacity: 0.8;
+}
+.feature-icon {
+  font-size: 30px;
+  color: #667eea;
+  margin-bottom: 10px;
 }

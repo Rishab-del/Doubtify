@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,17 +12,36 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!email || !password) {
-      toast.error("⚠️ Please fill all fields");
-      return;
+  if (!email || !password) {
+    toast.error("⚠️ Please fill all fields");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5001/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      toast.success("✅ " + data.message);
+      navigate("/dashboard");
+    } else {
+      toast.error("❌ " + data.message);
     }
 
-    toast.success("✅ Login successful!");
-    navigate("/dashboard");
-  };
+  } catch (err) {
+    toast.error("Server error");
+  }
+};
 
   const handleForgotPassword = () => {
     if (!email) {
@@ -95,6 +115,14 @@ export default function Login() {
         </div>
 
       </form>
+      <div className="signup-link">
+  <p>
+    Don't have an account?{" "}
+    <span onClick={() => navigate("/signup")}>
+      Sign up
+    </span>
+  </p>
+</div>
     </div>
   );
 }

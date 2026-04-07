@@ -3,16 +3,28 @@ import "./Dashboard.css";
 import Navbar from "../Home/Navbar";
 import { FaQuestionCircle, FaBook, FaChartLine, FaRobot } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useEffect,useState } from "react";
 
 export default function Dashboard() {
+
+  const [userName, setUserName] = useState("User");
   const navigate = useNavigate();
+  useEffect(() => {
+  fetch("http://localhost:5000/dashboard")
+    .then(res => res.json())
+    .then(data => {
+      setUserName(data.user);
+    })
+    .catch(err => console.log(err));
+}, []);
+
   return (
     <div className="dashboard">
 
       <Navbar />
 
 
-      <h2 className="dashboard-title">Your Learning Hub</h2>
+      <h2 className="dashboard-title">Welcome {userName}</h2>
       <p className="dashboard-subtitle">
         Access your doubts, notes, progress, and AI assistant all in one place
       </p>

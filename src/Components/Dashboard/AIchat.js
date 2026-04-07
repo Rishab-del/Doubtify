@@ -1,23 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./AIchat.css";
 import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
+import { FaMicrophone } from "react-icons/fa";
 
 export default function AIchat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [listening, setListening] = useState(false);
 
-  const sendMessage = () => {
+  const recognitionRef = useRef(null);
+  const chatEndRef = useRef(null);
+
+  // 🎤 Speech setup
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+
+      recognitionRef.current.onresult = (e) => {
+        setInput(e.results[0][0].transcript);
+      };
+
+      recognitionRef.current.onend = () => {
+        setListening(false);
+      };
+    }
+  }, []);
+
+  // 🎤 mic toggle
+const handleMic = () => {
+  if (!recognitionRef.current) return;
+
+  if (!listening) {
+    setListening(true);
+    recognitionRef.current.start();
+  } else {
+    recognitionRef.current.stop();
+    setListening(false);
+  }
+};
+
+  // 🔄 auto scroll
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // 💬 send message
+  const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const newMessages = [
-      ...messages,
-      { text: input, sender: "user" },
-      { text: "AI reply coming soon 🤖", sender: "ai" }
-    ];
+    setLoading(true);
 
-    setMessages(newMessages);
+    const userMsg = { text: input, sender: "user" };
+    setMessages((prev) => [...prev, userMsg]);
+
+    const currentInput = input;
     setInput("");
+
+    try {
+      const res = await fetch("http://localhost:5001/ask-ai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: currentInput }),
+      });
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+
+      let aiText = "";
+
+      setMessages((prev) => [...prev, { text: "", sender: "ai" }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        aiText += chunk;
+
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[updated.length - 1].text = aiText;
+          return updated;
+        });
+      }
+
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setMessages((prev) => [
+        ...prev,
+        { text: "⚠️ Server error", sender: "ai" },
+      ]);
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,7 +107,7 @@ export default function AIchat() {
       <BackButton />
       <Navbar />
 
-      <h2 className="chat-title">🤖 AI Chat</h2>
+      <h2 className="chat-title">🤖 AI Chat Bot</h2>
 
       <div className="chat-box">
         {messages.length === 0 && (
@@ -33,24 +115,39 @@ export default function AIchat() {
         )}
 
         {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`chat-message ${msg.sender}`}
-          >
+          <div key={index} className={`chat-message ${msg.sender}`}>
             {msg.text}
           </div>
         ))}
+
+        {loading && (
+          <div className="chat-message ai loading">
+            <span></span><span></span><span></span>
+          </div>
+        )}
+
+        {/* 🔄 auto scroll */}
+        <div ref={chatEndRef}></div>
       </div>
 
       <div className="chat-input">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask anything..."
-        />
+        <div className="input-wrapper">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask anything..."
+          />
+
+          <button
+  onClick={handleMic}
+  className={`mic-btn ${listening ? "active" : ""}`}
+>
+  <FaMicrophone />
+</button>
+        </div>
+
         <button onClick={sendMessage}>Send</button>
       </div>
-
     </div>
   );
 }

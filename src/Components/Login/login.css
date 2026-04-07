@@ -159,3 +159,14 @@
   font-size: 14px;
   text-align: center;
 }
+
+.signup-link {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.signup-link span {
+  color: #667eea;
+  cursor: pointer;
+  font-weight: bold;
+}

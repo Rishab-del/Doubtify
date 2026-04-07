@@ -20,6 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AIOptions from "./components/Dashboard/AIOptions";
 import AIchat from "./components/Dashboard/AIchat";
 import Discussion from "./components/Dashboard/Discussion";
+import Signup from "./components/Login/signup";
 
 import "./App.css";
 
@@ -47,8 +48,12 @@ function App() {
         <Route path="/dashboard/ai-options" element={<AIOptions />} />
         <Route path="/dashboard/aichat" element={<AIchat />} />
         <Route path="/dashboard/discussion" element={<Discussion />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </BrowserRouter>
+    <footer className="footer">
+      <p>&copy; 2024 Doubtify. All rights reserved.</p>
+    </footer>
     </>
   );
 }

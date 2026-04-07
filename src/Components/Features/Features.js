@@ -1,10 +1,50 @@
 import React from "react";
 import "./Features.css";
 import Navbar from "../Home/Navbar";
-import { FaRobot, FaBook, FaChartLine, FaBolt } from "react-icons/fa";
-import { FaUsers, FaCloudUploadAlt } from "react-icons/fa";
+import { FaRobot, FaBook, FaChartLine, FaBolt, FaUsers, FaCloudUploadAlt } from "react-icons/fa";
 
 export default function Features() {
+
+  const features = [
+    
+    {
+      icon: <FaRobot />,
+      title: "AI Doubt Solver",
+      short: "Instant answers to your questions.",
+      detail: "Get step-by-step solutions using AI for coding, math, and concepts."
+    },
+    {
+      icon: <FaBook />,
+      title: "Smart Notes",
+      short: "Organize your study material.",
+      detail: "Save notes, upload PDFs, and manage resources easily."
+    },
+    {
+      icon: <FaChartLine />,
+      title: "Progress Tracking",
+      short: "Track your growth.",
+      detail: "Visualize learning with charts, streaks, and analytics."
+    },
+    {
+      icon: <FaBolt />,
+      title: "Fast & Clean UI",
+      short: "Smooth experience.",
+      detail: "Modern design with fast and seamless navigation."
+    },
+    {
+      icon: <FaUsers />,
+      title: "Community Discussions",
+      short: "Learn with others.",
+      detail: "Ask doubts and collaborate with other learners."
+    },
+    {
+      icon: <FaCloudUploadAlt />,
+      title: "Cloud Sync",
+      short: "Access anywhere.",
+      detail: "Your data is सुरक्षित and accessible anytime."
+    }
+  ];
+
   return (
     <div className="features-page">
 
@@ -16,72 +56,14 @@ export default function Features() {
       </h2>
 
       <div className="features-container">
-
-        <div className="feature-card">
-          <FaRobot className="feature-icon" />
-          <h3>AI Doubt Solver</h3>
-          <p className="short">Instant answers to your questions.</p>
-
-          <p className="detail">
-            Get step-by-step solutions for your doubts using advanced AI.
-            Supports coding, math, and conceptual queries with real-time responses.
-          </p>
-        </div>
-
-        <div className="feature-card">
-          <FaBook className="feature-icon" />
-          <h3>Smart Notes</h3>
-          <p className="short">Organize your study material.</p>
-
-          <p className="detail">
-            Save notes, upload PDFs, and access everything in one place.
-            Easily manage and search your learning resources anytime.
-          </p>
-        </div>
-
-        <div className="feature-card">
-          <FaChartLine className="feature-icon" />
-          <h3>Progress Tracking</h3>
-          <p className="short">Track your growth.</p>
-
-          <p className="detail">
-            Visualize your learning progress with charts and analytics.
-            Stay motivated with streaks and performance insights.
-          </p>
-        </div>
-
-        <div className="feature-card">
-          <FaBolt className="feature-icon" />
-          <h3>Fast & Clean UI</h3>
-          <p className="short">Smooth experience.</p>
-
-          <p className="detail">
-            Enjoy a distraction-free interface with modern design,
-            fast loading, and seamless navigation across the app.
-          </p>
-        </div>
-        <div className="feature-card">
-    <FaUsers className="feature-icon" />
-    <h3>Community Discussions</h3>
-    <p className="short">Learn with others.</p>
-    <p className="detail">
-      Ask doubts, share ideas, and collaborate with other learners.
-      Get multiple perspectives and improve your understanding faster.
-    </p>
-  </div>
-
-  {/* 🔥 NEW 2 */}
-  <div className="feature-card">
-    <FaCloudUploadAlt className="feature-icon" />
-    <h3>Cloud Sync</h3>
-    <p className="short">Access anywhere.</p>
-    <p className="detail">
-      Your notes and progress are securely stored in the cloud.
-      Access your data anytime from any device seamlessly.
-    </p>
-  </div>
-
-
+        {features.map((f, index) => (
+          <div className="feature-card" key={index}>
+            <div className="feature-icon">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p className="short">{f.short}</p>
+            <p className="detail">{f.detail}</p>
+          </div>
+        ))}
       </div>
 
     </div>
