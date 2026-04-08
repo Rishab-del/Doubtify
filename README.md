@@ -1,70 +1,119 @@
-# Getting Started with Create React App
+🚀 Doubtify
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An AI-powered learning platform to solve doubts, collaborate with peers, and track your progress.
 
-## Available Scripts
+⸻
+<p align="center">
+  <a href="https://github.com/your-username/doubtify">
+    <img src="https://img.shields.io/badge/GitHub-Repo-black?style=for-the-badge&logo=github">
+  </a>
+  <a href="http://localhost:3000">
+    <img src="https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel">
+  </a>
+  <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge">
+</p>
 
-In the project directory, you can run:
+🌟 Features
 
-### `npm start`
+✨ AI Doubt Solver
+	•	Get instant answers using AI
+	•	Supports coding, math, and concepts
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+💬 Community Discussions
+	•	Ask doubts and interact with other learners
+	•	Real-time discussion panel
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+📝 Smart Notes
+	•	Organize and manage study material
+	•	Upload and access PDFs easily
 
-### `npm test`
+📊 Progress Tracking
+	•	Track your learning journey
+	•	Visual insights and analytics
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+⚡ Fast & Clean UI
+	•	Modern glassmorphism design
+	•	Smooth and responsive experience
 
-### `npm run build`
+☁️ Cloud Sync
+	•	Access your data anytime, anywhere
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+⸻
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+🛠️ Tech Stack
+	•	⚛️ React.js (Frontend)
+	•	🎨 CSS (Glassmorphism UI)
+	•	🌐 Node.js + Express (Backend)
+	•	🤖 AI API (for chatbot)
+	•	🎤 Web Speech API (Voice input)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+⸻
 
-### `npm run eject`
+📸 Screenshots
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+🤖 AI Chat
+	•	Interactive chatbot with markdown support
+	•	Voice input enabled
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+💬 Discussion Panel
+	•	Chat-style UI
+	•	Real-time doubt sharing
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+📊 Dashboard
+	•	Track progress and activity
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+⸻
 
-## Learn More
+⚙️ Installation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Clone the repository
+git clone https://github.com/your-username/doubtify.git
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Go to project folder
+cd doubtify
 
-### Code Splitting
+# Install dependencies
+npm install
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# Run the app
+npm start
 
-### Analyzing the Bundle Size
+🔥 Usage
+	•	Ask doubts in AI Chat 🤖
+	•	Discuss with peers 💬
+	•	Track your learning 📊
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+⸻
 
-### Making a Progressive Web App
+📦 Build
+npm run build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+🚀 Future Improvements
+	•	🔄 Real-time chat (Socket.io)
+	•	👤 User authentication
+	•	📱 Mobile responsive optimization
+	•	📊 Advanced analytics dashboard
+	•	💻 Syntax highlighting for code
 
-### Advanced Configuration
+⸻
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+🤝 Contributing
 
-### Deployment
+Contributions are welcome!
+Feel free to fork the repo and submit a PR.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+⸻
 
-### `npm run build` fails to minify
+📄 License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License.
+
+⸻
+
+💡 Author
+
+Made with ❤️ by Rishabh Patel
+
+⸻
+
+⭐ If you like this project, don’t forget to star the repo!
