@@ -1,17 +1,11 @@
 🚀 Doubtify
 
-An AI-powered learning platform to solve doubts, collaborate with peers, and track your progress.
+<p align="center">
+  <b>✨ AI-powered learning platform to solve doubts, collaborate with peers, and track your progress 🚀</b>
+</p>
+
 
 ⸻
-<p align="center">
-  <a href="https://github.com/your-username/doubtify">
-    <img src="https://img.shields.io/badge/GitHub-Repo-black?style=for-the-badge&logo=github">
-  </a>
-  <a href="http://localhost:3000">
-    <img src="https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel">
-  </a>
-  <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge">
-</p>
 
 🌟 Features
 
