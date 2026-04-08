@@ -88,10 +88,15 @@ npm start
 npm run build
 
 🚀 Future Improvements
+
 	•	🔄 Real-time chat (Socket.io)
+	
 	•	👤 User authentication
+	
 	•	📱 Mobile responsive optimization
+	
 	•	📊 Advanced analytics dashboard
+	
 	•	💻 Syntax highlighting for code
 
 ⸻
