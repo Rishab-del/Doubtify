@@ -35,10 +35,15 @@
 ⸻
 
 🛠️ Tech Stack
+
 	•	⚛️ React.js (Frontend)
+	
 	•	🎨 CSS (Glassmorphism UI)
+	
 	•	🌐 Node.js + Express (Backend)
+	
 	•	🤖 AI API (for chatbot)
+	
 	•	🎤 Web Speech API (Voice input)
 
 ⸻
