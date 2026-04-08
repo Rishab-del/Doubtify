@@ -3,6 +3,7 @@ import "./AIchat.css";
 import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
 import { FaMicrophone } from "react-icons/fa";
+import ReactMarkdown from "react-markdown";
 
 export default function AIchat() {
   const [messages, setMessages] = useState([]);
@@ -50,57 +51,54 @@ const handleMic = () => {
   }, [messages]);
 
   // 💬 send message
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+const sendMessage = async () => {
+  if (!input.trim()) return;
 
-    setLoading(true);
+  setLoading(true);
 
-    const userMsg = { text: input, sender: "user" };
-    setMessages((prev) => [...prev, userMsg]);
+  const userMsg = { text: input, sender: "user" };
+  setMessages((prev) => [...prev, userMsg]);
 
-    const currentInput = input;
-    setInput("");
+  const currentInput = input;
+  setInput("");
 
+  try {
+    const res = await fetch("http://localhost:5001/ask-ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question: currentInput }),
+    });
+
+    const text = await res.text(); // 🔥 ONLY ONCE
+
+    let data;
     try {
-      const res = await fetch("http://localhost:5001/ask-ai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ question: currentInput }),
-      });
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-
-      let aiText = "";
-
-      setMessages((prev) => [...prev, { text: "", sender: "ai" }]);
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        aiText += chunk;
-
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1].text = aiText;
-          return updated;
-        });
-      }
-
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setMessages((prev) => [
-        ...prev,
-        { text: "⚠️ Server error", sender: "ai" },
-      ]);
-      setLoading(false);
+      data = JSON.parse(text); // try JSON parse
+    } catch {
+      throw new Error(text); // अगर plain text है
     }
-  };
+
+    if (!res.ok) {
+      throw new Error(data.error || "Server error");
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      { text: data.reply, sender: "ai" },
+    ]);
+
+  } catch (err) {
+    console.log(err);
+    setMessages((prev) => [
+      ...prev,
+      { text: err.message, sender: "ai" },
+    ]);
+  }
+
+  setLoading(false);
+};
 
   return (
     <div className="chat-container">
@@ -116,8 +114,8 @@ const handleMic = () => {
 
         {messages.map((msg, index) => (
           <div key={index} className={`chat-message ${msg.sender}`}>
-            {msg.text}
-          </div>
+  <ReactMarkdown>{msg.text}</ReactMarkdown>
+</div>
         ))}
 
         {loading && (

@@ -10,9 +10,9 @@ export default function AIOptions() {
     <>
     <Navbar />
     <div className="ai-options">
-      <h2 className="title">Choose Option 🤖</h2>
 
       <div className="options-container">
+        
         
         <div
           className="option-card"

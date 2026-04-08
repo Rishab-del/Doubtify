@@ -1,12 +1,19 @@
 require("dotenv").config();
 
 const express = require("express");
+const app = express();
+console.log("API KEY:", process.env.OPENROUTER_API_KEY);
+
+
 const cors = require("cors");
 
-const app = express(); // ✅ PEHLE APP
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 
-app.use(cors());
 app.use(express.json());
+
 
 
 const axios = require("axios");
@@ -50,7 +57,7 @@ app.post("/ask-ai", async (req, res) => {
 
   } catch (err) {
     console.log(err);
-    res.status(500).end("AI Error ❌");
+    res.status(500).json({ error: "AI Error ❌" });
   }
 });
 // LOGIN
@@ -92,9 +99,8 @@ app.post("/doubt", (req, res) => {
   const { question } = req.body;
 
   res.json({
-    success: true,
-    message: "Doubt submitted"
-  });
+  reply: response.choices[0].message.content,
+});
 });
 
 
