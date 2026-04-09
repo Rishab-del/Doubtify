@@ -14,16 +14,12 @@
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "firebase": "^12.11.0",
-<<<<<<< HEAD
     "katex": "^0.16.45",
-=======
->>>>>>> 6183c4683bd66ed783c667f1a95464e85ec51562
     "openai": "^6.33.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.72.1",
     "react-icons": "^5.6.0",
-<<<<<<< HEAD
     "react-katex": "^3.1.0",
     "react-markdown": "^10.1.0",
     "react-pdf": "^10.4.1",
@@ -34,13 +30,6 @@
     "recharts": "^3.8.1",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-=======
-    "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.13.2",
-    "react-scripts": "5.0.1",
-    "react-toastify": "^11.0.5",
-    "recharts": "^3.8.1",
->>>>>>> 6183c4683bd66ed783c667f1a95464e85ec51562
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -50,17 +39,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": ["react-app", "react-app/jest"]
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
