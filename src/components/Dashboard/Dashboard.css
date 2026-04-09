@@ -1,0 +1,72 @@
+.dashboard {
+  padding-top: 120px;
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #89f7fe,
+    #66a6ff,
+    #89f7fe
+  );
+}
+@media (max-width: 768px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* GRID */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+
+  width: 80%;
+  margin: 40px auto;
+}
+
+/* CARD (same as feature-card) */
+.card {
+  background: linear-gradient(135deg ,skyblue, white);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 18px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  cursor: pointer;
+  border: 0.5px solid white;
+}
+
+/* Hover */
+.card:hover {
+  transform: translateY(-10px) scale(1.04);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+/* ICON */
+.card-icon {
+  font-size: 40px;
+  color: rgb(97, 97, 189);
+  margin-bottom: 12px;
+  transition: 0.3s;
+}
+
+/* Icon animation */
+.card:hover .card-icon {
+  transform: scale(1.2);
+}
+
+.dashboard-card {
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px) scale(1.03);
+}
+
+.dashboard-subtitle {
+  font-size: 20px;
+  text-align: center;
+  color: whitesmoke;
+  margin-bottom: 60px;
+}

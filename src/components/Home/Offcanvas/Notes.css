@@ -1,0 +1,62 @@
+.dashboard {
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  margin-top: 50px;
+}
+
+/* 🔥 Upload spacing */
+.upload-section {
+  margin-bottom: 30px;
+}
+
+/* 🔥 GRID FIX */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  max-width: 900px;
+  margin: auto;
+}
+
+/* 🔥 CARD */
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  position: relative;
+
+  transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: scale(1.05);
+}
+
+/* HEADER */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

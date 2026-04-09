@@ -1,0 +1,113 @@
+.custom-sidebar {
+  background: linear-gradient(135deg, #66a6ff, skyblue, #66a6ff);
+  color: white;
+  width: 260px;
+  backdrop-filter: blur(10px);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.offcanvas-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.offcanvas-header h5 {
+  font-weight: bold;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.sidebar-menu li {
+  margin: 10px 0;
+}
+
+/* MAIN LINK STYLE */
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: whitesmoke;
+  text-decoration: none;
+  padding: 12px 15px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Hover */
+.sidebar-menu a:hover {
+  background: linear-gradient(45deg, #00c6ff, #0072ff);
+  transform: translateX(6px) scale(1.02);
+}
+
+/* Click press */
+.sidebar-menu a:active {
+  transform: scale(0.95);
+}
+
+/* Active route */
+.active {
+  background: linear-gradient(45deg, #0072ff, #00c6ff);
+  color: white !important;
+  box-shadow: 0 0 15px rgba(0, 114, 255, 0.6);
+}
+
+/* ICON STYLE */
+.sidebar-menu svg {
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+/* ICON ANIMATION */
+.sidebar-menu a:hover svg {
+  transform: scale(1.2);
+}
+
+/* OPTIONAL: LEFT BORDER INDICATOR 🔥 */
+.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 4px;
+  background: white;
+  border-radius: 5px;
+}
+
+.logout-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: red;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(45deg, #ff4d4d, #ff0000);
+  color: red;
+}
+.sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.sidebar-menu li a:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateX(5px);
+}
+
+.sidebar-menu li a.active {
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
+}

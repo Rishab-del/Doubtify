@@ -1,0 +1,172 @@
+.login-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg,#89f7fe, #66a6ff,#89f7fe);
+}
+
+.welcome {
+  margin-top: 0.5 px;
+  margin-bottom: 60px;
+  color: white;
+  font-size: 32px;
+  text-shadow: 0 0 5px rgba(0,0,0,0.3); ;
+}
+
+.login-form {
+  background: linear-gradient(135deg , skyblue , white );
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Forgot password */
+.forgot {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.forgot span {
+  color: #0072ff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.forgot span:hover {
+  text-decoration: underline;
+}
+.line {
+  display: block;
+  margin-top: 8px;
+}
+
+/* Login button */
+.login-btn {
+  width: 100%;
+  padding: 10px;
+  background: #0072ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: #005bd1;
+}
+
+/* Divider */
+.divider {
+  margin: 20px 0;
+  text-align: center;
+  position: relative;
+}
+
+.divider span {
+  background: white;
+  padding: 0 10px;
+  color: #555;
+  font-size: 14px;
+}
+
+.divider::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: #ccc;
+  top: 50%;
+  left: 0;
+  z-index: -1;
+}
+/* SOCIAL BUTTON CONTAINER */
+.social-login {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* GOOGLE BUTTON */
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+
+  background: white;
+  color: #333;
+  font-weight: 500;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.google-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+/* FACEBOOK BUTTON */
+.fb-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+
+  background: linear-gradient(135deg, #1877f2, #0d5ed7);
+  color: white;
+  font-weight: 500;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.fb-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+.error-msg {
+  background: #ffe0e0;
+  color: #d8000c;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.signup-link {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.signup-link span {
+  color: #667eea;
+  cursor: pointer;
+  font-weight: bold;
+}

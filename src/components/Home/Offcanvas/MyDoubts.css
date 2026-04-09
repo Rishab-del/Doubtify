@@ -1,0 +1,86 @@
+/* PAGE SAME AS DASHBOARD */
+.doubts-page {
+  padding-top: 100px;
+  min-height: 100vh;
+
+  background: linear-gradient(
+    135deg,
+    #89f7fe,
+    #66a6ff,
+    #89f7fe
+  );
+
+  text-align: center;
+  color: whitesmoke;
+}
+
+/* TITLE */
+.doubts-page h1 {
+  margin-bottom: 30px;
+  font-size: 32px;
+  margin-top: 60px;
+}
+
+
+/* GRID SAME AS FEATURES */
+.doubts-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 110%;
+  margin: 0 auto;
+  margin-left: 100px;
+}
+
+/* CARD SAME STYLE */
+.doubt-card {
+  width: 110%;
+  padding: 25px;
+  border-radius: 18px;
+
+  align-items: flex-start;  
+  color: #000;
+
+  text-align: left;  
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  cursor: pointer;
+  border: 0.5px solid white;
+  background: linear-gradient(135deg ,skyblue, white);
+}
+
+/* HOVER SAME */
+.doubt-card:hover {
+  transform: translateY(-10px) scale(1.04);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+/* STATUS */
+.status {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #000;
+}
+
+.solved {
+  background: #00c853;
+}
+
+.pending {
+  background: #ff9800;
+}
+
+/* EMPTY */
+.empty {
+  opacity: 0.7;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .doubts-list {
+    grid-template-columns: 1fr;
+  }
+}

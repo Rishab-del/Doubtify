@@ -1,0 +1,85 @@
+/* Background */
+.login-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: linear-gradient(
+    135deg,
+    #89f7fe,
+    #66a6ff,
+    #89f7fe
+  );;
+}
+
+/* Heading */
+.login-page h1 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+/* Form Card */
+.login-form {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Inputs */
+.login-form input {
+  margin: 8px 0;
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.2s;
+}
+
+.login-form input:focus {
+  border-color: #667eea;
+}
+
+/* Button */
+.login-form button {
+  margin-top: 15px;
+  padding: 12px;
+  background: #667eea;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-form button:hover {
+  background: #5a67d8;
+}
+
+/* Link */
+.signup-link {
+  margin-top: 15px;
+  text-align: center;
+  color: white;
+}
+
+.signup-link span {
+  color: #ffd369;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .login-form {
+    width: 90%;
+  }
+}

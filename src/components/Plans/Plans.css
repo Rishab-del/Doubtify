@@ -1,0 +1,72 @@
+.plans-page {
+  padding-top: 120px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff, #89f7fe);
+  text-align: center;
+}
+
+.plans-title {
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+/* Container */
+.plans-container {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+/* Card */
+.plan-card {
+  background: linear-gradient(135deg , white, skyblue);
+  padding: 25px;
+  border-radius: 18px;
+  width: 260px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: 0.3s;
+border: 0.5px solid black;
+}
+
+.plan-card:hover {
+  transform: translateY(-10px) scale(1.05);
+}
+
+/* Popular highlight */
+.popular {
+    border: 0.5px solid black;
+
+  transform: scale(1.05);
+}
+
+/* Price */
+.plan-card h3 {
+  margin: 10px 0;
+  color: #0072ff;
+}
+
+/* List */
+.plan-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+}
+
+.plan-card li {
+  margin: 8px 0;
+}
+
+/* Button */
+.plan-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #0072ff;
+  color: white;
+  cursor: pointer;
+}
+
+.plan-btn:hover {
+  background: #005bd1;
+}

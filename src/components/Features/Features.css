@@ -1,0 +1,79 @@
+.features-page {
+  min-height: 120vh;
+  padding-top: 100px;
+  text-align: center;
+
+  background: linear-gradient(
+    135deg,
+    #89f7fe,
+    #66a6ff,
+    #89f7fe
+  );
+  font-family: "Poppins", sans-serif;
+}
+
+.features-title {
+  font-size: 42px;
+  color: white;
+}
+
+.features-subtitle {
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 40px;
+  font-size: 20px;
+}
+
+/* Grid */
+.features-container {
+  display: grid;
+  background-color: transparent;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* Card */
+.feature-card {
+  padding: 25px;
+  border-radius: 18px;
+
+  background: linear-gradient(135deg, skyblue, white);
+  backdrop-filter: blur(10px);
+
+  text-align: left;
+  transition: 0.3s;
+  border: 0.5px solid white;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+}
+
+/* Icon */
+.feature-icon {
+  font-size: 35px;
+  color: rgb(72, 76, 201);
+  transition: 0.3s;
+  align-items: center;
+}
+
+/* Text */
+.feature-card h3 {
+  margin-top: 10px;
+}
+
+.short {
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.detail {
+  font-size: 14px;
+  opacity: 0.8;
+}
+.feature-icon {
+  font-size: 30px;
+  color: #667eea;
+  margin-bottom: 10px;
+}

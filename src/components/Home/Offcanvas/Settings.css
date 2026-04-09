@@ -1,0 +1,100 @@
+.settings-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 30px;
+
+  background: linear-gradient(135deg,skyblue,white);
+  backdrop-filter: blur(20px);
+
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.settings-page {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(
+    135deg,
+    #89f7fe 25%,
+    #66a6ff 50%,
+    #89f7fe 75%
+  );
+}
+/* ITEM */
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: black;
+}
+
+/* SWITCH */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 25px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background: #ccc;
+  border-radius: 25px;
+  inset: 0;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3.5px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background: linear-gradient(135deg, #6C63FF, #00C9A7);
+}
+
+input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+/* TIMER */
+.timer-input {
+  width: 80px;
+  padding: 5px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* RESET */
+.reset-btn {
+  width: 100%;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #ff4d4d, #ff0000);
+  color: white;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reset-btn:hover {
+  transform: scale(1.05);
+}
+
