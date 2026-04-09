@@ -4,10 +4,6 @@ import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
 import { FaMicrophone } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
-import remarkMath from "remark-math";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import rehypeKatex from "rehype-katex";
 
 export default function AIchat() {
   const [messages, setMessages] = useState([]);
@@ -115,28 +111,10 @@ const sendMessage = async () => {
         {messages.length === 0 && (
           <p className="empty-chat">Start conversation 🚀</p>
         )}
-        
 
         {messages.map((msg, index) => (
           <div key={index} className={`chat-message ${msg.sender}`}>
-<ReactMarkdown
-  remarkPlugins={[remarkMath]}
-  rehypePlugins={[rehypeKatex]}
-  components={{
-    code({ inline, className, children, ...props }) {
-      const match = /language-(\w+)/.exec(className || "");
-      return !inline && match ? (
-        <SyntaxHighlighter style={oneDark} language={match[1]}>
-          {String(children).replace(/\n$/, "")}
-        </SyntaxHighlighter>
-      ) : (
-        <code>{children}</code>
-      );
-    },
-  }}
->
-  {msg.text}
-</ReactMarkdown>
+  <ReactMarkdown>{msg.text}</ReactMarkdown>
 </div>
         ))}
 

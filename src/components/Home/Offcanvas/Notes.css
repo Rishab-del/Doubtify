@@ -1,62 +1,81 @@
 .dashboard {
-  padding: 100px 20px;
+  padding: 40px;
   text-align: center;
+  color: white;
+  background: linear-gradient(135deg,#89f7fe, #66a6ff, #89f7fe);
 }
 
 .dashboard-title {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  margin-top: 50px;
+  margin-top: 60px;
+  font-size: 32px;
+  margin-bottom: 40px;
 }
 
-/* 🔥 Upload spacing */
-.upload-section {
-  margin-bottom: 30px;
-}
-
-/* 🔥 GRID FIX */
+/* SAME GRID */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-  max-width: 900px;
-  margin: auto;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
 }
 
-/* 🔥 CARD */
+/* SAME CARD */
 .dashboard-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(12px);
+  padding: 30px;
   border-radius: 15px;
-  padding: 20px;
-  cursor: pointer;
-  position: relative;
 
-  transition: transform 0.2s ease;
+  background: linear-gradient(135deg,skyblue, white);
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  transition: 0.3s;
+  cursor: pointer;
+  color : black;
+  border : 0.5px solid black;
 }
 
 .dashboard-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px) scale(1.03);
 }
 
-/* HEADER */
-.card-header {
+.dashboard-card:active {
+  transform: scale(0.95);
+}
+
+.dashboard-card h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.dashboard-card p {
+  opacity: 0.9;
+}
+/* 🔥 Container */
+.notes-container {
+  min-height: 100vh;
+  padding-top: 100px;
+
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  font-family: "Poppins", sans-serif;
 }
 
-/* DELETE BUTTON */
-.delete-btn {
-  background: red;
+/* 🔥 Title */
+.notes-title {
+  font-size: 36px;
   color: white;
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
+  margin-bottom: 40px;
+}
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* 🔥 Grid Layout */
+.notes-grid {
+  width: 100%;
+  max-width: 1000px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
 }

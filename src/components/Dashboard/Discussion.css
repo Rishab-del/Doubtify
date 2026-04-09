@@ -109,7 +109,7 @@
 /* LEFT (others - glass premium look) */
 .doubt-card.left {
   align-self: flex-start;
-  background: rgba(0,0,0, 0.15);  /* 👈 THIS IS IMPORTANT */
+  background: rgba(255, 255, 255, 0.15);  /* 👈 THIS IS IMPORTANT */
   border-top-left-radius: 5px;
   backdrop-filter: blur(12px);
   color: white;
