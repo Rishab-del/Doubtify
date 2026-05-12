@@ -15,7 +15,7 @@ export default function Hero() {
 
       <div className="buttons">
 
-      <button className="upload-btn" onClick={() => navigate("/upload")}>
+      <button className="upload-btn" onClick={() => navigate("/dashboard/ai-options")}>
         Ask Doubt 🤖
       </button>
 

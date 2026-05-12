@@ -28,34 +28,37 @@ import "./App.css";
 function App() {
   return (
     <>
-    <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} />
-    <BrowserRouter>
-      <Offcanvas />
-      <Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+      />
+      <BrowserRouter>
+        <Offcanvas />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Splash />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/plans" element={<Plans />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Splash />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/plans" element={<Plans />} />
+          <Route path="/my-doubts" element={<MyDoubts />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/progress" element={<Progress />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
 
-        <Route path="/my-doubts" element={<MyDoubts />} />
-        <Route path="/notes" element={<Notes />} />
-        <Route path="/progress" element={<Progress />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-
-        <Route path="/dashboard/ai-options" element={<AIOptions />} />
-        <Route path="/dashboard/aichat" element={<AIchat />} />
-        <Route path="/dashboard/discussion" element={<Discussion />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/pdf" element={<PDFViewer />} />
-      </Routes>
-    </BrowserRouter>
-    <footer className="footer">
-      <p>&copy; 2024 Doubtify. All rights reserved.</p>
-    </footer>
+          <Route path="/dashboard/ai-options" element={<AIOptions />} />
+          <Route path="/dashboard/aichat" element={<AIchat />} />
+          <Route path="/dashboard/discussion" element={<Discussion />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/pdf" element={<PDFViewer />} />
+        </Routes>
+      </BrowserRouter>
+      <footer className="footer">
+        <p>&copy; 2024 Doubtify. All rights reserved.</p>
+      </footer>
     </>
   );
 }

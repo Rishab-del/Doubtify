@@ -4,6 +4,10 @@ import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
 import { FaMicrophone } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+import "katex/dist/katex.min.css";
 
 export default function AIchat() {
   const [messages, setMessages] = useState([]);
@@ -70,34 +74,27 @@ const sendMessage = async () => {
       },
       body: JSON.stringify({ question: currentInput }),
     });
-
-    const text = await res.text(); // 🔥 ONLY ONCE
-
-    let data;
-    try {
-      data = JSON.parse(text); // try JSON parse
-    } catch {
-      throw new Error(text); // अगर plain text है
-    }
-
+    const data = await res.json();
     if (!res.ok) {
       throw new Error(data.error || "Server error");
     }
-
     setMessages((prev) => [
       ...prev,
-      { text: data.reply, sender: "ai" },
+      {
+        text: data.reply,sender: "ai",
+      },
     ]);
-
   } catch (err) {
-    console.log(err);
     setMessages((prev) => [
       ...prev,
-      { text: err.message, sender: "ai" },
+      {
+        text: err.message || "AI Error ❌",
+        sender: "ai",
+      },
     ]);
+  } finally {
+    setLoading(false);
   }
-
-  setLoading(false);
 };
 
   return (
@@ -114,7 +111,9 @@ const sendMessage = async () => {
 
         {messages.map((msg, index) => (
           <div key={index} className={`chat-message ${msg.sender}`}>
-  <ReactMarkdown>{msg.text}</ReactMarkdown>
+  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+  {msg.text}
+</ReactMarkdown>
 </div>
         ))}
 

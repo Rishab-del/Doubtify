@@ -55,7 +55,7 @@
 
 /* AI */
 .chat-message.ai {
-  background: linear-gradient(135deg,#6C63FF,#00C9A7);
+  background: linear-gradient(135deg,#6f6f71);
   color: white;
   border-radius: 15px;
 }

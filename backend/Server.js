@@ -23,49 +23,47 @@ const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
 });
-
 app.post("/ask-ai", async (req, res) => {
   try {
     const { question } = req.body;
 
     const response = await openai.chat.completions.create({
-      model: "meta-llama/llama-3-8b-instruct",
-      messages: [{ role: "user", content: question }],
-      stream: true,
+      model: "deepseek/deepseek-chat-v3-0324",
+
+      messages: [
+        {
+          role: "system",
+          content:  `
+        You are a helpful AI tutor.
+        Rules:
+        - Use markdown formatting
+        - For inline maths use: $...$
+        - For equations use: $$...$$
+        - Explain step by step
+        - Use headings and bullet points where necessary
+        `,
+        },
+        {
+          role: "user",
+          content: question,
+        },
+      ],
+
+      stream: false,
+      temperature: 0.5,
+      max_tokens: 500,
     });
 
-    res.setHeader("Content-Type", "text/plain");
-    res.setHeader("Transfer-Encoding", "chunked");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-
-    for await (const chunk of response) {
-      const content = chunk.choices?.[0]?.delta?.content;
-      if (content) {
-        res.write(content);
-      }
-    }
-    messages: [
-  {
-    role: "system",
-    content: `
-    You are a helpful teacher.
-
-    Rules:
-    - Use markdown formatting
-    - Use code blocks for code
-    - Use $$...$$ for math equations
-    - Explain step by step in simple language
-    `
-  },
-  { role: "user", content: question }
-]
-
-    res.end();
+    res.json({
+      reply: response.choices[0].message.content,
+    });
 
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "AI Error ❌" });
+
+    res.status(500).json({
+      error: "AI Error ❌",
+    });
   }
 });
 // LOGIN
