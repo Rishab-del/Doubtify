@@ -15,13 +15,3 @@
   animation: zoomRotate 2s ease-in-out infinite alternate;
   filter: drop-shadow(0 0 20px cyan);
 }
-<<<<<<< HEAD
-=======
-
-.loading-text {
-  color: white;
-  margin-top: 20px;
-  font-size: 18px;
-  animation: blink 1s infinite;
-}
->>>>>>> 5dc8a11 (add new feature in chat bot history store)

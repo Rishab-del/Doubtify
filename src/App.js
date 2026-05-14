@@ -21,7 +21,6 @@ import AIOptions from "./components/Dashboard/AIOptions";
 import AIchat from "./components/Dashboard/AIchat";
 import Discussion from "./components/Dashboard/Discussion";
 import Signup from "./components/Login/signup";
-import PDFViewer from "./PDFViewer";
 
 import "./App.css";
 
@@ -53,7 +52,6 @@ function App() {
           <Route path="/dashboard/aichat" element={<AIchat />} />
           <Route path="/dashboard/discussion" element={<Discussion />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/pdf" element={<PDFViewer />} />
         </Routes>
       </BrowserRouter>
       <footer className="footer">
