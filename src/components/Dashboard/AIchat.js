@@ -1,159 +1,550 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+} from "react";
+
 import "./AIchat.css";
+
 import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
+
 import { FaMicrophone } from "react-icons/fa";
+
 import ReactMarkdown from "react-markdown";
-<<<<<<< HEAD
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
-=======
->>>>>>> 5dc8a11 (add new feature in chat bot history store)
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [listening, setListening] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
+
+  const [messages, setMessages] =
+    useState([]);
+
+  const [input, setInput] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [listening, setListening] =
+    useState(false);
+
+  const [chatList, setChatList] =
+    useState([]);
+
+  const [
+    currentChatId,
+    setCurrentChatId,
+  ] = useState(null);
+
+  const [
+    temporaryMode,
+    setTemporaryMode,
+  ] = useState(false);
 
   const recognitionRef = useRef(null);
+
   const chatEndRef = useRef(null);
 
-  // 🎤 Speech setup
+  /* 🎤 Speech setup */
   useEffect(() => {
+
     const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
 
     if (SpeechRecognition) {
-      recognitionRef.current = new SpeechRecognition();
 
-      recognitionRef.current.onresult = (e) => {
-        setInput(e.results[0][0].transcript);
-      };
+      recognitionRef.current =
+        new SpeechRecognition();
 
-      recognitionRef.current.onend = () => {
-        setListening(false);
-      };
+      recognitionRef.current.onresult =
+        (e) => {
+
+          setInput(
+            e.results[0][0].transcript
+          );
+        };
+
+      recognitionRef.current.onend =
+        () => {
+
+          setListening(false);
+        };
     }
+
   }, []);
 
-  // 🎤 mic toggle
-const handleMic = () => {
-  if (!recognitionRef.current) return;
+  /* 🎤 Mic Toggle */
+  const handleMic = () => {
 
-  if (!listening) {
-    setListening(true);
-    recognitionRef.current.start();
-  } else {
-    recognitionRef.current.stop();
-    setListening(false);
-  }
-};
+    if (!recognitionRef.current)
+      return;
 
-  // 🔄 auto scroll
+    if (!listening) {
+
+      setListening(true);
+
+      recognitionRef.current.start();
+
+    } else {
+
+      recognitionRef.current.stop();
+
+      setListening(false);
+    }
+  };
+
+  /* 🔄 Auto Scroll */
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    chatEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+
   }, [messages]);
 
-  // 💬 send message
-const sendMessage = async () => {
-  if (!input.trim()) return;
+  /* 📂 Fetch All Chats */
+  useEffect(() => {
 
-  setLoading(true);
+    const fetchAllChats =
+      async () => {
 
-  const userMsg = { text: input, sender: "user" };
-  setMessages((prev) => [...prev, userMsg]);
+        try {
 
-  const currentInput = input;
-  setInput("");
+          const res = await fetch(
+            "http://localhost:5001/all-chats/rishabh123"
+          );
 
-  try {
-    const res = await fetch("http://localhost:5001/ask-ai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ question: currentInput }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error || "Server error");
+          const data =
+            await res.json();
+
+          setChatList(
+            Array.isArray(data)
+              ? data
+              : []
+          );
+
+        } catch (err) {
+
+          console.log(err);
+        }
+      };
+
+    fetchAllChats();
+
+  }, [messages]);
+
+  /* 🔄 Load selected chat */
+  useEffect(() => {
+
+    const loadSelectedChat =
+      async () => {
+
+        const savedChatId =
+          localStorage.getItem(
+            "currentChatId"
+          );
+
+        if (!savedChatId) return;
+
+        try {
+
+          const res = await fetch(
+            `http://localhost:5001/chat-by-id/${savedChatId}`
+          );
+
+          const data =
+            await res.json();
+
+          if (data?.messages) {
+
+            setMessages(
+              data.messages
+            );
+
+            setCurrentChatId(
+              savedChatId
+            );
+          }
+
+        } catch (err) {
+
+          console.log(err);
+        }
+      };
+
+    loadSelectedChat();
+
+  }, []);
+
+  /* 💬 Send Message */
+  const sendMessage = async () => {
+
+    if (!input.trim()) return;
+
+    setLoading(true);
+
+    const currentInput = input;
+
+    const userMsg = {
+
+      text: currentInput,
+      sender: "user",
+    };
+
+    setMessages((prev) => [
+      ...prev,
+      userMsg,
+    ]);
+
+    setInput("");
+
+    try {
+
+      const res = await fetch(
+        "http://localhost:5001/ask-ai",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+
+            question: currentInput,
+
+            history: messages,
+
+            userId: "rishabh123",
+
+            chatId: currentChatId,
+
+            temporary:
+              temporaryMode,
+          }),
+        }
+      );
+
+      const data =
+        await res.json();
+
+      if (!res.ok) {
+
+        throw new Error(
+          data.error ||
+            "Server error"
+        );
+      }
+
+      /* AI MESSAGE */
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: data.reply,
+          sender: "ai",
+        },
+      ]);
+
+      setCurrentChatId(
+        data.chatId
+      );
+
+    } catch (err) {
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          text:
+            err.message ||
+            "AI Error ❌",
+
+          sender: "ai",
+        },
+      ]);
+
+    } finally {
+
+      setLoading(false);
     }
-    setMessages((prev) => [
-      ...prev,
-      {
-        text: data.reply,sender: "ai",
-      },
-    ]);
-  } catch (err) {
-    setMessages((prev) => [
-      ...prev,
-      {
-        text: err.message || "AI Error ❌",
-        sender: "ai",
-      },
-    ]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
-    <>
-    <div className="chat-layout"></div>
-    
-    <div className="chat-container">
-      <BackButton />
-      <Navbar />
-      
 
-      <h2 className="chat-title">🤖 AI Chat Bot</h2>
+    <div className="main-layout">
 
-      <div className="chat-box">
-        {messages.length === 0 && (
-          <p className="empty-chat">Start conversation 🚀</p>
-        )}
+      {/* SIDEBAR */}
+      <div className="sidebar">
 
-        {messages.map((msg, index) => (
-          <div key={index} className={`chat-message ${msg.sender}`}>
-  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-  {msg.text}
-</ReactMarkdown>
-</div>
-        ))}
-
-        {loading && (
-          <div className="chat-message ai loading">
-            <span></span><span></span><span></span>
-          </div>
-        )}
-
-        {/* 🔄 auto scroll */}
-        <div ref={chatEndRef}></div>
-      </div>
-
-      <div className="chat-input">
-        <div className="input-wrapper">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask anything..."
-          />
+        <div className="sidebar-top">
 
           <button
-  onClick={handleMic}
-  className={`mic-btn ${listening ? "active" : ""}`}
->
-  <FaMicrophone />
-</button>
+            className="new-chat-btn"
+
+            onClick={() => {
+
+              setMessages([]);
+
+              setCurrentChatId(
+                null
+              );
+
+              localStorage.removeItem(
+                "currentChatId"
+              );
+            }}
+          >
+            + New Chat
+          </button>
+
+          <div className="temp-chat-toggle">
+
+            <span>
+              Temporary Chat
+            </span>
+
+            <input
+              type="checkbox"
+
+              checked={temporaryMode}
+
+              onChange={() => {
+
+                const updatedValue =
+                  !temporaryMode;
+
+                setTemporaryMode(
+                  updatedValue
+                );
+
+                if (
+                  temporaryMode ===
+                  true
+                ) {
+
+                  setMessages([]);
+
+                  setCurrentChatId(
+                    null
+                  );
+
+                  localStorage.removeItem(
+                    "currentChatId"
+                  );
+                }
+              }}
+            />
+
+          </div>
+
         </div>
 
-        <button onClick={sendMessage}>Send</button>
+        {/* CHAT HISTORY */}
+        <div className="chat-history">
+
+          {Array.isArray(chatList) &&
+            chatList.map((chat) => (
+
+            <div
+              key={chat._id}
+
+              className="chat-item"
+            >
+
+              <span
+                className="chat-title-text"
+
+                onClick={async () => {
+
+                  const res =
+                    await fetch(
+                      `http://localhost:5001/chat-by-id/${chat._id}`
+                    );
+
+                  const data =
+                    await res.json();
+
+                  setMessages(
+                    data.messages
+                  );
+
+                  setCurrentChatId(
+                    chat._id
+                  );
+
+                  localStorage.setItem(
+                    "currentChatId",
+                    chat._id
+                  );
+                }}
+              >
+                {chat.title}
+              </span>
+
+              <button
+
+                className="delete-btn"
+
+                onClick={async (
+                  e
+                ) => {
+
+                  e.stopPropagation();
+
+                  await fetch(
+                    `http://localhost:5001/delete-chat/${chat._id}`,
+                    {
+                      method:
+                        "DELETE",
+                    }
+                  );
+
+                  setChatList(
+                    (prev) =>
+                      prev.filter(
+                        (c) =>
+                          c._id !==
+                          chat._id
+                      )
+                  );
+
+                  if (
+                    currentChatId ===
+                    chat._id
+                  ) {
+
+                    setMessages([]);
+
+                    setCurrentChatId(
+                      null
+                    );
+
+                    localStorage.removeItem(
+                      "currentChatId"
+                    );
+                  }
+                }}
+              >
+                🗑
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+
       </div>
+
+      {/* MAIN CHAT */}
+      <div className="chat-container">
+
+        <BackButton />
+        <Navbar />
+
+        <h2 className="chat-title">
+          🤖 AI Assistant
+        </h2>
+
+        {/* CHAT BOX */}
+        <div className="chat-box">
+
+          {messages.length === 0 && (
+
+            <p className="empty-chat">
+              Start conversation 🚀
+            </p>
+
+          )}
+
+          {messages.map(
+            (msg, index) => (
+
+            <div
+              key={index}
+
+              className={`chat-message ${msg.sender}`}
+            >
+
+              <ReactMarkdown
+                remarkPlugins={[
+                  remarkMath,
+                ]}
+
+                rehypePlugins={[
+                  rehypeKatex,
+                ]}
+              >
+                {msg.text}
+              </ReactMarkdown>
+
+            </div>
+
+          ))}
+
+          {loading && (
+
+            <div className="chat-message ai loading">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
+          )}
+
+          <div
+            ref={chatEndRef}
+          ></div>
+
+        </div>
+
+        {/* INPUT */}
+        <div className="chat-input">
+
+          <div className="input-wrapper">
+
+            <input
+              value={input}
+
+              onChange={(e) =>
+                setInput(
+                  e.target.value
+                )
+              }
+
+              placeholder="Ask anything..."
+            />
+
+            <button
+              onClick={handleMic}
+
+              className={`mic-btn ${
+                listening
+                  ? "active"
+                  : ""
+              }`}
+            >
+              <FaMicrophone />
+            </button>
+
+          </div>
+
+          <button
+            onClick={sendMessage}
+          >
+            Send
+          </button>
+
+        </div>
+
+      </div>
+
     </div>
-    </>
   );
 }

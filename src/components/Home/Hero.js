@@ -15,11 +15,8 @@ export default function Hero() {
 
       <div className="buttons">
 
-<<<<<<< HEAD
       <button className="upload-btn" onClick={() => navigate("/dashboard/ai-options")}>
-=======
       <button className="upload-btn" onClick={() => navigate("/dashboard/aichat")}>
->>>>>>> 5dc8a11 (add new feature in chat bot history store)
         Ask Doubt 🤖
       </button>
 
