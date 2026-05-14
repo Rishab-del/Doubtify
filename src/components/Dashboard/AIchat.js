@@ -4,9 +4,12 @@ import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
 import { FaMicrophone } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
+<<<<<<< HEAD
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
+=======
+>>>>>>> 5dc8a11 (add new feature in chat bot history store)
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
@@ -14,6 +17,7 @@ export default function AIchat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   const recognitionRef = useRef(null);
   const chatEndRef = useRef(null);
@@ -98,9 +102,13 @@ const sendMessage = async () => {
 };
 
   return (
+    <>
+    <div className="chat-layout"></div>
+    
     <div className="chat-container">
       <BackButton />
       <Navbar />
+      
 
       <h2 className="chat-title">🤖 AI Chat Bot</h2>
 
@@ -146,5 +154,6 @@ const sendMessage = async () => {
         <button onClick={sendMessage}>Send</button>
       </div>
     </div>
+    </>
   );
 }

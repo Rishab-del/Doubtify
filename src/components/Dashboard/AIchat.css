@@ -55,7 +55,11 @@
 
 /* AI */
 .chat-message.ai {
+<<<<<<< HEAD
   background: linear-gradient(135deg, #6f6f71);
+=======
+  background: linear-gradient(135deg,#6C63FF);
+>>>>>>> 5dc8a11 (add new feature in chat bot history store)
   color: white;
   border-radius: 15px;
 }
@@ -183,5 +187,18 @@
 }
 
 .chat-message:hover {
+<<<<<<< HEAD
   transform: scale(1.02);
 }
+=======
+  transform: translateY(-2px);
+}
+
+.katex {
+  font-size: 1.2em;
+}
+
+.chat-message {
+  line-height: 1.6;
+}
+>>>>>>> 5dc8a11 (add new feature in chat bot history store)
