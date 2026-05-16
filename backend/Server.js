@@ -21,6 +21,8 @@ const cors = require("cors");
 
 const Chat = require("./models/Chat");
 
+const Note = require("./models/Notes");
+
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -363,16 +365,96 @@ app.post(
   "/upload",
   upload.single("file"),
 
-  (req, res) => {
+  async (req, res) => {
 
-    res.json({
-      file: `/uploads/${req.file.filename}`,
+    try {
 
-      title: req.file.originalname,
-    });
+      const note = await Note.create({
+
+        title: req.file.originalname,
+
+        file: `/uploads/${req.file.filename}`,
+
+        size: (
+          req.file.size /
+          1024 /
+          1024
+        ).toFixed(2),
+      });
+
+      res.json(note);
+
+    } catch (err) {
+
+      console.log(err);
+
+      res.status(500).json({
+        error: "Upload failed",
+      });
+    }
   }
 );
 
+
+
+/* STATIC FILE ACCESS */
+
+app.use(
+  "/uploads",
+  express.static("uploads")
+);
+
+/* GET ALL NOTES */
+
+app.get("/notes", async (req, res) => {
+
+  try {
+
+    const notes = await Note.find().sort({
+      createdAt: -1,
+    });
+
+    res.json(notes);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      error: "Failed to fetch notes",
+    });
+  }
+});
+
+/* DELETE NOTE */
+
+app.delete(
+  "/delete-note/:id",
+
+  async (req, res) => {
+
+    try {
+
+      const note =
+        await Note.findByIdAndDelete(
+          req.params.id
+        );
+
+      res.json({
+        success: true,
+        note,
+      });
+
+    } catch (err) {
+
+      console.log(err);
+
+      res.status(500).json({
+        error: "Delete failed",
+      });
+    }
+  }
+);
 /* =========================
    SERVER START
 ========================= */

@@ -26,15 +26,13 @@
 
 /* CARD (same as feature-card) */
 .card {
-  background: linear-gradient(135deg ,skyblue, white);
-  backdrop-filter: blur(10px);
+  background:  rgba(255,255,255,0.22) !important;
   padding: 25px;
   border-radius: 18px;
   text-align: center;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
   cursor: pointer;
-  border: 0.5px solid white;
+  color: rgb(96, 94, 94)!important;
 }
 
 /* Hover */
