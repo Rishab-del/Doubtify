@@ -512,7 +512,7 @@ footer{
 
   border:none;
 
-  background:transparent;
+  background:transparent ;
 
   color:white;
 
@@ -531,11 +531,3 @@ footer{
   opacity:1;
 }
 
-/* HOVER EFFECT */
-
-.delete-btn:hover{
-
-  transform:scale(1.2);
-
-  color:#ff4d6d;
-}

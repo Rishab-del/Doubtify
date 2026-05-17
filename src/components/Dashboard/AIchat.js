@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import "./AIchat.css";
 
@@ -18,31 +14,19 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
+  const [messages, setMessages] = useState([]);
 
-  const [messages, setMessages] =
-    useState([]);
+  const [input, setInput] = useState("");
 
-  const [input, setInput] =
-    useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [listening, setListening] = useState(false);
 
-  const [listening, setListening] =
-    useState(false);
+  const [chatList, setChatList] = useState([]);
 
-  const [chatList, setChatList] =
-    useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
 
-  const [
-    currentChatId,
-    setCurrentChatId,
-  ] = useState(null);
-
-  const [
-    temporaryMode,
-    setTemporaryMode,
-  ] = useState(false);
+  const [temporaryMode, setTemporaryMode] = useState(false);
 
   const recognitionRef = useRef(null);
 
@@ -50,47 +34,31 @@ export default function AIchat() {
 
   /* 🎤 Speech setup */
   useEffect(() => {
-
     const SpeechRecognition =
-      window.SpeechRecognition ||
-      window.webkitSpeechRecognition;
+      window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
 
-      recognitionRef.current =
-        new SpeechRecognition();
+      recognitionRef.current.onresult = (e) => {
+        setInput(e.results[0][0].transcript);
+      };
 
-      recognitionRef.current.onresult =
-        (e) => {
-
-          setInput(
-            e.results[0][0].transcript
-          );
-        };
-
-      recognitionRef.current.onend =
-        () => {
-
-          setListening(false);
-        };
+      recognitionRef.current.onend = () => {
+        setListening(false);
+      };
     }
-
   }, []);
 
   /* 🎤 Mic Toggle */
   const handleMic = () => {
-
-    if (!recognitionRef.current)
-      return;
+    if (!recognitionRef.current) return;
 
     if (!listening) {
-
       setListening(true);
 
       recognitionRef.current.start();
-
     } else {
-
       recognitionRef.current.stop();
 
       setListening(false);
@@ -99,90 +67,57 @@ export default function AIchat() {
 
   /* 🔄 Auto Scroll */
   useEffect(() => {
-
     chatEndRef.current?.scrollIntoView({
       behavior: "smooth",
     });
-
   }, [messages]);
 
   /* 📂 Fetch All Chats */
   useEffect(() => {
+    const fetchAllChats = async () => {
+      try {
+        const res = await fetch("http://localhost:5001/all-chats/rishabh123");
 
-    const fetchAllChats =
-      async () => {
+        const data = await res.json();
 
-        try {
-
-          const res = await fetch(
-            "http://localhost:5001/all-chats/rishabh123"
-          );
-
-          const data =
-            await res.json();
-
-          setChatList(
-            Array.isArray(data)
-              ? data
-              : []
-          );
-
-        } catch (err) {
-
-          console.log(err);
-        }
-      };
+        setChatList(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
     fetchAllChats();
-
   }, [messages]);
 
   /* 🔄 Load selected chat */
   useEffect(() => {
+    const loadSelectedChat = async () => {
+      const savedChatId = localStorage.getItem("currentChatId");
 
-    const loadSelectedChat =
-      async () => {
+      if (!savedChatId) return;
 
-        const savedChatId =
-          localStorage.getItem(
-            "currentChatId"
-          );
+      try {
+        const res = await fetch(
+          `http://localhost:5001/chat-by-id/${savedChatId}`,
+        );
 
-        if (!savedChatId) return;
+        const data = await res.json();
 
-        try {
+        if (data?.messages) {
+          setMessages(data.messages);
 
-          const res = await fetch(
-            `http://localhost:5001/chat-by-id/${savedChatId}`
-          );
-
-          const data =
-            await res.json();
-
-          if (data?.messages) {
-
-            setMessages(
-              data.messages
-            );
-
-            setCurrentChatId(
-              savedChatId
-            );
-          }
-
-        } catch (err) {
-
-          console.log(err);
+          setCurrentChatId(savedChatId);
         }
-      };
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
     loadSelectedChat();
-
   }, []);
 
   /* 💬 Send Message */
   const sendMessage = async () => {
-
     if (!input.trim()) return;
 
     setLoading(true);
@@ -190,55 +125,39 @@ export default function AIchat() {
     const currentInput = input;
 
     const userMsg = {
-
       text: currentInput,
       sender: "user",
     };
 
-    setMessages((prev) => [
-      ...prev,
-      userMsg,
-    ]);
+    setMessages((prev) => [...prev, userMsg]);
 
     setInput("");
 
     try {
+      const res = await fetch("http://localhost:5001/ask-ai", {
+        method: "POST",
 
-      const res = await fetch(
-        "http://localhost:5001/ask-ai",
-        {
-          method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+        body: JSON.stringify({
+          question: currentInput,
 
-          body: JSON.stringify({
+          history: messages,
 
-            question: currentInput,
+          userId: "rishabh123",
 
-            history: messages,
+          chatId: currentChatId,
 
-            userId: "rishabh123",
+          temporary: temporaryMode,
+        }),
+      });
 
-            chatId: currentChatId,
-
-            temporary:
-              temporaryMode,
-          }),
-        }
-      );
-
-      const data =
-        await res.json();
+      const data = await res.json();
 
       if (!res.ok) {
-
-        throw new Error(
-          data.error ||
-            "Server error"
-        );
+        throw new Error(data.error || "Server error");
       }
 
       /* AI MESSAGE */
@@ -250,301 +169,173 @@ export default function AIchat() {
         },
       ]);
 
-      setCurrentChatId(
-        data.chatId
-      );
-
+      setCurrentChatId(data.chatId);
     } catch (err) {
-
       setMessages((prev) => [
         ...prev,
         {
-          text:
-            err.message ||
-            "AI Error ❌",
+          text: err.message || "AI Error ❌",
 
           sender: "ai",
         },
       ]);
-
     } finally {
-
       setLoading(false);
     }
   };
 
   return (
-
     <div className="main-layout">
-
       {/* SIDEBAR */}
       <div className="sidebar">
-
         <div className="sidebar-top">
-
           <button
             className="new-chat-btn"
-
             onClick={() => {
-
               setMessages([]);
 
-              setCurrentChatId(
-                null
-              );
+              setCurrentChatId(null);
 
-              localStorage.removeItem(
-                "currentChatId"
-              );
+              localStorage.removeItem("currentChatId");
             }}
           >
             + New Chat
           </button>
 
           <div className="temp-chat-toggle">
-
-            <span>
-              Temporary Chat
-            </span>
+            <span>Temporary Chat</span>
 
             <input
               type="checkbox"
-
               checked={temporaryMode}
-
               onChange={() => {
+                const updatedValue = !temporaryMode;
 
-                const updatedValue =
-                  !temporaryMode;
+                setTemporaryMode(updatedValue);
 
-                setTemporaryMode(
-                  updatedValue
-                );
-
-                if (
-                  temporaryMode ===
-                  true
-                ) {
-
+                if (temporaryMode === true) {
                   setMessages([]);
 
-                  setCurrentChatId(
-                    null
-                  );
+                  setCurrentChatId(null);
 
-                  localStorage.removeItem(
-                    "currentChatId"
-                  );
+                  localStorage.removeItem("currentChatId");
                 }
               }}
             />
-
           </div>
-
         </div>
 
         {/* CHAT HISTORY */}
         <div className="chat-history">
-
           {Array.isArray(chatList) &&
             chatList.map((chat) => (
+              <div key={chat._id} className="chat-item">
+                <span
+                  className="chat-title-text"
+                  onClick={async () => {
+                    const res = await fetch(
+                      `http://localhost:5001/chat-by-id/${chat._id}`,
+                    );
 
-            <div
-              key={chat._id}
+                    const data = await res.json();
 
-              className="chat-item"
-            >
+                    setMessages(data.messages);
 
-              <span
-                className="chat-title-text"
+                    setCurrentChatId(chat._id);
 
-                onClick={async () => {
+                    localStorage.setItem("currentChatId", chat._id);
+                  }}
+                >
+                  {chat.title}
+                </span>
 
-                  const res =
+                <button
+                  className="delete-btn"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+
                     await fetch(
-                      `http://localhost:5001/chat-by-id/${chat._id}`
+                      `http://localhost:5001/delete-chat/${chat._id}`,
+                      {
+                        method: "DELETE",
+                      },
                     );
 
-                  const data =
-                    await res.json();
+                    setChatList((prev) =>
+                      prev.filter((c) => c._id !== chat._id),
+                    );
 
-                  setMessages(
-                    data.messages
-                  );
+                    if (currentChatId === chat._id) {
+                      setMessages([]);
 
-                  setCurrentChatId(
-                    chat._id
-                  );
+                      setCurrentChatId(null);
 
-                  localStorage.setItem(
-                    "currentChatId",
-                    chat._id
-                  );
-                }}
-              >
-                {chat.title}
-              </span>
-
-              <button
-
-                className="delete-btn"
-
-                onClick={async (
-                  e
-                ) => {
-
-                  e.stopPropagation();
-
-                  await fetch(
-                    `http://localhost:5001/delete-chat/${chat._id}`,
-                    {
-                      method:
-                        "DELETE",
+                      localStorage.removeItem("currentChatId");
                     }
-                  );
-
-                  setChatList(
-                    (prev) =>
-                      prev.filter(
-                        (c) =>
-                          c._id !==
-                          chat._id
-                      )
-                  );
-
-                  if (
-                    currentChatId ===
-                    chat._id
-                  ) {
-
-                    setMessages([]);
-
-                    setCurrentChatId(
-                      null
-                    );
-
-                    localStorage.removeItem(
-                      "currentChatId"
-                    );
-                  }
-                }}
-              >
-                🗑
-              </button>
-
-            </div>
-
-          ))}
-
+                  }}
+                >
+                  🗑
+                </button>
+              </div>
+            ))}
         </div>
-
       </div>
 
       {/* MAIN CHAT */}
       <div className="chat-container">
-
         <BackButton />
         <Navbar />
 
-        <h2 className="chat-title">
-          🤖 AI Assistant
-        </h2>
+        <h2 className="chat-title">🤖 AI Assistant</h2>
 
         {/* CHAT BOX */}
         <div className="chat-box">
-
           {messages.length === 0 && (
-
-            <p className="empty-chat">
-              Start conversation 🚀
-            </p>
-
+            <p className="empty-chat">Start conversation 🚀</p>
           )}
 
-          {messages.map(
-            (msg, index) => (
-
-            <div
-              key={index}
-
-              className={`chat-message ${msg.sender}`}
-            >
-
+          {messages.map((msg, index) => (
+            <div key={index} className={`chat-message ${msg.sender}`}>
               <ReactMarkdown
-                remarkPlugins={[
-                  remarkMath,
-                ]}
-
-                rehypePlugins={[
-                  rehypeKatex,
-                ]}
+                remarkPlugins={[remarkMath]}
+                rehypePlugins={[rehypeKatex]}
               >
                 {msg.text}
               </ReactMarkdown>
-
             </div>
-
           ))}
 
           {loading && (
-
             <div className="chat-message ai loading">
-
               <span></span>
               <span></span>
               <span></span>
-
             </div>
-
           )}
 
-          <div
-            ref={chatEndRef}
-          ></div>
-
+          <div ref={chatEndRef}></div>
         </div>
 
         {/* INPUT */}
         <div className="chat-input">
-
           <div className="input-wrapper">
-
             <input
               value={input}
-
-              onChange={(e) =>
-                setInput(
-                  e.target.value
-                )
-              }
-
+              onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything..."
             />
 
             <button
               onClick={handleMic}
-
-              className={`mic-btn ${
-                listening
-                  ? "active"
-                  : ""
-              }`}
+              className={`mic-btn ${listening ? "active" : ""}`}
             >
               <FaMicrophone />
             </button>
-
           </div>
 
-          <button
-            onClick={sendMessage}
-          >
-            Send
-          </button>
-
+          <button onClick={sendMessage}>Send</button>
         </div>
-
       </div>
-
     </div>
   );
 }

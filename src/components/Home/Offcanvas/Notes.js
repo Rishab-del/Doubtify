@@ -82,6 +82,12 @@ export default function Notes() {
 
 const deleteNote = async (id) => {
 
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this note?"
+  );
+
+  if (!confirmDelete) return;
+
   try {
 
     await axios.delete(
@@ -167,7 +173,7 @@ const deleteNote = async (id) => {
   </button>
 
   <button
-    className="delete-btn"
+    className="delete-btns"
     onClick={() =>
       deleteNote(note._id)
     }
