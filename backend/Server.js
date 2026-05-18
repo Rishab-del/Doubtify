@@ -2,12 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-
-console.log(
-  "API KEY:",
-  process.env.OPENROUTER_API_KEY
-);
-
+const http = require("http");
 const mongoose = require("mongoose");
 
 mongoose
@@ -17,11 +12,265 @@ mongoose
   )
   .catch((err) => console.log(err));
 
+const { Server } = require("socket.io");
 const cors = require("cors");
-
 const Chat = require("./models/Chat");
-
 const Note = require("./models/Notes");
+const Discussion = require("./models/Discussion");
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", async (socket) => {
+
+  console.log(
+    "User connected:",
+    socket.id
+  );
+
+  /* =========================
+      LOAD OLD MESSAGES
+  ========================= */
+
+  try {
+
+    const messages =
+      await Discussion.find().sort({
+        createdAt: 1,
+      });
+
+    socket.emit(
+      "load_messages",
+      messages
+    );
+
+  } catch (err) {
+
+    console.log(err);
+
+  }
+
+  /* =========================
+      SEND MESSAGE
+  ========================= */
+
+  socket.on(
+    "send_message",
+
+    async (data) => {
+
+      try {
+
+        const saved =
+          await Discussion.create({
+
+            text: data.text,
+
+            user: data.user,
+
+            avatar: data.avatar,
+
+            reactions:
+              data.reactions || [],
+
+            seenBy:
+              data.seenBy || [],
+
+            time: data.time,
+
+          });
+
+        // SEND TO EVERYONE
+        io.emit(
+          "receive_message",
+          saved
+        );
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    }
+  );
+
+  /* =========================
+      TYPING
+  ========================= */
+
+  socket.on(
+    "typing",
+
+    (data) => {
+
+      socket.broadcast.emit(
+        "typing",
+        data
+      );
+
+    }
+  );
+
+  /* =========================
+      SEEN STATUS
+  ========================= */
+
+  socket.on(
+    "message_seen",
+
+    async ({
+      messageId,
+      user,
+    }) => {
+
+      try {
+
+        const updated =
+          await Discussion.findByIdAndUpdate(
+
+            messageId,
+
+            {
+              $addToSet: {
+                seenBy: user,
+              },
+            },
+
+            {
+              new: true,
+            }
+
+          );
+
+        if (!updated) return;
+
+        io.emit(
+          "seen_updated",
+          updated
+        );
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    }
+  );
+
+  /* =========================
+      REACTION
+  ========================= */
+
+  socket.on(
+    "add_reaction",
+
+    async ({
+      messageId,
+      emoji,
+      user,
+    }) => {
+
+      try {
+
+        const message =
+          await Discussion.findById(
+            messageId
+          );
+
+        if (!message) return;
+
+        // replace old reaction
+        const existingReaction =
+          message.reactions.find(
+            (r) => r.user === user
+          );
+
+        if (existingReaction) {
+
+          existingReaction.emoji =
+            emoji;
+
+        } else {
+
+          message.reactions.push({
+            emoji,
+            user,
+          });
+
+        }
+
+        await message.save();
+
+        io.emit(
+          "reaction_updated",
+          message
+        );
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    }
+  );
+
+  /* =========================
+      DELETE MESSAGE
+  ========================= */
+
+  socket.on(
+    "delete_message",
+
+    async (id) => {
+
+      try {
+
+        const deleted =
+          await Discussion.findByIdAndDelete(
+            id
+          );
+
+        if (!deleted) return;
+
+        io.emit(
+          "message_deleted",
+          id
+        );
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    }
+  );
+
+  /* =========================
+      DISCONNECT
+  ========================= */
+
+  socket.on(
+    "disconnect",
+
+    () => {
+
+      console.log(
+        "User disconnected"
+      );
+
+    }
+  );
+
+});
 
 app.use(
   cors({
@@ -459,7 +708,7 @@ app.delete(
    SERVER START
 ========================= */
 
-app.listen(5001, () => {
+server.listen(5001, () => {
 
   console.log(
     "Server running on port 5001"
