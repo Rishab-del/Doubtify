@@ -4,6 +4,37 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("./models/User");
+
+const auth = (req, res, next) => {
+  const token =
+    req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Access denied",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    req.user = decoded;
+
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token",
+    });
+  }
+};
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -537,25 +568,61 @@ app.get("/chat/:userId", async (req, res) => {
    LOGIN
 ========================= */
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  const { email, password } = req.body;
+    const user = await User.findOne({
+      email,
+    });
 
-  if (
-    email === "test@gmail.com" &&
-    password === "1234"
-  ) {
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isMatch =
+      await bcrypt.compare(
+        password,
+        user.password
+      );
+
+    if (!isMatch) {
+      return res.json({
+        success: false,
+        message:
+          "Invalid credentials",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     res.json({
       success: true,
       message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
+  } catch (err) {
+    console.log(err);
 
-  } else {
-
-    res.json({
+    res.status(500).json({
       success: false,
-      message: "Invalid credentials",
+      message: "Login failed",
     });
   }
 });
@@ -564,28 +631,94 @@ app.post("/login", (req, res) => {
    SIGNUP
 ========================= */
 
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+    } = req.body;
 
-  console.log("Signup:", req.body);
+    const existingUser =
+      await User.findOne({
+        email,
+      });
 
-  res.json({
-    success: true,
-    message:
-      "User registered successfully",
-  });
+    if (existingUser) {
+      return res.json({
+        success: false,
+        message:
+          "Email already exists",
+      });
+    }
+
+    const hashedPassword =
+      await bcrypt.hash(
+        password,
+        10
+      );
+
+    const user =
+      await User.create({
+        name,
+        email,
+        password: hashedPassword,
+      });
+
+    res.json({
+      success: true,
+      message:
+        "Account created successfully",
+      user,
+    });
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Signup failed",
+    });
+  }
 });
 
 /* =========================
    DASHBOARD
 ========================= */
 
-app.get("/dashboard", (req, res) => {
+app.get(
+  "/dashboard",
+  auth,
+  async (req, res) => {
+    try {
+      const user = await User.findById(
+        req.user.id
+      );
 
-  res.json({
-    user: "Rishabh",
-    doubts: 5,
-  });
-});
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      res.json({
+        success: true,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      });
+    } catch (err) {
+      console.log(err);
+
+      res.status(500).json({
+        success: false,
+        message: "Server error",
+      });
+    }
+  }
+);
 
 /* =========================
    FILE UPLOAD

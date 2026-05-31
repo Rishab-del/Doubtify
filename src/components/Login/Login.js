@@ -1,92 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // 🔥 error state
 
   const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-  e.preventDefault();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-  if (!email || !password) {
-    toast.error("⚠️ Please fill all fields");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://localhost:5001/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      toast.success("✅ " + data.message);
+    if (token) {
       navigate("/dashboard");
-    } else {
-      toast.error("❌ " + data.message);
+    }
+  }, [navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      toast.error("⚠️ Please fill all fields");
+      return;
     }
 
-  } catch (err) {
-    toast.error("Server error");
-  }
-};
+    try {
+      const res = await fetch("http://localhost:5001/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem(
+          "token",
+          data.token
+        );
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(data.user)
+        );
+
+        toast.success("✅ " + data.message);
+
+        navigate("/dashboard");
+      } else {
+        toast.error("❌ " + data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("❌ Server error");
+    }
+  };
 
   const handleForgotPassword = () => {
     if (!email) {
       toast.error("📧 Please enter your email first");
     } else {
-      toast.success("✅ Reset link sent to " + email);
+      toast.info(
+        `📨 Reset link will be sent to ${email}`
+      );
     }
   };
 
   const handleGoogleLogin = () => {
-    toast.error("🚀 Google login coming soon");
+    toast.info("🚀 Google Login Coming Soon");
   };
 
   const handleFacebookLogin = () => {
-    toast.error("🚀 Facebook login coming soon");
+    toast.info("🚀 Facebook Login Coming Soon");
   };
 
   return (
     <div className="login-page">
-      
-      <h1 className="welcome">Welcome to Doubtify 🚀</h1>
+      <h1 className="welcome">
+        Welcome to Doubtify 🚀
+      </h1>
 
-      <form className="login-form" onSubmit={handleSubmit}>
-
-        {/* 🔥 ERROR MESSAGE UI */}
-        {error && <div className="error-msg">{error}</div>}
-
+      <form
+        className="login-form"
+        onSubmit={handleSubmit}
+      >
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Enter Email"
           value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setError(""); // typing pe error remove
-          }}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
+          required
         />
-        
+
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Enter Password"
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setError("");
-          }}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
+          required
         />
 
         <div className="forgot">
@@ -95,34 +117,51 @@ export default function Login() {
           </span>
         </div>
 
-        <button type="submit" className="login-btn">
+        <button
+          type="submit"
+          className="login-btn"
+        >
           Login
         </button>
 
         <div className="divider">
           <span>OR</span>
-          <span className="line">continue with </span>
+          <span className="line">
+            continue with
+          </span>
         </div>
 
         <div className="social-login">
-          <button type="button" className="google-btn" onClick={handleGoogleLogin}>
+          <button
+            type="button"
+            className="google-btn"
+            onClick={handleGoogleLogin}
+          >
             <FaGoogle /> Google
           </button>
 
-          <button type="button" className="fb-btn" onClick={handleFacebookLogin}>
+          <button
+            type="button"
+            className="fb-btn"
+            onClick={handleFacebookLogin}
+          >
             <FaFacebook /> Facebook
           </button>
         </div>
-
       </form>
+
       <div className="signup-link">
-  <p>
-    Don't have an account?{" "}
-    <span onClick={() => navigate("/signup")}>
-      Sign up
-    </span>
-  </p>
-</div>
+        <p>
+          Don't have an account?{" "}
+          <span
+            onClick={() =>
+              navigate("/signup")
+            }
+          >
+            Sign Up
+          </span>
+        </p>
+      </div>
     </div>
   );
 }

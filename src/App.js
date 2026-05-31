@@ -22,6 +22,8 @@ import AIchat from "./components/Dashboard/AIchat";
 import Discussion from "./components/Dashboard/Discussion";
 import Signup from "./components/Login/signup";
 
+import PrivateRoute from "./components/PrivateRoute";
+
 import "./App.css";
 
 function App() {
@@ -35,10 +37,9 @@ function App() {
       <BrowserRouter>
         <Offcanvas />
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<PrivateRoute> <Dashboard /></PrivateRoute>}/>
           <Route path="/" element={<Splash />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/features" element={<Features />} />
           <Route path="/plans" element={<Plans />} />
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="/dashboard/aichat" element={<AIchat />} />
           <Route path="/dashboard/discussion" element={<Discussion />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
       <footer className="footer">
