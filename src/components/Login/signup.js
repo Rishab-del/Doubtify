@@ -13,6 +13,7 @@ export default function Signup() {
     className: "",
     city: ""
   });
+  
 
   const navigate = useNavigate();
 

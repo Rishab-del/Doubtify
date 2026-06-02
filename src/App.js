@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {BrowserRouter,Routes,Route,useLocation,} from "react-router-dom";
 
 import Home from "./components/Home/Home";
 import Dashboard from "./components/Dashboard/Dashboard";
@@ -17,6 +17,7 @@ import Offcanvas from "./components/Home/Offcanvas/Offcanvas";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 import AIOptions from "./components/Dashboard/AIOptions";
 import AIchat from "./components/Dashboard/AIchat";
 import Discussion from "./components/Dashboard/Discussion";
@@ -26,6 +27,56 @@ import PrivateRoute from "./components/PrivateRoute";
 
 import "./App.css";
 
+function Layout() {
+  const location = useLocation();
+
+  const hideSidebarRoutes = [
+    "/",
+    "/login",
+    "/signup",
+    "/home",
+    "/features",
+    "/plans",
+  ];
+
+  return (
+    <>
+      {!hideSidebarRoutes.includes(location.pathname) && (
+        <Offcanvas />
+      )}
+
+      <Routes>
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route path="/" element={<Splash />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/plans" element={<Plans />} />
+
+        <Route path="/my-doubts" element={<MyDoubts />} />
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/progress" element={<Progress />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+
+        <Route path="/dashboard/ai-options" element={<AIOptions />} />
+        <Route path="/dashboard/aichat" element={<AIchat />} />
+        <Route path="/dashboard/discussion" element={<Discussion />} />
+
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </>
+  );
+}
+
 function App() {
   return (
     <>
@@ -34,28 +85,11 @@ function App() {
         autoClose={2000}
         hideProgressBar={false}
       />
+
       <BrowserRouter>
-        <Offcanvas />
-        <Routes>
-          <Route path="/dashboard" element={<PrivateRoute> <Dashboard /></PrivateRoute>}/>
-          <Route path="/" element={<Splash />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/plans" element={<Plans />} />
-
-          <Route path="/my-doubts" element={<MyDoubts />} />
-          <Route path="/notes" element={<Notes />} />
-          <Route path="/progress" element={<Progress />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-
-          <Route path="/dashboard/ai-options" element={<AIOptions />} />
-          <Route path="/dashboard/aichat" element={<AIchat />} />
-          <Route path="/dashboard/discussion" element={<Discussion />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+        <Layout />
       </BrowserRouter>
+
       <footer className="footer">
         <p>&copy; 2024 Doubtify. All rights reserved.</p>
       </footer>

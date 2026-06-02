@@ -7,6 +7,23 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
+const router = express.Router();
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
+
+
+app.use("/uploads", express.static("uploads"));
 
 const auth = (req, res, next) => {
   const token =
@@ -371,6 +388,30 @@ app.get("/chat-by-id/:id", async (req, res) => {
   }
 });
 
+//PROFILE PIC UPLOAD
+app.post( "/api/user/upload-profile",
+  auth,
+  upload.single("profilePic"),
+  async (req, res) => {
+    try {
+      const imageUrl = `/uploads/${req.file.filename}`;
+
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        { profilePic: imageUrl },
+        { returnDocument: "after" }
+      );
+
+      res.json({
+        success: true,
+        profilePic: imageUrl,
+      });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+);
+
 /* =========================
    ALL CHATS
 ========================= */
@@ -665,10 +706,21 @@ app.post("/signup", async (req, res) => {
         password: hashedPassword,
       });
 
+      const token = jwt.sign(
+        {
+          id: user._id,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      );  
+
     res.json({
       success: true,
       message:
         "Account created successfully",
+      token,
       user,
     });
   } catch (err) {
@@ -724,39 +776,14 @@ app.get(
    FILE UPLOAD
 ========================= */
 
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-
-  destination: "uploads/",
-
-  filename: (req, file, cb) => {
-
-    cb(
-      null,
-      Date.now() +
-        "-" +
-        file.originalname
-    );
-  },
-});
-
-const upload = multer({ storage });
-
 app.post(
   "/upload",
   upload.single("file"),
-
   async (req, res) => {
-
     try {
-
       const note = await Note.create({
-
         title: req.file.originalname,
-
         file: `/uploads/${req.file.filename}`,
-
         size: (
           req.file.size /
           1024 /
@@ -767,7 +794,6 @@ app.post(
       res.json(note);
 
     } catch (err) {
-
       console.log(err);
 
       res.status(500).json({
@@ -776,8 +802,6 @@ app.post(
     }
   }
 );
-
-
 
 /* STATIC FILE ACCESS */
 
@@ -837,6 +861,38 @@ app.delete(
     }
   }
 );
+
+
+//PROFILE UPDATE
+
+router.get("/profile", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.put("/profile", auth, async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      req.body,
+      { returnDocument: "after" }
+    ).select("-password");
+
+    console.log(updatedUser);
+
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+app.use("/api/user", router);
+
 /* =========================
    SERVER START
 ========================= */
