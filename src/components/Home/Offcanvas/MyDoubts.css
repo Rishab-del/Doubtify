@@ -16,36 +16,40 @@
 
 /* TITLE */
 .doubts-page h1 {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   font-size: 32px;
-  margin-top: 60px;
+  margin-top: 40px;
 }
 
 
-/* GRID SAME AS FEATURES */
 .doubts-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  width: 110%;
+
+  width: 90%;
+  max-width: 1200px;
+
   margin: 0 auto;
-  margin-left: 100px;
 }
 
-/* CARD SAME STYLE */
 .doubt-card {
-  width: 110%;
+  width: 100%;
   padding: 25px;
   border-radius: 18px;
+
   color: rgb(221, 214, 214);
-  align-items: flex-start;  
-  text-align: left;  
-  transition: all 0.3s ease;
-  cursor: pointer;
+
+  text-align: left;
+
   background: rgba(255,255,255,0.22);
   backdrop-filter: blur(18px);
-}
 
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  box-sizing: border-box;
+}
 /* HOVER SAME */
 .doubt-card:hover {
   transform: translateY(-10px) scale(1.04);
