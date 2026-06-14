@@ -20,7 +20,35 @@
   font-size: 32px;
   margin-top: 40px;
 }
+.doubts-container{
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
 
+.doubts-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+
+  width: 100%;
+  margin: 0;
+}
+
+.doubt-card {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 25px;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(18px);
+
+  color: rgb(221,214,214);
+}
 
 .doubts-list {
   display: grid;
