@@ -76,7 +76,7 @@ export default function AIchat() {
   useEffect(() => {
     const fetchAllChats = async () => {
       try {
-        const res = await fetch("http://localhost:5001/all-chats/rishabh123");
+        const res = await fetch("https://doubtify-0q6d.onrender.com/all-chats/rishabh123");
 
         const data = await res.json();
 
@@ -98,7 +98,7 @@ export default function AIchat() {
 
       try {
         const res = await fetch(
-          `http://localhost:5001/chat-by-id/${savedChatId}`,
+          `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
         );
 
         const data = await res.json();
@@ -134,7 +134,7 @@ export default function AIchat() {
     setInput("");
 
     try {
-      const res = await fetch("http://localhost:5001/ask-ai", {
+      const res = await fetch("https://doubtify-0q6d.onrender.com/ask-ai", {
         method: "POST",
 
         headers: {
@@ -234,7 +234,7 @@ export default function AIchat() {
                   className="chat-title-text"
                   onClick={async () => {
                     const res = await fetch(
-                      `http://localhost:5001/chat-by-id/${chat._id}`,
+                      `https://doubtify-0q6d.onrender.com/chat-by-id/${chat._id}`,
                     );
 
                     const data = await res.json();
@@ -255,7 +255,7 @@ export default function AIchat() {
                     e.stopPropagation();
 
                     await fetch(
-                      `http://localhost:5001/delete-chat/${chat._id}`,
+                      `https://doubtify-0q6d.onrender.com/delete-chat/${chat._id}`,
                       {
                         method: "DELETE",
                       },

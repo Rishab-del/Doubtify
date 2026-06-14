@@ -23,7 +23,7 @@ export default function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:5001/api/user/profile", {
+      const res = await axios.get("https://doubtify-0q6d.onrender.com/api/user/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -38,7 +38,7 @@ export default function Profile() {
       });
 
       if (res.data.profilePic) {
-        setImage(`http://localhost:5001${res.data.profilePic}`);
+        setImage(`https://doubtify-0q6d.onrender.com${res.data.profilePic}`);
       }
     } catch (err) {
       console.log(err);
@@ -71,7 +71,7 @@ export default function Profile() {
     formData.append("profilePic", selectedFile);
 
     const res = await axios.post(
-      "http://localhost:5001/api/user/upload-profile",
+      "https://doubtify-0q6d.onrender.com/api/user/upload-profile",
       formData,
       {
         headers: {
@@ -82,7 +82,7 @@ export default function Profile() {
     );
 
     if (res.data && res.data.profilePic) {
-      setImage(`http://localhost:5001${res.data.profilePic}`);
+      setImage(`https://doubtify-0q6d.onrender.com${res.data.profilePic}`);
     }
   };
 
@@ -95,7 +95,7 @@ export default function Profile() {
         await uploadProfilePic();
       }
       await axios.put(
-  "http://localhost:5001/api/user/profile",
+  "https://doubtify-0q6d.onrender.com/api/user/profile",
   user,
   {
     headers: {
@@ -104,7 +104,7 @@ export default function Profile() {
   }
 );
 
-      await axios.put("http://localhost:5001/api/user/profile", user, {
+      await axios.put("https://doubtify-0q6d.onrender.com/api/user/profile", user, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

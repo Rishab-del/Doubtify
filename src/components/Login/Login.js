@@ -28,7 +28,7 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch("http://localhost:5001/login", {
+      const res = await fetch("https://doubtify-0q6d.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

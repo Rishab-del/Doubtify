@@ -14,7 +14,7 @@ export default function Notes() {
   const fetchNotes = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5001/notes"
+        "https://doubtify-0q6d.onrender.com/notes"
       );
       setNotes(res.data);
     } catch (err) {
@@ -40,7 +40,7 @@ export default function Notes() {
         formData.append("file",file);
 
         await axios.post(
-          "http://localhost:5001/upload",
+          "https://doubtify-0q6d.onrender.com/upload",
           formData,
           {
             headers: {
@@ -91,7 +91,7 @@ const deleteNote = async (id) => {
   try {
 
     await axios.delete(
-      `http://localhost:5001/delete-note/${id}`
+      `https://doubtify-0q6d.onrender.com/delete-note/${id}`
     );
 
     fetchNotes();
@@ -165,7 +165,7 @@ const deleteNote = async (id) => {
     className="open-btn"
     onClick={() =>
       window.open(
-        `http://localhost:5001${note.file}`
+        `https://doubtify-0q6d.onrender.com${note.file}`
       )
     }
   >

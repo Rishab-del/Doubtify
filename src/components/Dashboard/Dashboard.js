@@ -11,7 +11,7 @@ export default function Dashboard() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:5001/dashboard", {
+    fetch("https://doubtify-0q6d.onrender.com/dashboard", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
