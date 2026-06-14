@@ -6,10 +6,9 @@ import Navbar from "../Navbar";
 export default function MyDoubts() {
 
   const [doubts] = useState([
-    { id: 1, question: "What is React?", status: "Solved" },
+    { id: 1, question: "What is React?", status: "Pending" },
     { id: 2, question: "Explain closures in JS", status: "Pending" },
     { id: 3, question: "What is useState hook?", status: "Pending" },
-    { id: 4, question: "Why nowadays react is used so much in website building?", status: "Pending" }
   ]);
 
   return (
