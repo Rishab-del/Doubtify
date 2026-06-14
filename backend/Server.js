@@ -39,7 +39,7 @@ if (process.env.MONGO_URL) {
 ========================= */
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: true,
     credentials: true,
   })
 );
