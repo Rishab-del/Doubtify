@@ -8,8 +8,8 @@ export default function MyDoubts() {
   const [doubts] = useState([
     { id: 1, question: "What is React?", status: "Solved" },
     { id: 2, question: "Explain closures in JS", status: "Pending" },
-    { id: 3, question: "What is useState hook?", status: "Solved" },
-    { id: 4, question: "Why nowadays react is used so much in website building?", status: "pending" }
+    { id: 3, question: "What is useState hook?", status: "Pending" },
+    { id: 4, question: "Why nowadays react is used so much in website building?", status: "Pending" }
   ]);
 
   return (
