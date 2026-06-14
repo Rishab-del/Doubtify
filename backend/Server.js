@@ -185,16 +185,6 @@ app.put("/api/user/profile", auth, async (req, res) => {
 ========================= */
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-require("dotenv").config();
-
-const app = express();
-const http = require("http");
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("./models/User");
-const router = express.Router();
-const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
