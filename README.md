@@ -6,6 +6,8 @@
 
 🌐 Live Demo: https://doubtify-five.vercel.app/
 
+Use Versel for Frontend deployment and Render for Backend deployment.
+
 ⸻
 
 🌟 Features
