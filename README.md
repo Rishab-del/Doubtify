@@ -4,6 +4,7 @@
   <b>✨ AI-powered learning platform to solve doubts, collaborate with peers, and track your progress 🚀</b>
 </p>
 
+🌐 Live Demo: https://doubtify-five.vercel.app/
 
 ⸻
 
