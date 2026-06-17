@@ -355,6 +355,8 @@ app.post("/ask-ai", async (req, res) => {
 
     const userMsg = { sender: "user", text: question };
 
+    console.log ("ask ai userId =", userId);
+
     const response = await openai.chat.completions.create({
       model: "openai/gpt-3.5-turbo",
       messages: [
