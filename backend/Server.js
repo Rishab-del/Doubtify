@@ -355,13 +355,16 @@ app.delete("/delete-note/:id", async (req, res) => {
    AI CHAT (ASK-AI)
 ========================= */
 app.post("/ask-ai", async (req, res) => {
-  console.log("REQ USER ID =", req.body.userId);
+  console.log("BODY =", req.body);
   try {
     const { question, history, userId, chatId, temporary } = req.body;
 
+    console.log("REQ USER ID =", req.body.userId);
+
+    console.log("ASK AI USER ID =", userId);
+
     const userMsg = { sender: "user", text: question };
 
-    console.log ("ask ai userId =", userId);
 
     const response = await openai.chat.completions.create({
       model: "openai/gpt-3.5-turbo",
@@ -399,6 +402,7 @@ Rules:
           { new: true }
         );
       } else {
+        console.log("SAVING CHAT USERID =", userId);
         chat = await Chat.create({
           userId,
           title: question.substring(0, 30),
