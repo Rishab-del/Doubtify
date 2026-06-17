@@ -350,6 +350,7 @@ app.delete("/delete-note/:id", async (req, res) => {
    AI CHAT (ASK-AI)
 ========================= */
 app.post("/ask-ai", async (req, res) => {
+  console.log("REQ USER ID =", req.body.userId);
   try {
     const { question, history, userId, chatId, temporary } = req.body;
 
