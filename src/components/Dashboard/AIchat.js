@@ -14,8 +14,6 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id;  
   const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
@@ -78,7 +76,7 @@ export default function AIchat() {
   useEffect(() => {
     const fetchAllChats = async () => {
       try {
-        const res = await fetch(`https://doubtify-0q6d.onrender.com/all-chats/${userId}`, {
+        const res = await fetch(`https://doubtify-0q6d.onrender.com/all-chats/${localStorage.getItem("userId")}`, {
           method: "GET",
         });
 
@@ -150,7 +148,7 @@ export default function AIchat() {
 
           history: messages,
 
-          userId,
+          userId: localStorage.getItem("userId"),
 
           chatId: currentChatId,
 
