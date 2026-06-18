@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import "./AIchat.css";
 
@@ -17,6 +18,7 @@ export default function AIchat() {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
@@ -34,6 +36,12 @@ export default function AIchat() {
   const recognitionRef = useRef(null);
 
   const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login", { replace: true });
+    }
+  }, [token, navigate]);
 
   /* 🎤 Speech setup */
   useEffect(() => {
@@ -77,6 +85,8 @@ export default function AIchat() {
 
   /* 📂 Fetch All Chats */
   useEffect(() => {
+    if (!token) return;
+
     const fetchAllChats = async () => {
       try {
         const res = await fetch(
@@ -102,6 +112,8 @@ export default function AIchat() {
 
   /* 🔄 Load selected chat */
   useEffect(() => {
+    if (!token) return;
+
     const loadSelectedChat = async () => {
       const savedChatId = localStorage.getItem("currentChatId");
 
@@ -135,6 +147,11 @@ export default function AIchat() {
   /* 💬 Send Message */
   const sendMessage = async () => {
     if (!input.trim()) return;
+
+    if (!token) {
+      navigate("/login", { replace: true });
+      return;
+    }
 
     setLoading(true);
 
