@@ -235,7 +235,8 @@ app.post("/login", async (req, res) => {
 ========================= */
 app.get("/dashboard", async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const userId = JSON.parse(localStorage.getItem("user") || "{}")?._id;
+    const user = await User.findOne();
     if (!user) {
       return res
         .status(404)
@@ -347,50 +348,55 @@ app.delete("/delete-note/:id", async (req, res) => {
 ========================= */
 app.post("/ask-ai", async (req, res) => {
   try {
-    const { question, history, chatId, temporary } = req.body;
-    const userId = req.user.id;
+    const { question, history, chatId, temporary, userId } = req.body;
 
-    const userMsg = { sender: "user", text: question };
+    const userMsg = {
+      sender: "user",
+      text: question,
+    };
 
     const response = await openai.chat.completions.create({
       model: "openai/gpt-3.5-turbo",
       messages: [
         {
           role: "system",
-          content: `You are a helpful AI tutor.
-Rules:
-- Use markdown formatting
-- For inline maths use: $...$
-- For equations use: $$...$$
-- Explain step by step
-- Use headings and bullet points`,
+          content: "You are a helpful AI tutor talk as a friendly teacher, " +
+            "provide clear and concise explanations, " +
+            "use examples and analogies to explain complex concepts, " +
+            "encourage critical thinking and problem-solving, " +
+            "answer in plain language, avoid jargon, and provide step-by-step guidance.",
         },
-        ...(history || []).map((msg) => ({
+        (history || []).map((msg) => ({
           role: msg.sender === "user" ? "user" : "assistant",
           content: msg.text,
         })),
-        { role: "user", content: question },
+        {
+          role: "user",
+          content: question,
+        },
       ],
-      stream: false,
-      temperature: 0.5,
-      max_tokens: 500,
     });
 
-    const aiMsg = { sender: "ai", text: response.choices[0].message.content };
+    const aiMsg = {
+      sender: "ai",
+      text: response.choices[0].message.content,
+    };
 
     let chat = null;
 
     if (!temporary) {
       if (chatId) {
-        chat = await Chat.findOneAndUpdate(
-          { _id: chatId, userId },
-          { $push: { messages: { $each: [userMsg, aiMsg] } } },
-          { new: true },
+        chat = await Chat.findByIdAndUpdate(
+          chatId,
+          {
+            $push: {
+              messages: {
+                $each: [userMsg, aiMsg],
+              },
+            },
+          },
+          { new: true }
         );
-
-        if (!chat) {
-          return res.status(404).json({ error: "Chat not found" });
-        }
       } else {
         chat = await Chat.create({
           userId,
@@ -400,12 +406,15 @@ Rules:
       }
     }
 
-    res.json({ reply: aiMsg.text, chatId: chat?._id || null });
+    res.json({
+      reply: aiMsg.text,
+      chatId: chat?._id,
+    });
   } catch (err) {
-    console.error("ASK AI ERROR =", err);
-  res.status(500).json({
-    error: err.message,
-  });
+    console.error(err);
+    res.status(500).json({
+      error: err.message,
+    });
   }
 });
 
@@ -414,52 +423,57 @@ Rules:
 ========================= */
 app.post("/new-chat", async (req, res) => {
   try {
+    const { userId } = req.body;
+
     const chat = await Chat.create({
-      userId: req.user.id,
+      userId,
       title: "New Chat",
       messages: [],
     });
 
     res.json(chat);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to create chat" });
+    res.status(500).json({
+      error: "Failed to create chat",
+    });
   }
 });
 
 app.get("/chat-by-id/:id", async (req, res) => {
   try {
-    const chat = await Chat.findOne({
-      _id: req.params.id,
-      userId: req.user.id,
-    });
+    const chat = await Chat.findById(req.params.id);
 
     if (!chat) {
-      return res.status(404).json({ error: "Chat not found" });
+      return res.status(404).json({
+        error: "Chat not found",
+      });
     }
 
     res.json(chat);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Chat not found" });
+    res.status(500).json({
+      error: "Chat not found",
+    });
   }
 });
 
-app.get("/all-chats", async (req, res) => {
+app.get("/all-chats/:userId", async (req, res) => {
   try {
-    const chats = await Chat.find({ userId: req.user.id }).sort({
-      createdAt: -1,
-    });
+    const chats = await Chat.find({
+      userId: req.params.userId,
+    }).sort({ createdAt: -1 });
+
     res.json(chats);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to fetch chats" });
+    res.status(500).json({
+      error: "Failed to fetch chats",
+    });
   }
 });
 
 app.get("/chat", async (req, res) => {
   try {
-    const chat = await Chat.findOne({ userId: req.user.id });
+    const chat = await Chat.findOne({ userId });
     res.json(chat || { messages: [] });
   } catch (err) {
     console.log(err);
@@ -469,22 +483,18 @@ app.get("/chat", async (req, res) => {
 
 app.delete("/delete-chat/:id", async (req, res) => {
   try {
-    const deletedChat = await Chat.findOneAndDelete({
-      _id: req.params.id,
-      userId: req.user.id,
+    await Chat.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
     });
-
-    if (!deletedChat) {
-      return res.status(404).json({ success: false, error: "Chat not found" });
-    }
-
-    console.log("Deleted:", deletedChat);
-    res.json({ success: true });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Delete failed" });
+    res.status(500).json({
+      error: "Delete failed",
+    });
   }
 });
+
 
 /* =========================
    SERVER START

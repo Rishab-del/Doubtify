@@ -14,6 +14,8 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
+  const userId = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = userId?._id;
   const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
@@ -146,7 +148,7 @@ export default function AIchat() {
 
           history: messages,
 
-          userId,
+          userId =user?.id,
 
           chatId: currentChatId,
 
