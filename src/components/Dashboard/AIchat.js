@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { FaMicrophone, FaCamera } from "react-icons/fa";
 
 import "./AIchat.css";
 
@@ -33,6 +34,17 @@ export default function AIchat() {
   const recognitionRef = useRef(null);
 
   const chatEndRef = useRef(null);
+
+  const [image, setImage] = useState(null);
+
+  const handleImageUpload = (e) => {
+  const file = e.target.files[0];
+
+  if (file) {
+    setImage(file);
+    console.log("Selected image:", file);
+  }
+};
 
   /* 🎤 Speech setup */
   useEffect(() => {
@@ -118,9 +130,32 @@ export default function AIchat() {
     loadSelectedChat();
   }, []);
 
+//  for image upload
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  console.log("Selected image:", file);
+
+  // baad me backend ko bhejenge
+};
+
   /* 💬 Send Message */
   const sendMessage = async () => {
-    if (!input.trim()) return;
+      if (!input.trim()) return;
+      const formData = new FormData();
+
+      formData.append("question", input);
+      formData.append("image", image);
+
+      const res = await fetch(
+        "https://doubtify-0q6d.onrender.com/ask-ai",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
     setLoading(true);
 
@@ -321,19 +356,30 @@ export default function AIchat() {
         {/* INPUT */}
         <div className="chat-input">
           <div className="input-wrapper">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything..."
-            />
+  <input
+    value={input}
+    onChange={(e) => setInput(e.target.value)}
+    placeholder="Ask anything..."
+  />
 
-            <button
-              onClick={handleMic}
-              className={`mic-btn ${listening ? "active" : ""}`}
-            >
-              <FaMicrophone />
-            </button>
-          </div>
+  <label className="camera-btn">
+    <FaCamera />
+    <input
+      type="file"
+      accept="image/*"
+      capture="environment"
+      onChange={handleImageUpload}
+      style={{ display: "none" }}
+    />
+  </label>
+
+  <button
+    onClick={handleMic}
+    className={`mic-btn ${listening ? "active" : ""}`}
+  >
+    <FaMicrophone />
+  </button>
+</div>
 
           <button onClick={sendMessage}>Send</button>
         </div>
