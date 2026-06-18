@@ -6,8 +6,6 @@ import "./AIchat.css";
 import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
 
-import { FaMicrophone } from "react-icons/fa";
-
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -15,8 +13,8 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
-  const userId = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = userId?._id;
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = user?._id;
   const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
@@ -130,16 +128,6 @@ export default function AIchat() {
     loadSelectedChat();
   }, []);
 
-//  for image upload
-const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-
-  if (!file) return;
-
-  console.log("Selected image:", file);
-
-  // baad me backend ko bhejenge
-};
 
   /* 💬 Send Message */
   const sendMessage = async () => {
@@ -174,16 +162,12 @@ const handleImageUpload = async (e) => {
       const res = await fetch("https://doubtify-0q6d.onrender.com/ask-ai", {
         method: "POST",
 
-        headers: {
-          "Content-Type": "application/json",
-        },
-
         body: JSON.stringify({
           question: currentInput,
 
           history: messages,
 
-          userId =user?.id,
+          userId: userId,
 
           chatId: currentChatId,
 

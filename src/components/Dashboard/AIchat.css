@@ -543,10 +543,13 @@ footer{
 }
 
 
-.camera-btn {
-  cursor: pointer;
-  font-size: 20px;
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
+.camera-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:60px;
+  height:60px;
+  cursor:pointer;
+  font-size:24px;
+  color:white;
 }
