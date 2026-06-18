@@ -338,15 +338,9 @@ export default function AIchat() {
         </div>
 
         {/* INPUT */}
-        <div className="chat-input">
-          <div className="input-wrapper">
-  <input
-    value={input}
-    onChange={(e) => setInput(e.target.value)}
-    placeholder="Ask anything..."
-  />
+<div className="chat-input">
 
-  <label className="camera-btn">
+  <label className="camera-outside-btn">
     <FaCamera />
     <input
       type="file"
@@ -357,16 +351,24 @@ export default function AIchat() {
     />
   </label>
 
-  <button
-    onClick={handleMic}
-    className={`mic-btn ${listening ? "active" : ""}`}
-  >
-    <FaMicrophone />
-  </button>
-</div>
+  <div className="input-wrapper">
+    <input
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      placeholder="Ask anything..."
+    />
 
-          <button onClick={sendMessage}>Send</button>
-        </div>
+    <button
+      onClick={handleMic}
+      className={`mic-btn ${listening ? "active" : ""}`}
+    >
+      <FaMicrophone />
+    </button>
+  </div>
+
+  <button onClick={sendMessage}>Send</button>
+
+</div>
       </div>
     </div>
   );
