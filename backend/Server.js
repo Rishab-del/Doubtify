@@ -346,19 +346,10 @@ app.delete("/delete-note/:id", async (req, res) => {
 /* =========================
    AI CHAT (ASK-AI)
 ========================= */
-app.post("/ask-ai",upload.single("image"), async (req, res) => {
+app.post("/ask-ai", async (req, res) => {
   try {
     const { question, history, chatId, temporary, userId } = req.body;
 
-    let imageUrl = null;
-
-    if (req.file) {
-
-      imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-
-    }
-
-    console.log("IMAGE URL =", imageUrl);
     const userMsg = {
       sender: "user",
       text: question,
@@ -366,12 +357,12 @@ app.post("/ask-ai",upload.single("image"), async (req, res) => {
     
 
     const response = await openai.chat.completions.create({
-      model: "openai/gpt-4o",
+      model: "openai/gpt-3.5-turbo",
       messages: [
   {
     role: "system",
     content: `
-You are a helpful AI tutor and friendly teacher.
+    You are a helpful AI tutor and friendly teacher.
 
 Rules:
 - Use markdown formatting
@@ -388,20 +379,10 @@ Rules:
     role: msg.sender === "user" ? "user" : "assistant",
     content: msg.text,
   })),
+
   {
     role: "user",
-    content: [
-      {
-        type: "text",
-        text: question || "Solve this question",
-      },
-      {
-        type: "image_url",
-        image_url: {
-          url: imageUrl,
-        },
-      },
-    ],
+    content: question,
   },
 ],
     });
