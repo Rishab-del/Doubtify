@@ -369,7 +369,7 @@ Rules:
 - For inline maths use: $...$
 - For equations use: $$...$$
 - Explain step by step
-- Use headings and bullet points,
+- use bullet points keep answer to the point and recheck 100 times before giving answer,
 - Use examples and analogies
 - For code, use triple backticks with language specified
 `
