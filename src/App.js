@@ -1,4 +1,4 @@
-import {BrowserRouter,Routes,Route,useLocation,} from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import Home from "./components/Home/Home";
 import Dashboard from "./components/Dashboard/Dashboard";
@@ -41,9 +41,7 @@ function Layout() {
 
   return (
     <>
-      {!hideSidebarRoutes.includes(location.pathname) && (
-        <Offcanvas />
-      )}
+      {!hideSidebarRoutes.includes(location.pathname) && <Offcanvas />}
 
       <Routes>
         <Route
@@ -60,15 +58,71 @@ function Layout() {
         <Route path="/features" element={<Features />} />
         <Route path="/plans" element={<Plans />} />
 
-        <Route path="/my-doubts" element={<MyDoubts />} />
-        <Route path="/notes" element={<Notes />} />
-        <Route path="/progress" element={<Progress />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route
+          path="/my-doubts"
+          element={
+            <PrivateRoute>
+              <MyDoubts />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/notes"
+          element={
+            <PrivateRoute>
+              <Notes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/progress"
+          element={
+            <PrivateRoute>
+              <Progress />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <Settings />
+            </PrivateRoute>
+          }
+        />
 
-        <Route path="/dashboard/ai-options" element={<AIOptions />} />
-        <Route path="/dashboard/aichat" element={<AIchat />} />
-        <Route path="/dashboard/discussion" element={<Discussion />} />
+        <Route
+          path="/dashboard/ai-options"
+          element={
+            <PrivateRoute>
+              <AIOptions />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard/aichat"
+          element={
+            <PrivateRoute>
+              <AIchat />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard/discussion"
+          element={
+            <PrivateRoute>
+              <Discussion />
+            </PrivateRoute>
+          }
+        />
 
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
