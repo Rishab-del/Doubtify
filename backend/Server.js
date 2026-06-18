@@ -39,7 +39,7 @@ if (process.env.MONGO_URL) {
 ========================= */
 app.use(
   cors({
-    origin: "https://doubtify-0q6d.onrender.com",
+    origin: ["http://localhost:3000", "https://doubtify-0q6d.onrender.com"],
     credentials: true,
   })
 );
@@ -349,9 +349,10 @@ app.delete("/delete-note/:id", async (req, res) => {
 /* =========================
    AI CHAT (ASK-AI)
 ========================= */
-app.post("/ask-ai", async (req, res) => {
+app.post("/ask-ai", auth, async (req, res) => {
   try {
-    const { question, history, userId, chatId, temporary } = req.body;
+    const { question, history, chatId, temporary } = req.body;
+    const userId = req.user.id;
 
     const userMsg = { sender: "user", text: question };
 
@@ -385,11 +386,15 @@ Rules:
 
     if (!temporary) {
       if (chatId) {
-        chat = await Chat.findByIdAndUpdate(
-          chatId,
+        chat = await Chat.findOneAndUpdate(
+          { _id: chatId, userId },
           { $push: { messages: { $each: [userMsg, aiMsg] } } },
           { new: true }
         );
+
+        if (!chat) {
+          return res.status(404).json({ error: "Chat not found" });
+        }
       } else {
         chat = await Chat.create({
           userId,
@@ -409,12 +414,10 @@ Rules:
 /* =========================
    CHAT ROUTES
 ========================= */
-app.post("/new-chat", async (req, res) => {
+app.post("/new-chat", auth, async (req, res) => {
   try {
-    const { userId } = req.body;
-
     const chat = await Chat.create({
-      userId,
+      userId: req.user.id,
       title: "New Chat",
       messages: [],
     });
@@ -426,9 +429,17 @@ app.post("/new-chat", async (req, res) => {
   }
 });
 
-app.get("/chat-by-id/:id", async (req, res) => {
+app.get("/chat-by-id/:id", auth, async (req, res) => {
   try {
-    const chat = await Chat.findById(req.params.id);
+    const chat = await Chat.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found" });
+    }
+
     res.json(chat);
   } catch (err) {
     console.log(err);
@@ -436,9 +447,9 @@ app.get("/chat-by-id/:id", async (req, res) => {
   }
 });
 
-app.get("/all-chats/:userId", async (req, res) => {
+app.get("/all-chats", auth, async (req, res) => {
   try {
-    const chats = await Chat.find({ userId: req.params.userId }).sort({
+    const chats = await Chat.find({ userId: req.user.id }).sort({
       createdAt: -1,
     });
     res.json(chats);
@@ -448,9 +459,9 @@ app.get("/all-chats/:userId", async (req, res) => {
   }
 });
 
-app.get("/chat/:userId", async (req, res) => {
+app.get("/chat", auth, async (req, res) => {
   try {
-    const chat = await Chat.findOne({ userId: req.params.userId });
+    const chat = await Chat.findOne({ userId: req.user.id });
     res.json(chat || { messages: [] });
   } catch (err) {
     console.log(err);
@@ -458,9 +469,17 @@ app.get("/chat/:userId", async (req, res) => {
   }
 });
 
-app.delete("/delete-chat/:id", async (req, res) => {
+app.delete("/delete-chat/:id", auth, async (req, res) => {
   try {
-    const deletedChat = await Chat.findByIdAndDelete(req.params.id);
+    const deletedChat = await Chat.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+
+    if (!deletedChat) {
+      return res.status(404).json({ success: false, error: "Chat not found" });
+    }
+
     console.log("Deleted:", deletedChat);
     res.json({ success: true });
   } catch (err) {

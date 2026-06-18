@@ -45,20 +45,21 @@ export default function Login() {
 
   localStorage.removeItem("currentChatId");
 
-  localStorage.setItem(
-    "token",
-    data.token
-  );
+  localStorage.setItem("token", data.token);
 
   localStorage.setItem(
+
     "user",
+
     JSON.stringify(data.user)
+
   );
 
   toast.success("✅ " + data.message);
 
   navigate("/dashboard");
-} else {
+
+}else {
         toast.error("❌ " + data.message);
       }
     } catch (err) {

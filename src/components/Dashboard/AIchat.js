@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import "./AIchat.css";
 
@@ -31,6 +32,18 @@ export default function AIchat() {
   const recognitionRef = useRef(null);
 
   const chatEndRef = useRef(null);
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const authHeaders = token
+    ? { Authorization: `Bearer ${token}` }
+    : {};
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate, token]);
 
   /* 🎤 Speech setup */
   useEffect(() => {
@@ -73,34 +86,44 @@ export default function AIchat() {
   }, [messages]);
 
   /* 📂 Fetch All Chats */
+  const fetchAllChats = async () => {
+    try {
+      const res = await fetch("https://doubtify-0q6d.onrender.com/all-chats", {
+        method: "GET",
+        headers: {
+          ...authHeaders,
+        },
+      });
+
+      const data = await res.json();
+
+      setChatList(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
-    const fetchAllChats = async () => {
-      try {
-        const res = await fetch(`https://doubtify-0q6d.onrender.com/all-chats/${localStorage.getItem("userId")}`, {
-          method: "GET",
-        });
-
-        const data = await res.json();
-
-        setChatList(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchAllChats();
-  }, [messages]);
+    if (token) {
+      fetchAllChats();
+    }
+  }, [token]);
 
   /* 🔄 Load selected chat */
   useEffect(() => {
     const loadSelectedChat = async () => {
       const savedChatId = localStorage.getItem("currentChatId");
 
-      if (!savedChatId) return;
+      if (!savedChatId || !token) return;
 
       try {
         const res = await fetch(
           `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
+          {
+            headers: {
+              ...authHeaders,
+            },
+          }
         );
 
         const data = await res.json();
@@ -116,7 +139,7 @@ export default function AIchat() {
     };
 
     loadSelectedChat();
-  }, []);
+  }, [token]);
 
   /* 💬 Send Message */
   const sendMessage = async () => {
@@ -141,14 +164,13 @@ export default function AIchat() {
 
         headers: {
           "Content-Type": "application/json",
+          ...authHeaders,
         },
 
         body: JSON.stringify({
           question: currentInput,
 
           history: messages,
-
-          userId: localStorage.getItem("userId"),
 
           chatId: currentChatId,
 
@@ -237,6 +259,11 @@ export default function AIchat() {
                   onClick={async () => {
                     const res = await fetch(
                       `https://doubtify-0q6d.onrender.com/chat-by-id/${chat._id}`,
+                      {
+                        headers: {
+                          ...authHeaders,
+                        },
+                      }
                     );
 
                     const data = await res.json();
@@ -260,6 +287,9 @@ export default function AIchat() {
                       `https://doubtify-0q6d.onrender.com/delete-chat/${chat._id}`,
                       {
                         method: "DELETE",
+                        headers: {
+                          ...authHeaders,
+                        },
                       },
                     );
 
