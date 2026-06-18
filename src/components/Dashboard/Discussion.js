@@ -26,7 +26,9 @@ export default function Discussion() {
 
   const bottomRef = useRef(null);
 
-  const username = "Rishabh";
+  const username = JSON.parse(
+    localStorage.getItem("user")
+  )?.name;
 
   const avatar =
     "https://i.pravatar.cc/150?img=12";

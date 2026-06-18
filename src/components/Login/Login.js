@@ -42,20 +42,23 @@ export default function Login() {
       const data = await res.json();
 
       if (data.success) {
-        localStorage.setItem(
-          "token",
-          data.token
-        );
 
-        localStorage.setItem(
-          "user",
-          JSON.stringify(data.user)
-        );
+  localStorage.removeItem("currentChatId");
 
-        toast.success("✅ " + data.message);
+  localStorage.setItem(
+    "token",
+    data.token
+  );
 
-        navigate("/dashboard");
-      } else {
+  localStorage.setItem(
+    "user",
+    JSON.stringify(data.user)
+  );
+
+  toast.success("✅ " + data.message);
+
+  navigate("/dashboard");
+} else {
         toast.error("❌ " + data.message);
       }
     } catch (err) {
