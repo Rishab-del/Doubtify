@@ -99,31 +99,31 @@ export default function AIchat() {
   }, [messages]);
 
   /* 🔄 Load selected chat */
-  useEffect(() => {
-    const loadSelectedChat = async () => {
-      const savedChatId = localStorage.getItem("currentChatId");
+  // useEffect(() => {
+  //   const loadSelectedChat = async () => {
+  //     const savedChatId = localStorage.getItem("currentChatId");
 
-      if (!savedChatId) return;
+  //     if (!savedChatId) return;
 
-      try {
-        const res = await fetch(
-          `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
-        );
+  //     try {
+  //       const res = await fetch(
+  //         `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
+  //       );
 
-        const data = await res.json();
+  //       const data = await res.json();
 
-        if (data?.messages) {
-          setMessages(data.messages);
+  //       if (data?.messages) {
+  //         setMessages(data.messages);
 
-          setCurrentChatId(savedChatId);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+  //         setCurrentChatId(savedChatId);
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
 
-    loadSelectedChat();
-  }, []);
+  //   loadSelectedChat();
+  // }, []);
 
   /* 💬 Send Message */
   const sendMessage = async () => {
