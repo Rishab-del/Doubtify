@@ -17,9 +17,6 @@ export default function AIchat() {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const token = localStorage.getItem("token");
-  console.log("USER =", user);
-
-  console.log("USER ID =", userId);
   const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
@@ -83,7 +80,7 @@ export default function AIchat() {
     const fetchAllChats = async () => {
       try {
         const res = await fetch(
-          `https://doubtify-0q6d.onrender.com/all-chats/${userId}`,
+          `https://doubtify-0q6d.onrender.com/all-chats`,
           {
             method: "GET",
             headers: {
@@ -104,31 +101,36 @@ export default function AIchat() {
   }, [messages]);
 
   /* 🔄 Load selected chat */
-  // useEffect(() => {
-  //   const loadSelectedChat = async () => {
-  //     const savedChatId = localStorage.getItem("currentChatId");
+  useEffect(() => {
+    const loadSelectedChat = async () => {
+      const savedChatId = localStorage.getItem("currentChatId");
 
-  //     if (!savedChatId) return;
+      if (!savedChatId) return;
 
-  //     try {
-  //       const res = await fetch(
-  //         `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
-  //       );
+      try {
+        const res = await fetch(
+          `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
 
-  //       const data = await res.json();
+        const data = await res.json();
 
-  //       if (data?.messages) {
-  //         setMessages(data.messages);
+        if (data?.messages) {
+          setMessages(data.messages);
 
-  //         setCurrentChatId(savedChatId);
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
+          setCurrentChatId(savedChatId);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-  //   loadSelectedChat();
-  // }, []);
+    loadSelectedChat();
+  }, []);
 
   /* 💬 Send Message */
   const sendMessage = async () => {

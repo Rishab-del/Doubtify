@@ -447,7 +447,7 @@ app.post("/new-chat", auth, async (req, res) => {
   }
 });
 
-app.get("/chat-by-id/:id/:userId?", auth, async (req, res) => {
+app.get("/chat-by-id/:id", auth, async (req, res) => {
   try {
     const chat = await Chat.findOne({
       _id: req.params.id,
@@ -465,7 +465,7 @@ app.get("/chat-by-id/:id/:userId?", auth, async (req, res) => {
   }
 });
 
-app.get("/all-chats/:userId?", auth, async (req, res) => {
+app.get("/all-chats", auth, async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -518,5 +518,5 @@ app.delete("/delete-chat/:id", auth, async (req, res) => {
 /* =========================
    SERVER START
 ========================= */
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
