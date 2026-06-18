@@ -19,7 +19,7 @@ const app = express();
 
 console.log(
   "OPENROUTER_API_KEY:",
-  process.env.OPENROUTER_API_KEY ? "(set)" : "(missing)"
+  process.env.OPENROUTER_API_KEY ? "(set)" : "(missing)",
 );
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
@@ -41,7 +41,7 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 
@@ -141,7 +141,7 @@ io.on("connection", async (socket) => {
       const updated = await Discussion.findByIdAndUpdate(
         messageId,
         { $addToSet: { seenBy: user } },
-        { new: true }
+        { new: true },
       );
 
       if (!updated) return;
@@ -205,7 +205,12 @@ app.post("/signup", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
-    res.json({ success: true, message: "Account created successfully", token, user });
+    res.json({
+      success: true,
+      message: "Account created successfully",
+      token,
+      user,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "Signup failed" });
@@ -247,7 +252,9 @@ app.get("/dashboard", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     res.json({
@@ -303,14 +310,14 @@ app.post(
       await User.findByIdAndUpdate(
         req.user.id,
         { profilePic: imageUrl },
-        { new: true }
+        { new: true },
       );
 
       res.json({ success: true, profilePic: imageUrl });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
+  },
 );
 
 /* =========================
@@ -354,17 +361,17 @@ app.delete("/delete-note/:id", async (req, res) => {
 /* =========================
    AI CHAT (ASK-AI)
 ========================= */
-app.post("/ask-ai", async (req, res) => {
+app.post("/ask-ai", auth, async (req, res) => {
   console.log("BODY =", req.body);
   try {
-    const { question, history, userId, chatId, temporary } = req.body;
+    const { question, history, chatId, temporary } = req.body;
+    const userId = req.user.id;
 
-    console.log("REQ USER ID =", req.body.userId);
+    console.log("REQ USER ID =", req.user.id);
 
     console.log("ASK AI USER ID =", userId);
 
     const userMsg = { sender: "user", text: question };
-
 
     const response = await openai.chat.completions.create({
       model: "openai/gpt-3.5-turbo",
@@ -398,8 +405,12 @@ Rules:
       if (chatId) {
         chat = await Chat.findByIdAndUpdate(
           chatId,
-          { $push: { messages: { $each: [userMsg, aiMsg] } } },
-          { new: true }
+          {
+            $push: { messages: { $each: [userMsg, aiMsg] } },
+          },
+          {
+            new: true,
+          },
         );
       } else {
         console.log("SAVING CHAT USERID =", userId);
@@ -421,12 +432,10 @@ Rules:
 /* =========================
    CHAT ROUTES
 ========================= */
-app.post("/new-chat", async (req, res) => {
+app.post("/new-chat", auth, async (req, res) => {
   try {
-    const { userId } = req.body;
-
     const chat = await Chat.create({
-      userId,
+      userId: req.user.id,
       title: "New Chat",
       messages: [],
     });
@@ -438,9 +447,17 @@ app.post("/new-chat", async (req, res) => {
   }
 });
 
-app.get("/chat-by-id/:id", async (req, res) => {
+app.get("/chat-by-id/:id/:userId?", auth, async (req, res) => {
   try {
-    const chat = await Chat.findById(req.params.id);
+    const chat = await Chat.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
+
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found" });
+    }
+
     res.json(chat);
   } catch (err) {
     console.log(err);
@@ -448,11 +465,20 @@ app.get("/chat-by-id/:id", async (req, res) => {
   }
 });
 
-app.get("/all-chats/:userId", async (req, res) => {
+app.get("/all-chats/:userId?", auth, async (req, res) => {
   try {
-    const chats = await Chat.find({ userId: req.params.userId }).sort({
+    const userId = req.user.id;
+
+    console.log("ALL CHATS USERID =", userId);
+
+    const chats = await Chat.find({
+      userId,
+    }).sort({
       createdAt: -1,
     });
+
+    console.log("TOTAL CHATS =", chats.length);
+
     res.json(chats);
   } catch (err) {
     console.log(err);
@@ -460,9 +486,9 @@ app.get("/all-chats/:userId", async (req, res) => {
   }
 });
 
-app.get("/chat/:userId", async (req, res) => {
+app.get("/chat/:userId", auth, async (req, res) => {
   try {
-    const chat = await Chat.findOne({ userId: req.params.userId });
+    const chat = await Chat.findOne({ userId: req.user.id });
     res.json(chat || { messages: [] });
   } catch (err) {
     console.log(err);
@@ -470,10 +496,18 @@ app.get("/chat/:userId", async (req, res) => {
   }
 });
 
-app.delete("/delete-chat/:id", async (req, res) => {
+app.delete("/delete-chat/:id", auth, async (req, res) => {
   try {
-    const deletedChat = await Chat.findByIdAndDelete(req.params.id);
+    const deletedChat = await Chat.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
     console.log("Deleted:", deletedChat);
+
+    if (!deletedChat) {
+      return res.status(404).json({ error: "Chat not found" });
+    }
+
     res.json({ success: true });
   } catch (err) {
     console.log(err);

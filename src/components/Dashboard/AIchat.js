@@ -13,11 +13,10 @@ import rehypeKatex from "rehype-katex";
 
 import "katex/dist/katex.min.css";
 
-
 export default function AIchat() {
-  
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id;  
+  const userId = user?.id;
+  const token = localStorage.getItem("token");
   console.log("USER =", user);
 
   console.log("USER ID =", userId);
@@ -83,9 +82,15 @@ export default function AIchat() {
   useEffect(() => {
     const fetchAllChats = async () => {
       try {
-        const res = await fetch(`https://doubtify-0q6d.onrender.com/all-chats/${userId}`, {
-          method: "GET",
-        });
+        const res = await fetch(
+          `https://doubtify-0q6d.onrender.com/all-chats/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
 
         const data = await res.json();
 
@@ -148,14 +153,13 @@ export default function AIchat() {
 
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
 
         body: JSON.stringify({
           question: currentInput,
 
           history: messages,
-
-          userId,
 
           chatId: currentChatId,
 
@@ -244,6 +248,11 @@ export default function AIchat() {
                   onClick={async () => {
                     const res = await fetch(
                       `https://doubtify-0q6d.onrender.com/chat-by-id/${chat._id}`,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
+                      },
                     );
 
                     const data = await res.json();
@@ -267,6 +276,9 @@ export default function AIchat() {
                       `https://doubtify-0q6d.onrender.com/delete-chat/${chat._id}`,
                       {
                         method: "DELETE",
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
                       },
                     );
 
