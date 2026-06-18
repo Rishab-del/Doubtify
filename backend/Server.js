@@ -402,8 +402,10 @@ Rules:
 
     res.json({ reply: aiMsg.text, chatId: chat?._id || null });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to ask AI" });
+    console.error("ASK AI ERROR =", err);
+  res.status(500).json({
+    error: err.message,
+  });
   }
 });
 
