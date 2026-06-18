@@ -370,6 +370,8 @@ Rules:
 - For equations use: $$...$$
 - Explain step by step
 - Use headings and bullet points,
+- Use examples and analogies
+- For code, use triple backticks with language specified
 `
   },
 
