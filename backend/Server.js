@@ -68,25 +68,6 @@ const upload = multer({ storage });
 
 app.use("/uploads", express.static("uploads"));
 
-/* =========================
-   AUTH MIDDLEWARE
-========================= */
-const auth = (req, res, next) => {
-  const header = req.headers.authorization;
-  const token = header?.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: "Access denied" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = { id: decoded.id };
-    next();
-  } catch (err) {
-    return res.status(401).json({ success: false, message: "Invalid token" });
-  }
-};
 
 /* =========================
    HTTP + SOCKET.IO SERVER
@@ -193,7 +174,7 @@ io.on("connection", async (socket) => {
 });
 
 /* =========================
-   AUTH: SIGNUP / LOGIN
+   SIGNUP / LOGIN
 ========================= */
 app.post("/signup", async (req, res) => {
   try {
@@ -252,7 +233,7 @@ app.post("/login", async (req, res) => {
 /* =========================
    DASHBOARD
 ========================= */
-app.get("/dashboard", auth, async (req, res) => {
+app.get("/dashboard", async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -282,7 +263,7 @@ app.post("/doubt", (req, res) => {
 /* =========================
    PROFILE ROUTES
 ========================= */
-app.get("/api/user/profile", auth, async (req, res) => {
+app.get("/api/user/profile", async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
@@ -291,7 +272,7 @@ app.get("/api/user/profile", auth, async (req, res) => {
   }
 });
 
-app.put("/api/user/profile", auth, async (req, res) => {
+app.put("/api/user/profile", async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, {
       new: true,
@@ -305,7 +286,6 @@ app.put("/api/user/profile", auth, async (req, res) => {
 
 app.post(
   "/api/user/upload-profile",
-  auth,
   upload.single("profilePic"),
   async (req, res) => {
     try {
@@ -365,7 +345,7 @@ app.delete("/delete-note/:id", async (req, res) => {
 /* =========================
    AI CHAT (ASK-AI)
 ========================= */
-app.post("/ask-ai", auth, async (req, res) => {
+app.post("/ask-ai", async (req, res) => {
   try {
     const { question, history, chatId, temporary } = req.body;
     const userId = req.user.id;
@@ -430,7 +410,7 @@ Rules:
 /* =========================
    CHAT ROUTES
 ========================= */
-app.post("/new-chat", auth, async (req, res) => {
+app.post("/new-chat", async (req, res) => {
   try {
     const chat = await Chat.create({
       userId: req.user.id,
@@ -445,7 +425,7 @@ app.post("/new-chat", auth, async (req, res) => {
   }
 });
 
-app.get("/chat-by-id/:id", auth, async (req, res) => {
+app.get("/chat-by-id/:id", async (req, res) => {
   try {
     const chat = await Chat.findOne({
       _id: req.params.id,
@@ -463,7 +443,7 @@ app.get("/chat-by-id/:id", auth, async (req, res) => {
   }
 });
 
-app.get("/all-chats", auth, async (req, res) => {
+app.get("/all-chats", async (req, res) => {
   try {
     const chats = await Chat.find({ userId: req.user.id }).sort({
       createdAt: -1,
@@ -475,7 +455,7 @@ app.get("/all-chats", auth, async (req, res) => {
   }
 });
 
-app.get("/chat", auth, async (req, res) => {
+app.get("/chat", async (req, res) => {
   try {
     const chat = await Chat.findOne({ userId: req.user.id });
     res.json(chat || { messages: [] });
@@ -485,7 +465,7 @@ app.get("/chat", auth, async (req, res) => {
   }
 });
 
-app.delete("/delete-chat/:id", auth, async (req, res) => {
+app.delete("/delete-chat/:id", async (req, res) => {
   try {
     const deletedChat = await Chat.findOneAndDelete({
       _id: req.params.id,
