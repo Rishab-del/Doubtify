@@ -210,6 +210,17 @@
   font-size: 1.2em;
 }
 
+
+.katex-display {
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  padding: 8px 0;
+
+}
+
 .chat-message {
   line-height: 1.6;
 }
@@ -530,4 +541,5 @@ footer{
 .chat-item:hover .delete-btn{
   opacity:1;
 }
+
 
