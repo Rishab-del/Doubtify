@@ -30,8 +30,16 @@ export default function Discussion() {
     localStorage.getItem("user")
   )?.name;
 
-  const avatar =
-    "https://i.pravatar.cc/150?img=12";
+  const avatar = JSON.parse(
+    localStorage.getItem("user")
+  )?.avatar
+    ? `https://doubtify-0q6d.onrender.com${
+        JSON.parse(
+          localStorage.getItem("user")
+        ).avatar
+      }`
+    : "https://i.pravatar.cc/150?img=3";
+
 
   /* =========================
       SOCKET EVENTS

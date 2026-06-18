@@ -19,7 +19,7 @@ const app = express();
 
 console.log(
   "OPENROUTER_API_KEY:",
-  process.env.OPENROUTER_API_KEY ? "(set)" : "(missing)"
+  process.env.OPENROUTER_API_KEY ? "(set)" : "(missing)",
 );
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
@@ -39,7 +39,11 @@ if (process.env.MONGO_URL) {
 ========================= */
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://doubtify-0q6d.onrender.com"],
+    origin: [
+      "http://localhost:3000",
+      "https://doubtify-git-main-rishabh-team.vercel.app",
+      "https://doubtify-five.vercel.app",
+    ],
     credentials: true,
   })
 );
@@ -91,7 +95,12 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://doubtify-git-main-rishabh-team.vercel.app",
+      "https://doubtify-five.vercel.app",
+    ],
+    credentials: true,
     methods: ["GET", "POST"],
   },
 });
@@ -136,7 +145,7 @@ io.on("connection", async (socket) => {
       const updated = await Discussion.findByIdAndUpdate(
         messageId,
         { $addToSet: { seenBy: user } },
-        { new: true }
+        { new: true },
       );
 
       if (!updated) return;
@@ -200,7 +209,12 @@ app.post("/signup", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
-    res.json({ success: true, message: "Account created successfully", token, user });
+    res.json({
+      success: true,
+      message: "Account created successfully",
+      token,
+      user,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "Signup failed" });
@@ -242,7 +256,9 @@ app.get("/dashboard", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     res.json({
@@ -298,14 +314,14 @@ app.post(
       await User.findByIdAndUpdate(
         req.user.id,
         { profilePic: imageUrl },
-        { new: true }
+        { new: true },
       );
 
       res.json({ success: true, profilePic: imageUrl });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
+  },
 );
 
 /* =========================
@@ -389,7 +405,7 @@ Rules:
         chat = await Chat.findOneAndUpdate(
           { _id: chatId, userId },
           { $push: { messages: { $each: [userMsg, aiMsg] } } },
-          { new: true }
+          { new: true },
         );
 
         if (!chat) {
