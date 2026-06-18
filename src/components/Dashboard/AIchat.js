@@ -76,7 +76,14 @@ export default function AIchat() {
   useEffect(() => {
     const fetchAllChats = async () => {
       try {
-        const res = await fetch("");
+        const res = await fetch(
+  "https://doubtify-0q6d.onrender.com/all-chats",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
         const data = await res.json();
 
@@ -99,6 +106,12 @@ export default function AIchat() {
       try {
         const res = await fetch(
           `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
+          {
+            headers:{
+              Authorization: `Bearer ${token}`,
+            }
+            
+          }
         );
 
         const data = await res.json();
@@ -139,14 +152,13 @@ export default function AIchat() {
 
         headers: {
           "Content-Type": "application/json",
+          Authorization : `Bearer ${token}`
         },
 
         body: JSON.stringify({
           question: currentInput,
 
           history: messages,
-
-          userId: "rishabh123",
 
           chatId: currentChatId,
 
@@ -235,6 +247,11 @@ export default function AIchat() {
                   onClick={async () => {
                     const res = await fetch(
                       `https://doubtify-0q6d.onrender.com/chat-by-id/${chat._id}`,
+                      {
+                        headers:{
+                          Authorization: `Bearer ${token}`,
+                      }
+                    }
                     );
 
                     const data = await res.json();
@@ -258,6 +275,9 @@ export default function AIchat() {
                       `https://doubtify-0q6d.onrender.com/delete-chat/${chat._id}`,
                       {
                         method: "DELETE",
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
                       },
                     );
 
