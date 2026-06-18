@@ -44,10 +44,10 @@
   padding: 25px;
   border-radius: 18px;
 
-  background: rgba(255,255,255,0.22);
+  background: transparent;
   backdrop-filter: blur(18px);
 
-  color: rgb(221,214,214);
+  color: black;
 }
 
 .doubts-list {
@@ -59,24 +59,6 @@
   max-width: 1200px;
 
   margin: 0 auto;
-}
-
-.doubt-card {
-  width: 100%;
-  padding: 25px;
-  border-radius: 18px;
-
-  color: rgb(221, 214, 214);
-
-  text-align: left;
-
-  background: rgba(255,255,255,0.22);
-  backdrop-filter: blur(18px);
-
-  transition: all 0.3s ease;
-  cursor: pointer;
-
-  box-sizing: border-box;
 }
 /* HOVER SAME */
 .doubt-card:hover {
