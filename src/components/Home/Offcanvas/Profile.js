@@ -24,9 +24,6 @@ export default function Profile() {
       const token = localStorage.getItem("token");
 
       const res = await axios.get("https://doubtify-0q6d.onrender.com/api/user/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       setUser({
@@ -75,7 +72,6 @@ export default function Profile() {
       formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       },
@@ -97,17 +93,10 @@ export default function Profile() {
       await axios.put(
   "https://doubtify-0q6d.onrender.com/api/user/profile",
   user,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }
 );
 
       await axios.put("https://doubtify-0q6d.onrender.com/api/user/profile", user, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        
       });
 
       setIsEditing(false);

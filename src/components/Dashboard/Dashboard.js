@@ -12,9 +12,7 @@ export default function Dashboard() {
     const token = localStorage.getItem("token");
 
     fetch("https://doubtify-0q6d.onrender.com/dashboard", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    
     })
       .then((res) => res.json())
       .then((data) => {
