@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaMicrophone, FaCamera } from "react-icons/fa";
 
 import "./AIchat.css";
 
 import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
+
+import { FaMicrophone } from "react-icons/fa";
 
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
@@ -13,8 +14,9 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(localStorage.getItem("user") || "{}")._id;
   const userId = user?._id;
+
   const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
@@ -32,17 +34,6 @@ export default function AIchat() {
   const recognitionRef = useRef(null);
 
   const chatEndRef = useRef(null);
-
-  const [image, setImage] = useState(null);
-
-  const handleImageUpload = (e) => {
-  const file = e.target.files[0];
-
-  if (file) {
-    setImage(file);
-    console.log("Selected image:", file);
-  }
-};
 
   /* 🎤 Speech setup */
   useEffect(() => {
@@ -128,22 +119,9 @@ export default function AIchat() {
     loadSelectedChat();
   }, []);
 
-
   /* 💬 Send Message */
   const sendMessage = async () => {
-      if (!input.trim()) return;
-      const formData = new FormData();
-
-      formData.append("question", input);
-      formData.append("image", image);
-
-      const res = await fetch(
-        "https://doubtify-0q6d.onrender.com/ask-ai",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+    if (!input.trim()) return;
 
     setLoading(true);
 
@@ -162,12 +140,16 @@ export default function AIchat() {
       const res = await fetch("https://doubtify-0q6d.onrender.com/ask-ai", {
         method: "POST",
 
+        headers: {
+          "Content-Type": "application/json",
+        },
+
         body: JSON.stringify({
           question: currentInput,
 
           history: messages,
 
-          userId: userId,
+          userId,
 
           chatId: currentChatId,
 
@@ -338,37 +320,24 @@ export default function AIchat() {
         </div>
 
         {/* INPUT */}
-<div className="chat-input">
+        <div className="chat-input">
+          <div className="input-wrapper">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask anything..."
+            />
 
-  <label className="camera-outside-btn">
-    <FaCamera />
-    <input
-      type="file"
-      accept="image/*"
-      capture="environment"
-      onChange={handleImageUpload}
-      style={{ display: "none" }}
-    />
-  </label>
+            <button
+              onClick={handleMic}
+              className={`mic-btn ${listening ? "active" : ""}`}
+            >
+              <FaMicrophone />
+            </button>
+          </div>
 
-  <div className="input-wrapper">
-    <input
-      value={input}
-      onChange={(e) => setInput(e.target.value)}
-      placeholder="Ask anything..."
-    />
-
-    <button
-      onClick={handleMic}
-      className={`mic-btn ${listening ? "active" : ""}`}
-    >
-      <FaMicrophone />
-    </button>
-  </div>
-
-  <button onClick={sendMessage}>Send</button>
-
-</div>
+          <button onClick={sendMessage}>Send</button>
+        </div>
       </div>
     </div>
   );
