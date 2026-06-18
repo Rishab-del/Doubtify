@@ -371,7 +371,8 @@ Rules:
 - Explain step by step
 - use bullet points keep answer to the point and recheck 100 times before giving answer,
 - Use examples and analogies
-- For code, use triple backticks with language specified
+- For code, use triple backticks with language specified also explain the intution and algorithm 
+- dont give only solution explain the intution.
 `
   },
 
