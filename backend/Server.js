@@ -19,7 +19,7 @@ const app = express();
 
 console.log(
   "OPENROUTER_API_KEY:",
-  process.env.OPENROUTER_API_KEY ? "(set)" : "(missing)",
+  process.env.OPENROUTER_API_KEY ? "(set)" : "(missing)"
 );
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
@@ -39,9 +39,9 @@ if (process.env.MONGO_URL) {
 ========================= */
 app.use(
   cors({
-    origin: true,
+    origin: "https://doubtify-0q6d.onrender.com",
     credentials: true,
-  }),
+  })
 );
 app.use(express.json());
 
@@ -91,13 +91,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "https://doubtify-git-main-rishabh-team.vercel.app",
-      "https://doubtify-five.vercel.app",
-    ],
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
-    credentials: true,
   },
 });
 
@@ -141,7 +136,7 @@ io.on("connection", async (socket) => {
       const updated = await Discussion.findByIdAndUpdate(
         messageId,
         { $addToSet: { seenBy: user } },
-        { new: true },
+        { new: true }
       );
 
       if (!updated) return;
@@ -205,12 +200,7 @@ app.post("/signup", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
-    res.json({
-      success: true,
-      message: "Account created successfully",
-      token,
-      user,
-    });
+    res.json({ success: true, message: "Account created successfully", token, user });
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "Signup failed" });
@@ -252,9 +242,7 @@ app.get("/dashboard", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
     res.json({
@@ -310,14 +298,14 @@ app.post(
       await User.findByIdAndUpdate(
         req.user.id,
         { profilePic: imageUrl },
-        { new: true },
+        { new: true }
       );
 
       res.json({ success: true, profilePic: imageUrl });
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  },
+  }
 );
 
 /* =========================
@@ -361,15 +349,9 @@ app.delete("/delete-note/:id", async (req, res) => {
 /* =========================
    AI CHAT (ASK-AI)
 ========================= */
-app.post("/ask-ai", auth, async (req, res) => {
-  console.log("BODY =", req.body);
+app.post("/ask-ai", async (req, res) => {
   try {
-    const { question, history, chatId, temporary } = req.body;
-    const userId = req.user.id;
-
-    console.log("REQ USER ID =", req.user.id);
-
-    console.log("ASK AI USER ID =", userId);
+    const { question, history, userId, chatId, temporary } = req.body;
 
     const userMsg = { sender: "user", text: question };
 
@@ -405,15 +387,10 @@ Rules:
       if (chatId) {
         chat = await Chat.findByIdAndUpdate(
           chatId,
-          {
-            $push: { messages: { $each: [userMsg, aiMsg] } },
-          },
-          {
-            new: true,
-          },
+          { $push: { messages: { $each: [userMsg, aiMsg] } } },
+          { new: true }
         );
       } else {
-        console.log("SAVING CHAT USERID =", userId);
         chat = await Chat.create({
           userId,
           title: question.substring(0, 30),
@@ -432,10 +409,12 @@ Rules:
 /* =========================
    CHAT ROUTES
 ========================= */
-app.post("/new-chat", auth, async (req, res) => {
+app.post("/new-chat", async (req, res) => {
   try {
+    const { userId } = req.body;
+
     const chat = await Chat.create({
-      userId: req.user.id,
+      userId,
       title: "New Chat",
       messages: [],
     });
@@ -447,17 +426,9 @@ app.post("/new-chat", auth, async (req, res) => {
   }
 });
 
-app.get("/chat-by-id/:id", auth, async (req, res) => {
+app.get("/chat-by-id/:id", async (req, res) => {
   try {
-    const chat = await Chat.findOne({
-      _id: req.params.id,
-      userId: req.user.id,
-    });
-
-    if (!chat) {
-      return res.status(404).json({ error: "Chat not found" });
-    }
-
+    const chat = await Chat.findById(req.params.id);
     res.json(chat);
   } catch (err) {
     console.log(err);
@@ -465,20 +436,11 @@ app.get("/chat-by-id/:id", auth, async (req, res) => {
   }
 });
 
-app.get("/all-chats", auth, async (req, res) => {
+app.get("/all-chats/:userId", async (req, res) => {
   try {
-    const userId = req.user.id;
-
-    console.log("ALL CHATS USERID =", userId);
-
-    const chats = await Chat.find({
-      userId,
-    }).sort({
+    const chats = await Chat.find({ userId: req.params.userId }).sort({
       createdAt: -1,
     });
-
-    console.log("TOTAL CHATS =", chats.length);
-
     res.json(chats);
   } catch (err) {
     console.log(err);
@@ -486,9 +448,9 @@ app.get("/all-chats", auth, async (req, res) => {
   }
 });
 
-app.get("/chat/:userId", auth, async (req, res) => {
+app.get("/chat/:userId", async (req, res) => {
   try {
-    const chat = await Chat.findOne({ userId: req.user.id });
+    const chat = await Chat.findOne({ userId: req.params.userId });
     res.json(chat || { messages: [] });
   } catch (err) {
     console.log(err);
@@ -496,18 +458,10 @@ app.get("/chat/:userId", auth, async (req, res) => {
   }
 });
 
-app.delete("/delete-chat/:id", auth, async (req, res) => {
+app.delete("/delete-chat/:id", async (req, res) => {
   try {
-    const deletedChat = await Chat.findOneAndDelete({
-      _id: req.params.id,
-      userId: req.user.id,
-    });
+    const deletedChat = await Chat.findByIdAndDelete(req.params.id);
     console.log("Deleted:", deletedChat);
-
-    if (!deletedChat) {
-      return res.status(404).json({ error: "Chat not found" });
-    }
-
     res.json({ success: true });
   } catch (err) {
     console.log(err);
@@ -518,5 +472,5 @@ app.delete("/delete-chat/:id", auth, async (req, res) => {
 /* =========================
    SERVER START
 ========================= */
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

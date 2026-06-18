@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 import "./AIchat.css";
 
@@ -14,11 +13,14 @@ import rehypeKatex from "rehype-katex";
 
 import "katex/dist/katex.min.css";
 
+
 export default function AIchat() {
+  
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id;
-  const token = localStorage.getItem("token");
-  const navigate = useNavigate();
+  const userId = user?.id;  
+  console.log("USER =", user);
+
+  console.log("USER ID =", userId);
   const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
@@ -36,12 +38,6 @@ export default function AIchat() {
   const recognitionRef = useRef(null);
 
   const chatEndRef = useRef(null);
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/login", { replace: true });
-    }
-  }, [token, navigate]);
 
   /* 🎤 Speech setup */
   useEffect(() => {
@@ -85,19 +81,11 @@ export default function AIchat() {
 
   /* 📂 Fetch All Chats */
   useEffect(() => {
-    if (!token) return;
-
     const fetchAllChats = async () => {
       try {
-        const res = await fetch(
-          `https://doubtify-0q6d.onrender.com/all-chats`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+        const res = await fetch(`https://doubtify-0q6d.onrender.com/all-chats/${userId}`, {
+          method: "GET",
+        });
 
         const data = await res.json();
 
@@ -112,8 +100,6 @@ export default function AIchat() {
 
   /* 🔄 Load selected chat */
   useEffect(() => {
-    if (!token) return;
-
     const loadSelectedChat = async () => {
       const savedChatId = localStorage.getItem("currentChatId");
 
@@ -122,11 +108,6 @@ export default function AIchat() {
       try {
         const res = await fetch(
           `https://doubtify-0q6d.onrender.com/chat-by-id/${savedChatId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
         );
 
         const data = await res.json();
@@ -148,11 +129,6 @@ export default function AIchat() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    if (!token) {
-      navigate("/login", { replace: true });
-      return;
-    }
-
     setLoading(true);
 
     const currentInput = input;
@@ -172,13 +148,14 @@ export default function AIchat() {
 
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
 
         body: JSON.stringify({
           question: currentInput,
 
           history: messages,
+
+          userId,
 
           chatId: currentChatId,
 
@@ -267,11 +244,6 @@ export default function AIchat() {
                   onClick={async () => {
                     const res = await fetch(
                       `https://doubtify-0q6d.onrender.com/chat-by-id/${chat._id}`,
-                      {
-                        headers: {
-                          Authorization: `Bearer ${token}`,
-                        },
-                      },
                     );
 
                     const data = await res.json();
@@ -295,9 +267,6 @@ export default function AIchat() {
                       `https://doubtify-0q6d.onrender.com/delete-chat/${chat._id}`,
                       {
                         method: "DELETE",
-                        headers: {
-                          Authorization: `Bearer ${token}`,
-                        },
                       },
                     );
 
