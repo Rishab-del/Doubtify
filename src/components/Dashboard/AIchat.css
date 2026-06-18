@@ -535,11 +535,12 @@ footer{
   align-items: center;
   justify-content: center;
 
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
 
   background: linear-gradient(135deg, #6c63ff, #00c9a7);
   color: white;
+
   font-size: 20px;
 
   flex-shrink: 0;
@@ -553,7 +554,7 @@ footer{
 
 .input-wrapper input {
   width: 100%;
-  padding: 14px 55px 14px 15px;
+  padding: 14px 50px 14px 15px;
   box-sizing: border-box;
   color: #000;
 }
