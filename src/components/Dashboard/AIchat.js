@@ -402,6 +402,17 @@ if (image) {
           hidden
           onChange={handlePdfUpload}
         />
+        {pdf && (
+  <div
+    style={{
+      textAlign: "center",
+      marginBottom: "10px",
+      fontWeight: "bold",
+    }}
+  >
+    📄 {pdf.name}
+  </div>
+)}
 
         <FaFilePdf
           onClick={() => pdfRef.current.click()}
