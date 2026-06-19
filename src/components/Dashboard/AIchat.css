@@ -93,7 +93,6 @@
   margin-top: 15px;
 }
 
-/* INPUT WRAPPER */
 .input-wrapper {
   flex: 1;
 }
@@ -104,15 +103,11 @@
   border-radius: 30px;
   border: none;
   outline: none;
-
   background: rgba(255,255,255,0.9);
-
   font-size: 16px;
-
-  box-sizing: border-box;
 }
 
-/* MIC BUTTON */
+/* MIC */
 .mic-btn {
   width: 55px;
   height: 55px;
@@ -129,31 +124,24 @@
   color: white;
 
   display: flex;
-  justify-content: center;
   align-items: center;
-
-  cursor: pointer;
+  justify-content: center;
 
   font-size: 22px;
-
-  transition: 0.3s;
+  cursor: pointer;
 
   flex-shrink: 0;
 }
 
 .mic-btn:hover {
   opacity: 0.9;
+  transform: none;
 }
 
-.mic-btn.active {
-  color: #ff3b3b;
-}
-
-/* SEND BUTTON */
-.send-btn {
+/* SEND */
+.chat-input button:last-child {
+  width: 95px;
   height: 55px;
-
-  padding: 0 25px;
 
   border: none;
   border-radius: 16px;
@@ -165,17 +153,8 @@
   );
 
   color: white;
-
-  font-size: 16px;
-  font-weight: 600;
-
+  font-size: 18px;
   cursor: pointer;
-
-  transition: 0.3s;
-}
-
-.send-btn:hover {
-  transform: scale(1.05);
 }
 
 /* Send Button */
