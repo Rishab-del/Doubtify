@@ -89,11 +89,34 @@
   margin-top: 15px;
 }
 
+/* Input Wrapper */
+.input-wrapper {
+  position: relative;
+  flex: 1;
+}
 
+/* Input */
+.input-wrapper input {
+  width: 88%;
+  padding: 14px 45px 14px 15px;
+  border-radius: 25px;
+  border: 0.5px solid bisque;
+  outline: none;
+  background: rgba(255, 255, 255, 0.9);
+}
 
-
-
-
+/* 🎤 Mic inside input */
+.mic-btn  {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  color: #333;
+}
 
 /* 🔥 Active mic */
 .mic-btn.active {
@@ -519,35 +542,26 @@ footer{
   opacity:1;
 }
 
-.chat-input {
-  width: 100%;
-  max-width: 800px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-
 
 .input-wrapper {
-  position: relative;
-  flex: 1;
-  color: #000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.input-wrapper input {
-  width: 100%;
-  padding: 14px 55px 14px 15px;
-  box-sizing: border-box;
-  color: #000;
-}
-
+.camera-btn,
 .mic-btn {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
   cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+.camera-btn {
+  color: white;
 }
