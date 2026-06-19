@@ -59,6 +59,7 @@ export default function Dashboard() {
         </div>
 
         <div className="card" onClick={() => navigate("/calendar")}>
+          <FaCalendarAlt className="card-icon" />
           <h3>📅 Calendar</h3>
           <p> Manage exams and reminders </p> </div>
       </div>

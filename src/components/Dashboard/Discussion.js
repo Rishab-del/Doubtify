@@ -158,7 +158,7 @@ export default function Discussion() {
 
     };
 
-  }, []);
+  }, [username]);
 
   /* =========================
       AUTO SCROLL
