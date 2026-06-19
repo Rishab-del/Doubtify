@@ -2,6 +2,7 @@ import React from "react";
 import "./Features.css";
 import Navbar from "../Home/Navbar";
 import { FaRobot, FaBook, FaChartLine, FaBolt, FaUsers, FaCloudUploadAlt } from "react-icons/fa";
+import Offcanvas from "../Home/Offcanvas/Offcanvas";
 
 export default function Features() {
 
@@ -47,7 +48,7 @@ export default function Features() {
 
   return (
     <div className="features-page">
-
+      <Offcanvas/>
       <Navbar />
 
       <h1 className="features-title">✨ Features</h1>
