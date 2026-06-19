@@ -218,7 +218,7 @@ app.post("/login", async (req, res) => {
     res.json({
       success: true,
       message: "Login successful",
-      user: { _id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {
     console.log(err);
@@ -243,7 +243,7 @@ app.get("/dashboard", async (req, res) => {
     res.json({
       success: true,
       user: {
-        _id: user._id,
+        id: user._id,
         name: user.name,
         email: user.email,
       },
@@ -352,18 +352,17 @@ app.delete("/delete-note/:id", async (req, res) => {
    AI CHAT (ASK-AI)
 ========================= */
 app.post("/ask-ai", async (req, res) => {
-
   try {
-    const { question, history, chatId, temporary, userId ,imageUrl} = req.body;
-    console.log("Image URL:", imageUrl);
+    const { question, history, chatId, temporary, userId } = req.body;
 
     const userMsg = {
       sender: "user",
       text: question,
     };
+    
 
     const response = await openai.chat.completions.create({
-      model: "openai/gpt-4o",
+      model: "openai/gpt-3.5-turbo",
       messages: [
   {
     role: "system",
@@ -488,17 +487,13 @@ app.get("/all-chats/:userId", async (req, res) => {
   }
 });
 
-app.get("/chat/:userId", async (req, res) => {
+app.get("/chat", async (req, res) => {
   try {
-    const chat = await Chat.findOne({
-      userId: req.params.userId,
-    });
-
+    const chat = await Chat.findOne({ userId });
     res.json(chat || { messages: [] });
   } catch (err) {
-    res.status(500).json({
-      error: "Failed to fetch chat",
-    });
+    console.log(err);
+    res.status(500).json({ error: "Failed to fetch chat" });
   }
 });
 
@@ -515,26 +510,6 @@ app.delete("/delete-chat/:id", async (req, res) => {
     });
   }
 });
-
-app.post(
-  "/upload-chat-file",
-  upload.single("file"),
-  async (req, res) => {
-    try {
-      res.json({
-        success: true,
-        file: `/uploads/${req.file.filename}`,
-        filename: req.file.originalname,
-      });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        success: false,
-        message: "Upload failed",
-      });
-    }
-  }
-);
 
 /* =========================
    CALENDAR

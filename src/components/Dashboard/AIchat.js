@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 
 import "./AIchat.css";
-import { FaFilePdf } from "react-icons/fa";
 
 import Navbar from "../Home/Navbar";
 import BackButton from "../Home/Offcanvas/BackButton";
 
-import { FaMicrophone , FaCamera } from "react-icons/fa";
+import { FaMicrophone } from "react-icons/fa";
 
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
@@ -15,14 +14,10 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(localStorage.getItem("user") || "{}")._id;
   const userId = user?._id;
 
   const [messages, setMessages] = useState([]);
-  const [image, setImage] = useState(null);
-  const [pdf, setPdf] = useState(null);
-  const pdfRef = useRef();
-  const imageRef = useRef();
 
   const [input, setInput] = useState("");
 
@@ -57,25 +52,6 @@ export default function AIchat() {
       };
     }
   }, []);
-
-  
-//pdf upload
-const handlePdfUpload = (e) => {
-  const file = e.target.files[0];
-
-  if (file) {
-    setPdf(file);
-  }
-};
-
-
-//image upload
-  const handleImageUpload = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setImage(file);
-  }
-};
 
   /* 🎤 Mic Toggle */
   const handleMic = () => {
@@ -161,26 +137,6 @@ const handlePdfUpload = (e) => {
     setInput("");
 
     try {
-      let imageUrl = "";
-
-if (image) {
-  const formData = new FormData();
-  formData.append("file", image);
-
-  const uploadRes = await fetch(
-    "https://doubtify-0q6d.onrender.com/upload-chat-file",
-    {
-      method: "POST",
-      body: formData,
-    }
-  );
-
-  const uploadData = await uploadRes.json();
-
-  imageUrl =
-    "https://doubtify-0q6d.onrender.com" +
-    uploadData.file;
-}
       const res = await fetch("https://doubtify-0q6d.onrender.com/ask-ai", {
         method: "POST",
 
@@ -198,8 +154,6 @@ if (image) {
           chatId: currentChatId,
 
           temporary: temporaryMode,
-
-          imageUrl,
         }),
       });
 
@@ -365,20 +319,6 @@ if (image) {
           <div ref={chatEndRef}></div>
         </div>
 
-        {image && (
-  <div style={{ textAlign: "center", marginBottom: "10px" }}>
-    <img
-      src={URL.createObjectURL(image)}
-      alt="preview"
-      style={{
-        width: "150px",
-        borderRadius: "10px",
-        border: "2px solid #ddd",
-      }}
-    />
-  </div>
-)}
-
         {/* INPUT */}
         <div className="chat-input">
           <div className="input-wrapper">
@@ -387,42 +327,7 @@ if (image) {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything..."
             />
-            <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            hidden
-            ref={imageRef}
-          />
-
-          <input
-          type="file"
-          accept=".pdf"
-          ref={pdfRef}
-          hidden
-          onChange={handlePdfUpload}
-        />
-        {pdf && (
-  <div
-    style={{
-      textAlign: "center",
-      marginBottom: "10px",
-      fontWeight: "bold",
-    }}
-  >
-    📄 {pdf.name}
-  </div>
-)}
-
-        <FaFilePdf
-  className="file-btn"
-  onClick={() => pdfRef.current.click()}
-/>
-
-<FaCamera
-  className="camera-btn"
-  onClick={() => imageRef.current.click()}
-/>
+            
 
             <button
               onClick={handleMic}
