@@ -36,7 +36,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 
-  border: none;
+  text-shadow: black;
   cursor: pointer;
 }
 
