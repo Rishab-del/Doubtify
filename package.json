@@ -23,6 +23,7 @@
     "nodemon": "^3.1.14",
     "openai": "^6.33.0",
     "react": "^19.2.4",
+    "react-calendar": "^6.0.1",
     "react-dom": "^19.2.4",
     "react-dropzone": "^15.0.0",
     "react-hook-form": "^7.72.1",

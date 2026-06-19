@@ -25,7 +25,7 @@ export default function MyDoubts() {
           <div className="doubts-list">
 
             {doubts.map(doubt => (
-              <div className="doubt-card" key={doubt.id}>
+              <div className="doubt-card" key={doubt.id } > 
 
                 <h3>{doubt.question}</h3>
 

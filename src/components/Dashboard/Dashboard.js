@@ -57,6 +57,10 @@ export default function Dashboard() {
           <h3>AI Assistant</h3>
           <p>Ask anything instantly</p>
         </div>
+
+        <div className="card" onClick={() => navigate("/calender")}>
+          <h3>📅 Calendar</h3>
+          <p> Manage exams and reminders </p> </div>
       </div>
     </div>
   );
