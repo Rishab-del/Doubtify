@@ -103,7 +103,7 @@ useEffect(() => {
   };
 
   fetchAllChats();
-}, []);
+}, [userId]);
 
   /* 🔄 Load selected chat */
   useEffect(() => {
@@ -130,7 +130,7 @@ useEffect(() => {
     };
 
     loadSelectedChat();
-  }, [userId]);
+  }, []);
 
   /* 💬 Send Message */
   const sendMessage = async () => {
