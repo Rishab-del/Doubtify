@@ -79,29 +79,23 @@ console.log("UserId:", userId);
   }, [messages]);
 
   /* 📂 Fetch All Chats */
+const fetchAllChats = async () => {
+  try {
+    if (!userId) return;
+
+    const res = await fetch(
+      `https://doubtify-0q6d.onrender.com/all-chats/${userId}`
+    );
+
+    const data = await res.json();
+
+    setChatList(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 useEffect(() => {
-  const fetchAllChats = async () => {
-    try {
-      if (!userId) return;
-
-      const res = await fetch(
-        `https://doubtify-0q6d.onrender.com/all-chats/${userId}`
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch chats");
-      }
-
-      const data = await res.json();
-
-      console.log("Chats:", data);
-
-      setChatList(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Chat fetch error:", err);
-    }
-  };
-
   fetchAllChats();
 }, [userId]);
 
@@ -186,6 +180,7 @@ useEffect(() => {
       ]);
 
       setCurrentChatId(data.chatId);
+      await fetchAllChats();
     } catch (err) {
       setMessages((prev) => [
         ...prev,
@@ -276,6 +271,7 @@ useEffect(() => {
                         method: "DELETE",
                       },
                     );
+                    await fetchAllChats();
 
                     setChatList((prev) =>
                       prev.filter((c) => c._id !== chat._id),
