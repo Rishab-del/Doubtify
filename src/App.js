@@ -22,7 +22,7 @@ import AIOptions from "./components/Dashboard/AIOptions";
 import AIchat from "./components/Dashboard/AIchat";
 import Discussion from "./components/Dashboard/Discussion";
 import Signup from "./components/Login/signup";
-import CalendarPage from "./components/Home/Offcanvas/Calendar";
+import Calendar from "./components/Home/Offcanvas/Calendar";
 
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -122,8 +122,7 @@ function Layout() {
             </PrivateRoute>
           }
         />
-        <Route path="/calendar" element={<Calendar />} />
-
+        <Route path="/calendar" element={<PrivateRoute> <Calendar /> </PrivateRoute>} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
       </Routes>
