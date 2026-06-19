@@ -11,6 +11,7 @@ import {
   FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
+import BackButton from "./BackButton";
 
 export default function Offcanvas() {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export default function Offcanvas() {
       tabIndex="-1"
       id="sidebar"
     >
+      <BackButton/>
       <div className="offcanvas-header">
         <button
           className="btn-close btn-close-white"
