@@ -44,7 +44,7 @@
   padding: 25px;
   border-radius: 18px;
 
-  background: transparent;
+  background:  rgba(255,255,255,0.22) !important ;
   backdrop-filter: blur(18px);
 
   color: black;
