@@ -89,9 +89,12 @@ export default function AIchat() {
         console.log(err);
       }
     };
+if (userId) {
 
     fetchAllChats();
-  }, [messages]);
+
+  }
+  }, [userId , messages]);
 
   /* 🔄 Load selected chat */
   useEffect(() => {
