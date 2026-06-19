@@ -236,21 +236,30 @@ app.post("/login", async (req, res) => {
 ========================= */
 app.get("/dashboard", async (req, res) => {
   try {
-    const userId = JSON.parse(localStorage.getItem("user") || "{}")?._id;
     const user = await User.findOne();
+
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     res.json({
       success: true,
-      user: { id: user._id, name: user.name, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, message: "Server error" });
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 });
 
