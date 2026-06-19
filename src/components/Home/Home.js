@@ -7,7 +7,6 @@ import BackButton from "./Offcanvas/BackButton";
 export default function Home() {
   return (
     <>
-      <BackButton/>
       <Offcanvas/>
       <Navbar />
       <Hero />

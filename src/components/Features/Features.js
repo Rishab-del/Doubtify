@@ -49,7 +49,6 @@ export default function Features() {
 
   return (
     <div className="features-page">
-      <BackButton/>
       <Offcanvas/>
       <Navbar />
 
