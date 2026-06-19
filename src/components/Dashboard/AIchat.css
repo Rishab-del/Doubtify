@@ -1,6 +1,9 @@
 /* 🔥 Container */
 .chat-container {
   min-height: 100vh;
+  margin-left: 280px;
+  width: calc(100% - 280px);
+
   padding-top: 100px;
 
   display: flex;
@@ -8,6 +11,7 @@
   align-items: center;
 
   background: linear-gradient(135deg, #89f7fe, #66a6ff, #89f7fe);
+
   font-family: "Poppins", sans-serif;
 }
 
@@ -79,65 +83,99 @@
   color: white;
   border-radius: 15px;
 }
-
-/* 🔥 Input Section */
+/* INPUT SECTION */
 .chat-input {
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   margin-top: 15px;
 }
 
-/* Input Wrapper */
+/* INPUT WRAPPER */
 .input-wrapper {
-  position: relative;
   flex: 1;
 }
 
-/* Input */
 .input-wrapper input {
-  width: 88%;
-  padding: 14px 45px 14px 15px;
-  border-radius: 25px;
-  border: 0.5px solid bisque;
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 30px;
+  border: none;
   outline: none;
-  background: rgba(255, 255, 255, 0.9);
+
+  background: rgba(255,255,255,0.9);
+
+  font-size: 16px;
+
+  box-sizing: border-box;
 }
 
-/* 🎤 Mic inside input */
+/* MIC BUTTON */
 .mic-btn {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: 36px;
-  height: 36px;
+  width: 55px;
+  height: 55px;
 
   border: none;
-  border-radius: 50%;
+  border-radius: 16px;
 
-  background: transparent;
-  color: #666;
+  background: linear-gradient(
+    135deg,
+    #6c63ff,
+    #00c9a7
+  );
+
+  color: white;
 
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 
   cursor: pointer;
 
-  transition: none;
+  font-size: 22px;
+
+  transition: 0.3s;
+
+  flex-shrink: 0;
 }
 
 .mic-btn:hover {
-  transform: translateY(-50%);
-  background: transparent;
-  color: #444;
+  opacity: 0.9;
 }
 
 .mic-btn.active {
-  color: red;
+  color: #ff3b3b;
+}
+
+/* SEND BUTTON */
+.send-btn {
+  height: 55px;
+
+  padding: 0 25px;
+
+  border: none;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    135deg,
+    #6c63ff,
+    #00c9a7
+  );
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.send-btn:hover {
+  transform: scale(1.05);
 }
 
 /* Send Button */
@@ -400,13 +438,6 @@
 /* =========================
    MAIN CHAT AREA
 ========================= */
-
-.chat-container{
-
-  margin-left:280px;
-
-  width:calc(100% - 280px);
-}
 
 footer{
   display:none;
