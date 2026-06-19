@@ -9,14 +9,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
-  
 
-  useEffect(() => {
-
-    if (token) {
-      navigate("/dashboard");
-    }
-  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

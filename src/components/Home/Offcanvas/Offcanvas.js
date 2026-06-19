@@ -22,9 +22,6 @@ export default function Offcanvas() {
 
     if (!confirmLogout) return;
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
     navigate("/login");
   };
 
