@@ -3,6 +3,7 @@ import "./Dashboard.css";
 import Navbar from "../Home/Navbar";
 import { FaQuestionCircle, FaBook, FaChartLine, FaRobot } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { FaCalendarAlt } from "react-icons/fa";
 
 export default function Dashboard() {
   const [userName, setUserName] = useState("User");
@@ -58,7 +59,7 @@ export default function Dashboard() {
           <p>Ask anything instantly</p>
         </div>
 
-        <div className="card" onClick={() => navigate("/calender")}>
+        <div className="card" onClick={() => navigate("/calendar")}>
           <h3>📅 Calendar</h3>
           <p> Manage exams and reminders </p> </div>
       </div>

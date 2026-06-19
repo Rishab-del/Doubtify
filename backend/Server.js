@@ -14,6 +14,7 @@ const User = require("./models/user");
 const Chat = require("./models/Chat");
 const Note = require("./models/Notes");
 const Discussion = require("./models/Discussion");
+const Event = require("./models/Events");
 
 const app = express();
 
@@ -504,6 +505,43 @@ app.delete("/delete-chat/:id", async (req, res) => {
       error: "Delete failed",
     });
   }
+});
+
+/* =========================
+   CALENDAR
+========================= */
+
+app.post("/add-event", async (req, res) => {
+  try {
+    const event = await Event.create(req.body);
+
+    res.json({
+      success: true,
+      event,
+    });
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+    });
+  }
+});
+
+app.get("/events", async (req, res) => {
+  const events = await Event.find();
+
+  res.json(events);
+});
+
+app.delete("/event/:id", async (req, res) => {
+  await Event.findByIdAndDelete(
+    req.params.id
+  );
+
+  res.json({
+    success: true,
+  });
 });
 
 
