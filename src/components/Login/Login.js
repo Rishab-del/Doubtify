@@ -12,7 +12,6 @@ export default function Login() {
   
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
 
     if (token) {
       navigate("/dashboard");
@@ -45,7 +44,6 @@ export default function Login() {
 
   localStorage.removeItem("currentChatId");
 
-  localStorage.setItem("token", data.token);
 
   localStorage.setItem(
 

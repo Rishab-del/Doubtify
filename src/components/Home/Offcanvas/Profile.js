@@ -21,7 +21,6 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem("token");
 
       const res = await axios.get("https://doubtify-0q6d.onrender.com/api/user/profile", {
       });
@@ -62,8 +61,6 @@ export default function Profile() {
   const uploadProfilePic = async () => {
     if (!selectedFile) return;
 
-    const token = localStorage.getItem("token");
-
     const formData = new FormData();
     formData.append("profilePic", selectedFile);
 
@@ -85,7 +82,6 @@ export default function Profile() {
   const handleSave = async () => {
     
     try {
-      const token = localStorage.getItem("token");
 
       if (selectedFile) {
         await uploadProfilePic();

@@ -4,7 +4,6 @@ const express = require("express");
 const http = require("http");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const cors = require("cors");
 const OpenAI = require("openai");
@@ -189,12 +188,10 @@ app.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashedPassword });
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
     res.json({
       success: true,
       message: "Account created successfully",
-      token,
       user,
     });
   } catch (err) {
@@ -217,12 +214,10 @@ app.post("/login", async (req, res) => {
       return res.json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
     res.json({
       success: true,
       message: "Login successful",
-      token,
       user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {

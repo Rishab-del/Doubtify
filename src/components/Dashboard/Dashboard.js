@@ -10,7 +10,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
 
     fetch("https://doubtify-0q6d.onrender.com/dashboard", {
     
