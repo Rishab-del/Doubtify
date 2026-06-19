@@ -106,19 +106,36 @@
 }
 
 /* 🎤 Mic inside input */
-.mic-btn  {
+.mic-btn {
   position: absolute;
-  right: 10px;
+  right: 15px;
   top: 50%;
   transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 18px;
-  background-color: transparent;
+
+  width: 36px;
+  height: 36px;
+
   border: none;
-  color: #333;
+  border-radius: 50%;
+
+  background: transparent;
+  color: #666;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: none;
 }
 
-/* 🔥 Active mic */
+.mic-btn:hover {
+  transform: translateY(-50%);
+  background: transparent;
+  color: #444;
+}
+
 .mic-btn.active {
   color: red;
 }
@@ -208,17 +225,6 @@
 
 .katex {
   font-size: 1.2em;
-}
-
-
-.katex-display {
-
-  overflow-x: auto;
-
-  overflow-y: hidden;
-
-  padding: 8px 0;
-
 }
 
 .chat-message {
@@ -542,26 +548,3 @@ footer{
   opacity:1;
 }
 
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.camera-btn,
-.mic-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 45px;
-  height: 45px;
-  cursor: pointer;
-  border: none;
-  border-radius: 50%;
-  font-size: 20px;
-}
-
-.camera-btn {
-  color: white;
-}
