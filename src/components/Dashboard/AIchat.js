@@ -14,10 +14,9 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
 export default function AIchat() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = user?._id;
-
   const [messages, setMessages] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = user?.id || user?._id;
 
   const [input, setInput] = useState("");
 
@@ -77,24 +76,24 @@ export default function AIchat() {
 
   /* 📂 Fetch All Chats */
   useEffect(() => {
-    const fetchAllChats = async () => {
-      try {
-        const res = await fetch
-        ( `https://doubtify-0q6d.onrender.com/all-chats/${userId}`);
+  const fetchAllChats = async () => {
+    try {
+      const res = await fetch(
+        `https://doubtify-0q6d.onrender.com/all-chats/${userId}`
+      );
 
-        const data = await res.json();
+      const data = await res.json();
 
-        setChatList(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-if (userId) {
+      setChatList(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  if (userId) {
     fetchAllChats();
-
   }
-  }, [userId , messages]);
+}, [userId]);
 
   /* 🔄 Load selected chat */
   useEffect(() => {
@@ -331,7 +330,6 @@ if (userId) {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything..."
             />
-            
 
             <button
               onClick={handleMic}
