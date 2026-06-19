@@ -415,12 +415,14 @@ if (image) {
 )}
 
         <FaFilePdf
-          onClick={() => pdfRef.current.click()}
-        />
+  className="file-btn"
+  onClick={() => pdfRef.current.click()}
+/>
 
-          <FaCamera
-            onClick={() => imageRef.current.click()}
-          />
+<FaCamera
+  className="camera-btn"
+  onClick={() => imageRef.current.click()}
+/>
 
             <button
               onClick={handleMic}
