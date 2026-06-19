@@ -103,7 +103,7 @@ useEffect(() => {
   };
 
   fetchAllChats();
-}, [messages]);
+}, []);
 
   /* 🔄 Load selected chat */
   useEffect(() => {
@@ -130,7 +130,7 @@ useEffect(() => {
     };
 
     loadSelectedChat();
-  }, []);
+  }, [userId]);
 
   /* 💬 Send Message */
   const sendMessage = async () => {
@@ -186,6 +186,13 @@ useEffect(() => {
       ]);
 
       setCurrentChatId(data.chatId);
+      const chatsRes = await fetch(
+  `https://doubtify-0q6d.onrender.com/all-chats/${userId}`
+);
+
+const chatsData = await chatsRes.json();
+
+setChatList(Array.isArray(chatsData) ? chatsData : []);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
