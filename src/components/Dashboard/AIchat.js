@@ -18,6 +18,10 @@ export default function AIchat() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = user?.id || user?._id;
 
+  console.log("User:", user);
+
+console.log("UserId:", userId);
+
   const [input, setInput] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -75,24 +79,30 @@ export default function AIchat() {
   }, [messages]);
 
   /* 📂 Fetch All Chats */
-  useEffect(() => {
+useEffect(() => {
   const fetchAllChats = async () => {
     try {
+      if (!userId) return;
+
       const res = await fetch(
         `https://doubtify-0q6d.onrender.com/all-chats/${userId}`
       );
 
+      if (!res.ok) {
+        throw new Error("Failed to fetch chats");
+      }
+
       const data = await res.json();
+
+      console.log("Chats:", data);
 
       setChatList(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.log(err);
+      console.error("Chat fetch error:", err);
     }
   };
 
-  if (userId) {
-    fetchAllChats();
-  }
+  fetchAllChats();
 }, [userId]);
 
   /* 🔄 Load selected chat */
