@@ -80,7 +80,7 @@ export default function AIchat() {
     const fetchAllChats = async () => {
       try {
         const res = await fetch
-        (" `https://doubtify-0q6d.onrender.com/all-chats/${userId}`");
+        ( `https://doubtify-0q6d.onrender.com/all-chats/${userId}`);
 
         const data = await res.json();
 
