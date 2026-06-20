@@ -3,7 +3,6 @@ import "./Features.css";
 import Navbar from "../Home/Navbar";
 import { FaRobot, FaBook, FaChartLine, FaBolt, FaUsers, FaCloudUploadAlt } from "react-icons/fa";
 import Offcanvas from "../Home/Offcanvas/Offcanvas";
-import BackButton from "../Home/Offcanvas/BackButton";
 
 export default function Features() {
 
