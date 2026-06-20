@@ -9,7 +9,6 @@ import MyDoubts from "./components/Home/Offcanvas/MyDoubts";
 import Notes from "./components/Home/Offcanvas/Notes";
 import Progress from "./components/Home/Offcanvas/Progress";
 import Profile from "./components/Home/Offcanvas/Profile";
-import Settings from "./components/Home/Offcanvas/Settings";
 
 import Splash from "./components/Splash/Splash";
 import Plans from "./components/Plans/Plans";
@@ -88,14 +87,6 @@ function Layout() {
           element={
             <PrivateRoute>
               <Profile />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <PrivateRoute>
-              <Settings />
             </PrivateRoute>
           }
         />

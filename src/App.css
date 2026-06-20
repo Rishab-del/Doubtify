@@ -41,16 +41,8 @@ body.dark {
   color: white;
 }
 
-/* Cards dark */
-body.dark .settings-container {
-  background: rgba(0,0,0,0.4);
-  color: white;
-}
 
-/* Text */
-body.dark .setting-item {
-  color: white;
-}
+
 
 /* Input */
 body.dark .timer-input {
