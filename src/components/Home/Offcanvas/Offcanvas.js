@@ -98,17 +98,6 @@ export default function Offcanvas() {
             </NavLink>
           </li>
 
-          <li>
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                isActive ? "active" : ""
-              }
-            >
-              <FaCog /> <span>Settings</span>
-            </NavLink>
-          </li>
-
           <li
             className="logout-item"
             onClick={handleLogout}
