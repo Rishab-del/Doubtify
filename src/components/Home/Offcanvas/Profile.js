@@ -4,6 +4,11 @@ import BackButton from "./BackButton";
 import React, { useState, useEffect } from "react";
 
 export default function Profile() {
+  const storedUser = JSON.parse(
+  localStorage.getItem("user") || "{}"
+);
+
+const userId = storedUser?.id;
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,35 +26,37 @@ export default function Profile() {
   const [image, setImage] = useState(null);
   const [imageChanged, setImageChanged] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
+  if (userId) {
     fetchProfile();
-  }, []);
+  }
+}, [userId]);
 
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(
-        "https://doubtify-0q6d.onrender.com/api/user/profile"
+const fetchProfile = async () => {
+  try {
+    const res = await axios.get(
+      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`
+    );
+
+    setUser({
+      name: res.data.name || "",
+      email: res.data.email || "",
+      exam: res.data.exam || "",
+      className: res.data.className || "",
+      city: res.data.city || "",
+      phone: res.data.phone || "",
+      college: res.data.college || "",
+    });
+
+    if (res.data.profilePic) {
+      setImage(
+        `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
       );
-
-      setUser({
-        name: res.data.name || "",
-        email: res.data.email || "",
-        exam: res.data.exam || "",
-        className: res.data.className || "",
-        city: res.data.city || "",
-        phone: res.data.phone || "",
-        college: res.data.college || "",
-      });
-
-      if (res.data.profilePic) {
-        setImage(
-          `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
-        );
-      }
-    } catch (err) {
-      console.log(err);
     }
-  };
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   const handleChange = (e) => {
     setUser({
@@ -69,55 +76,63 @@ export default function Profile() {
     setIsEditing(true);
   };
 
-  const uploadProfilePic = async () => {
-    if (!selectedFile) return;
+const uploadProfilePic = async () => {
+  if (!selectedFile) return;
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    formData.append(
-      "profilePic",
-      selectedFile
+  formData.append(
+    "profilePic",
+    selectedFile
+  );
+
+  const res = await axios.post(
+    `https://doubtify-0q6d.onrender.com/api/user/upload-profile/${userId}`,
+    formData,
+    {
+      headers: {
+        "Content-Type":
+          "multipart/form-data",
+      },
+    }
+  );
+
+  if (res.data.profilePic) {
+    setImage(
+      `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
+    );
+  }
+};
+
+const handleSave = async () => {
+  try {
+    if (selectedFile) {
+      await uploadProfilePic();
+    }
+
+    await axios.put(
+      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`,
+      user
     );
 
-    const res = await axios.post(
-      "https://doubtify-0q6d.onrender.com/api/user/upload-profile",
-      formData,
-      {
-        headers: {
-          "Content-Type":
-            "multipart/form-data",
-        },
-      }
+    setIsEditing(false);
+    setImageChanged(false);
+    setSelectedFile(null);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...storedUser,
+        ...user,
+      })
     );
 
-    if (res.data.profilePic) {
-      setImage(
-        `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
-      );
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      if (selectedFile) {
-        await uploadProfilePic();
-      }
-
-      await axios.put(
-        "https://doubtify-0q6d.onrender.com/api/user/profile",
-        user
-      );
-
-      setIsEditing(false);
-      setImageChanged(false);
-      setSelectedFile(null);
-
-      alert("Profile Updated ✅");
-    } catch (err) {
-      console.log(err);
-      alert("Update Failed ❌");
-    }
-  };
+    alert("Profile Updated ✅");
+  } catch (err) {
+    console.log(err);
+    alert("Update Failed ❌");
+  }
+};
 
   return (
     <>

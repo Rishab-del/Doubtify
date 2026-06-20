@@ -28,12 +28,12 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
-    phone: {
+    city: {
       type: String,
       default: "",
     },
 
-    city: {
+    phone: {
       type: String,
       default: "",
     },
