@@ -8,7 +8,6 @@ import {
   FaQuestionCircle,
   FaUserGraduate,
   FaChartBar,
-  FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
 import BackButton from "./BackButton";
