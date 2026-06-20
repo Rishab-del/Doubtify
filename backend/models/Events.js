@@ -17,6 +17,16 @@ const eventSchema = new mongoose.Schema(
       required: true,
     },
 
+    time: {
+      type: String,
+      default: "",
+    },
+
+    reminder: {
+      type: String,
+      default: "10min",
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -32,7 +42,4 @@ const eventSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(
-  "Event",
-  eventSchema
-);
+module.exports = mongoose.model("Event", eventSchema);

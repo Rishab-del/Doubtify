@@ -514,7 +514,6 @@ app.delete("/delete-chat/:id", async (req, res) => {
 /* =========================
    CALENDAR
 ========================= */
-
 app.post("/add-event", async (req, res) => {
   try {
     const event = await Event.create(req.body);
@@ -532,10 +531,18 @@ app.post("/add-event", async (req, res) => {
   }
 });
 
-app.get("/events", async (req, res) => {
-  const events = await Event.find();
+app.get("/events/:userId", async (req, res) => {
+  try {
+    const events = await Event.find({
+      userId: req.params.userId,
+    }).sort({ date: 1 });
 
-  res.json(events);
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch events",
+    });
+  }
 });
 
 app.delete("/event/:id", async (req, res) => {

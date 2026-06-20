@@ -1,94 +1,104 @@
+/* =========================
+   PAGE
+========================= */
+
 .calendar-page {
   min-height: 100vh;
-  padding-top: 140px;
+  padding-top: 120px;
   padding-bottom: 40px;
   padding-left: 20px;
   padding-right: 20px;
 }
 
-/* Main Layout */
+/* =========================
+   MAIN LAYOUT
+========================= */
 
 .calendar-layout {
+  max-width: 1400px;
+  margin: auto;
+
   display: flex;
   justify-content: center;
   align-items: flex-start;
+
   gap: 25px;
-  max-width: 1400px;
-  margin: auto;
 }
 
-/* Calendar Card */
+/* =========================
+   CALENDAR CARD
+========================= */
 
 .calendar-card {
-  flex: 1;
-  max-width: 900px;
+  width: 900px;
 
   background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(18px);
 
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.15);
 
   border-radius: 30px;
 
   padding: 30px;
 
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 .calendar-card h1 {
-  color: white;
   text-align: center;
+  color: white;
   margin-bottom: 25px;
-  font-size: 2rem;
 }
 
 .selected-date {
-  margin-top: 20px;
   text-align: center;
-
   color: white;
+  margin-top: 20px;
 
-  font-size: 1.2rem;
+  font-size: 18px;
   font-weight: 600;
 }
 
-/* Event Sidebar */
+/* =========================
+   EVENTS SIDEBAR
+========================= */
 
 .events-sidebar {
   width: 280px;
-  min-height: 620px;
+  min-height: 650px;
 
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px);
 
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.15);
 
-  border-radius: 30px;
+  border-radius: 25px;
 
   padding: 20px;
 
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-
   display: flex;
   flex-direction: column;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 .events-sidebar h3 {
   color: white;
   text-align: center;
+
   margin-bottom: 15px;
-  font-size: 1.5rem;
 }
 
-/* Add Event Button */
+/* =========================
+   ADD EVENT BUTTON
+========================= */
 
 .add-event-btn {
-  width: 100%;
   border: none;
 
   padding: 14px;
 
-  border-radius: 15px;
+  border-radius: 14px;
 
   background: linear-gradient(
     135deg,
@@ -98,7 +108,7 @@
 
   color: white;
 
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 
   cursor: pointer;
@@ -110,43 +120,105 @@
   transform: translateY(-2px);
 }
 
-/* No Events */
+/* =========================
+   EVENT FORM
+========================= */
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-top: 15px;
+}
+
+.event-form input,
+.event-form textarea {
+  border: none;
+  outline: none;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  background: rgba(255,255,255,0.9);
+
+  resize: none;
+}
+
+.save-event-btn {
+  border: none;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #00c9a7,
+    #6c63ff
+  );
+
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: 600;
+}
+
+/* =========================
+   NO EVENTS
+========================= */
 
 .no-events {
   flex: 1;
 
   display: flex;
-  flex-direction: column;
-
   justify-content: center;
   align-items: center;
 
-  color: white;
-
   text-align: center;
 
-  font-size: 18px;
-  font-weight: 600;
+  color: white;
+}
+
+.no-events h4 {
+  margin-bottom: 8px;
 }
 
 .no-events span {
-  margin-top: 10px;
   opacity: 0.8;
   font-size: 14px;
 }
 
-/* Event Cards */
+/* =========================
+   EVENT LIST
+========================= */
 
-.event-card {
+.events-list {
   margin-top: 15px;
 
-  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
 
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  gap: 12px;
 
-  border-radius: 15px;
+  overflow-y: auto;
+}
 
-  padding: 12px;
+/* =========================
+   EVENT CARD
+========================= */
+
+.event-card {
+  background: rgba(255,255,255,0.15);
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  border-radius: 16px;
+
+  padding: 14px;
 
   color: white;
 
@@ -154,21 +226,57 @@
 }
 
 .event-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .event-title {
-  font-weight: 700;
   font-size: 16px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
 }
 
 .event-date {
-  margin-top: 5px;
-  font-size: 14px;
-  opacity: 0.8;
+  font-size: 13px;
+  opacity: 0.9;
 }
 
-/* React Calendar */
+.event-desc {
+  margin-top: 8px;
+
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* =========================
+   DELETE BUTTON
+========================= */
+
+.delete-event-btn {
+  margin-top: 10px;
+
+  width: 100%;
+
+  border: none;
+
+  padding: 10px;
+
+  border-radius: 10px;
+
+  background: #ff4d4f;
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.delete-event-btn:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   CALENDAR
+========================= */
 
 .react-calendar {
   width: 100% !important;
@@ -179,9 +287,9 @@
 
   overflow: hidden;
 
-  background: white;
-
   padding: 20px;
+
+  background: white;
 }
 
 .react-calendar__navigation {
@@ -189,14 +297,10 @@
 }
 
 .react-calendar__navigation button {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  min-height: 50px;
-  border-radius: 10px;
-}
 
-.react-calendar__navigation button:hover {
-  background: #f2f2f2;
+  border-radius: 10px;
 }
 
 .react-calendar__month-view__weekdays {
@@ -204,14 +308,10 @@
   font-weight: bold;
 }
 
-.react-calendar__month-view__days__day {
-  font-size: 18px;
-}
-
 .react-calendar__tile {
   border-radius: 10px;
+
   transition: 0.3s;
-  padding: 15px 0;
 }
 
 .react-calendar__tile:hover {
@@ -226,21 +326,24 @@
 
 .react-calendar__tile--now {
   background: #dbeafe;
-  border-radius: 10px;
 }
 
-/* Scrollbar */
+/* =========================
+   SCROLLBAR
+========================= */
 
-.events-sidebar::-webkit-scrollbar {
+.events-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.events-sidebar::-webkit-scrollbar-thumb {
+.events-list::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.4);
   border-radius: 20px;
 }
 
-/* Mobile */
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 1100px) {
   .calendar-layout {
@@ -254,34 +357,6 @@
 
   .events-sidebar {
     width: 100%;
-    min-height: 250px;
-  }
-}
-
-@media (max-width: 768px) {
-  .calendar-page {
-    padding-top: 120px;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
-  .calendar-card {
-    padding: 15px;
-  }
-
-  .calendar-card h1 {
-    font-size: 1.5rem;
-  }
-
-  .react-calendar {
-    padding: 10px;
-  }
-
-  .react-calendar__month-view__days__day {
-    font-size: 14px;
-  }
-
-  .events-sidebar {
-    padding: 15px;
+    min-height: auto;
   }
 }
