@@ -3,42 +3,77 @@ import "./Hero.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
-
   const navigate = useNavigate();
 
   return (
+    <section className="hero">
 
-    <div className="hero">
+      <div className="hero-content">
 
-      <h1>Solve Your Doubts Instantly 🚀</h1>
+        <span className="hero-badge">
+          🚀 AI Powered Learning Platform
+        </span>
 
-      <p>
-        Upload your question and get step-by-step
-        solutions in seconds
-      </p>
+        <h1>
+          Solve Your Doubts
+          <span> Instantly </span>
+          with AI
+        </h1>
 
-      <div className="buttons">
+        <p>
+          Get accurate step-by-step solutions for
+          Coding, Mathematics, Science and Aptitude
+          questions in seconds.
+        </p>
 
-        <button
-          className="upload-btn"
-          onClick={() =>
-            navigate("/dashboard/aichat")
-          }
-        >
-          Ask Doubt 🤖
-        </button>
+        <div className="hero-features">
+          <div>🤖 AI Doubt Solver</div>
+          <div>📚 Smart Notes</div>
+          <div>📈 Progress Tracking</div>
+          <div>👥 Community Discussions</div>
+        </div>
 
-        <button
-          className="upload-btn"
-          onClick={() =>
-            navigate("/features")
-          }
-        >
-          Explore Features ✨
-        </button>
+        <div className="buttons">
+
+          <button
+            className="primary-btn"
+            onClick={() =>
+              navigate("/dashboard/aichat")
+            }
+          >
+            Ask AI Now 🤖
+          </button>
+
+          <button
+            className="secondary-btn"
+            onClick={() =>
+              navigate("/features")
+            }
+          >
+            Explore Features ✨
+          </button>
+
+        </div>
+
+        <div className="hero-stats">
+          <div>
+            <h3>24/7</h3>
+            <span>Available</span>
+          </div>
+
+          <div>
+            <h3>1000+</h3>
+            <span>Doubts Solved</span>
+          </div>
+
+          <div>
+            <h3>AI</h3>
+            <span>Powered</span>
+          </div>
+        </div>
 
       </div>
 
-    </div>
+    </section>
   );
 }
