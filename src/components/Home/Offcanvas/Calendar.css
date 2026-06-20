@@ -1,268 +1,287 @@
-/* PAGE */
-
-.calendar-page{
-  min-height:100vh;
-
-  padding-top:120px;
-  padding-left:30px;
-  padding-right:30px;
-  padding-bottom:30px;
-
-  background:linear-gradient(
-    135deg,
-    #89f7fe,
-    #66a6ff,
-    #89f7fe
-  );
+.calendar-page {
+  min-height: 100vh;
+  padding-top: 140px;
+  padding-bottom: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-/* LAYOUT */
+/* Main Layout */
 
-.calendar-layout{
-  display:flex;
-  gap:25px;
-
-  max-width:1400px;
-  margin:auto;
+.calendar-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 25px;
+  max-width: 1400px;
+  margin: auto;
 }
 
-/* =========================
-   CALENDAR CARD
-========================= */
+/* Calendar Card */
 
-.calendar-card{
-  flex:3;
+.calendar-card {
+  flex: 1;
+  max-width: 900px;
 
-  background:rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(15px);
 
-  backdrop-filter:blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 
-  border:1px solid rgba(255,255,255,0.2);
+  border-radius: 30px;
 
-  border-radius:25px;
+  padding: 30px;
 
-  padding:30px;
-
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.15);
-
-  text-align:center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
-.calendar-card h1{
-  color:white;
-
-  margin-bottom:25px;
+.calendar-card h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2rem;
 }
 
-/* SELECTED DATE */
+.selected-date {
+  margin-top: 20px;
+  text-align: center;
 
-.selected-date{
-  margin-top:20px;
+  color: white;
 
-  color:white;
-
-  font-size:1.2rem;
-
-  font-weight:600;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
-/* =========================
-   EVENTS PANEL
-========================= */
+/* Event Sidebar */
 
-.events-card{
-  flex:1;
+.events-sidebar {
+  width: 280px;
+  min-height: 620px;
 
-  min-width:320px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(15px);
 
-  background:rgba(255,255,255,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 
-  backdrop-filter:blur(15px);
+  border-radius: 30px;
 
-  border:1px solid rgba(255,255,255,0.2);
+  padding: 20px;
 
-  border-radius:25px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 
-  padding:20px;
-
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
 }
 
-.events-header{
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  margin-bottom:20px;
+.events-sidebar h3 {
+  color: white;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
 }
 
-.events-header h2{
-  color:white;
+/* Add Event Button */
 
-  margin:0;
+.add-event-btn {
+  width: 100%;
+  border: none;
 
-  font-size:22px;
-}
+  padding: 14px;
 
-/* ADD BUTTON */
+  border-radius: 15px;
 
-.add-event-btn{
-  border:none;
-
-  padding:10px 14px;
-
-  border-radius:12px;
-
-  background:linear-gradient(
+  background: linear-gradient(
     135deg,
     #6c63ff,
     #00c9a7
   );
 
-  color:white;
+  color: white;
 
-  font-weight:600;
+  font-size: 16px;
+  font-weight: 600;
 
-  cursor:pointer;
+  cursor: pointer;
 
-  transition:0.3s;
+  transition: 0.3s;
 }
 
-.add-event-btn:hover{
-  transform:translateY(-2px);
+.add-event-btn:hover {
+  transform: translateY(-2px);
 }
 
-/* NO EVENTS */
+/* No Events */
 
-.no-events{
-  text-align:center;
+.no-events {
+  flex: 1;
 
-  color:white;
+  display: flex;
+  flex-direction: column;
 
-  opacity:0.9;
+  justify-content: center;
+  align-items: center;
 
-  margin-top:60px;
+  color: white;
+
+  text-align: center;
+
+  font-size: 18px;
+  font-weight: 600;
 }
 
-.no-events h3{
-  margin-bottom:10px;
+.no-events span {
+  margin-top: 10px;
+  opacity: 0.8;
+  font-size: 14px;
 }
 
-/* EVENTS LIST */
+/* Event Cards */
 
-.events-list{
-  display:flex;
+.event-card {
+  margin-top: 15px;
 
-  flex-direction:column;
+  background: rgba(255, 255, 255, 0.15);
 
-  gap:12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  border-radius: 15px;
+
+  padding: 12px;
+
+  color: white;
+
+  transition: 0.3s;
 }
 
-/* EVENT ITEM */
-
-.event-item{
-  background:rgba(255,255,255,0.2);
-
-  border:1px solid rgba(255,255,255,0.15);
-
-  border-radius:16px;
-
-  padding:14px;
-
-  color:white;
-
-  cursor:pointer;
-
-  transition:0.3s;
+.event-card:hover {
+  transform: translateY(-3px);
 }
 
-.event-item:hover{
-  transform:translateY(-2px);
-
-  background:rgba(255,255,255,0.28);
+.event-title {
+  font-weight: 700;
+  font-size: 16px;
 }
 
-.event-item h4{
-  margin:0 0 8px;
+.event-date {
+  margin-top: 5px;
+  font-size: 14px;
+  opacity: 0.8;
 }
 
-.event-item p{
-  margin:0;
+/* React Calendar */
 
-  opacity:0.9;
+.react-calendar {
+  width: 100% !important;
+
+  border: none !important;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  background: white;
+
+  padding: 20px;
 }
 
-/* =========================
-   REACT CALENDAR
-========================= */
-
-.react-calendar{
-  border:none !important;
-
-  border-radius:20px;
-
-  overflow:hidden;
-
-  width:100%;
-
-  max-width:700px;
-
-  margin:auto;
-
-  background:white;
-
-  padding:15px;
+.react-calendar__navigation {
+  margin-bottom: 15px;
 }
 
-.react-calendar__tile{
-  border-radius:10px;
-
-  transition:0.3s;
+.react-calendar__navigation button {
+  font-size: 20px;
+  font-weight: 600;
+  min-height: 50px;
+  border-radius: 10px;
 }
 
-.react-calendar__tile:hover{
-  background:#4f8cff !important;
-
-  color:white;
+.react-calendar__navigation button:hover {
+  background: #f2f2f2;
 }
 
-.react-calendar__tile--active{
-  background:#4f8cff !important;
-
-  color:white;
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
-.react-calendar__navigation button{
-  font-size:18px;
-
-  font-weight:600;
+.react-calendar__month-view__days__day {
+  font-size: 18px;
 }
 
-.react-calendar__month-view__weekdays{
-  text-transform:uppercase;
-
-  font-weight:bold;
+.react-calendar__tile {
+  border-radius: 10px;
+  transition: 0.3s;
+  padding: 15px 0;
 }
 
-/* =========================
-   MOBILE
-========================= */
+.react-calendar__tile:hover {
+  background: #4f8cff !important;
+  color: white;
+}
 
-@media(max-width:900px){
+.react-calendar__tile--active {
+  background: #4f8cff !important;
+  color: white;
+}
 
-  .calendar-layout{
-    flex-direction:column;
+.react-calendar__tile--now {
+  background: #dbeafe;
+  border-radius: 10px;
+}
+
+/* Scrollbar */
+
+.events-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.events-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.4);
+  border-radius: 20px;
+}
+
+/* Mobile */
+
+@media (max-width: 1100px) {
+  .calendar-layout {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .events-card{
-    min-width:100%;
+  .calendar-card {
+    width: 100%;
   }
 
-  .react-calendar{
-    width:100%;
+  .events-sidebar {
+    width: 100%;
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-page {
+    padding-top: 120px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .calendar-card {
+    padding: 15px;
+  }
+
+  .calendar-card h1 {
+    font-size: 1.5rem;
+  }
+
+  .react-calendar {
+    padding: 10px;
+  }
+
+  .react-calendar__month-view__days__day {
+    font-size: 14px;
+  }
+
+  .events-sidebar {
+    padding: 15px;
   }
 }

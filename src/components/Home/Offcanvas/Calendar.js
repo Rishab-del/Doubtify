@@ -17,53 +17,59 @@ export default function Calendar() {
       <Navbar />
       <BackButton />
 
-      <div className="calendar-layout">
-        
-        {/* LEFT */}
-        <div className="calendar-card">
-          <h1>📅 Study Calendar</h1>
+      <div className="calendar-page">
+        <div className="calendar-layout">
 
-          <ReactCalendar
-            onChange={setDate}
-            value={date}
-          />
+          {/* Calendar */}
+          <div className="calendar-card">
+            <h1>📅 Study Calendar</h1>
 
-          <div className="selected-date">
-            Selected Date: {date.toDateString()}
+            <ReactCalendar
+              onChange={setDate}
+              value={date}
+            />
+
+            <div className="selected-date">
+              Selected Date: {date.toDateString()}
+            </div>
           </div>
-        </div>
 
-        {/* RIGHT */}
-        <div className="events-card">
-          <div className="events-header">
-            <h2>📌 Active Events</h2>
+          {/* Events Sidebar */}
+          <div className="events-sidebar">
+            <h3>📌 Events</h3>
 
             <button className="add-event-btn">
               + Add Event
             </button>
+
+            {events.length === 0 ? (
+              <div className="no-events">
+                <div>
+                  <h4>📅 No Active Events</h4>
+                  <span>Create an event to get started.</span>
+                </div>
+              </div>
+            ) : (
+              <div className="events-list">
+                {events.map((event) => (
+                  <div
+                    key={event._id}
+                    className="event-card"
+                  >
+                    <div className="event-title">
+                      {event.title}
+                    </div>
+
+                    <div className="event-date">
+                      {event.date}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {events.length === 0 ? (
-            <div className="no-events">
-              <h3>📅 No Active Events</h3>
-              <p>Create an event to get started.</p>
-            </div>
-          ) : (
-            <div className="events-list">
-              {events.map((event) => (
-                <div
-                  key={event._id}
-                  className="event-item"
-                >
-                  <h4>{event.title}</h4>
-
-                  <p>{event.date}</p>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
-
       </div>
     </>
   );
