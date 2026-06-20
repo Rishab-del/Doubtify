@@ -27,12 +27,7 @@ const userId = storedUser?.id;
   const [imageChanged, setImageChanged] = useState(false);
 
 useEffect(() => {
-  if (userId) {
-    fetchProfile();
-  }
-}, [userId]);
-
-const fetchProfile = async () => {
+  const fetchProfile = async () => {
   try {
     const res = await axios.get(
       `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`
@@ -57,6 +52,12 @@ const fetchProfile = async () => {
     console.log(err);
   }
 };
+  if (userId) {
+    fetchProfile();
+  }
+}, [userId]);
+
+
 
   const handleChange = (e) => {
     setUser({
