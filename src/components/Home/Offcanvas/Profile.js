@@ -1,198 +1,388 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./Progress.css";
-
+import "./Profile.css";
 import BackButton from "./BackButton";
-import Navbar from "../Navbar";
+import React, { useState, useEffect } from "react";
 
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
-
-export default function Progress() {
+export default function Profile() {
   const storedUser = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  );
+  localStorage.getItem("user") || "{}"
+);
 
-  const userId = storedUser?.id;
+const userId = storedUser?.id;
+  const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState("profile");
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  const [progress, setProgress] = useState({
-    streak: 0,
-    doubtsSolved: 0,
-    notesCreated: 0,
-    totalChats: 0,
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    exam: "",
+    className: "",
+    city: "",
+    phone: "",
+    college: "",
   });
 
-  useEffect(() => {
-    if (userId) {
-      fetchProgress();
-    }
-  }, [userId]);
+  const [image, setImage] = useState(null);
+  const [imageChanged, setImageChanged] = useState(false);
 
-  const fetchProgress = async () => {
-    try {
-      const res = await axios.get(
-        `https://doubtify-0q6d.onrender.com/progress/${userId}`
+useEffect(() => {
+  const fetchProfile = async () => {
+  try {
+    const res = await axios.get(
+      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`
+    );
+
+    setUser({
+      name: res.data.name || "",
+      email: res.data.email || "",
+      exam: res.data.exam || "",
+      className: res.data.className || "",
+      city: res.data.city || "",
+      phone: res.data.phone || "",
+      college: res.data.college || "",
+    });
+
+    if (res.data.profilePic) {
+      setImage(
+        `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
       );
-
-      setProgress(res.data);
-    } catch (err) {
-      console.log(err);
     }
+  } catch (err) {
+    console.log(err);
+  }
+};
+  if (userId) {
+    fetchProfile();
+  }
+}, [userId]);
+
+
+
+  const handleChange = (e) => {
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // Temporary chart data
-  const pieData = [
-    {
-      name: "Doubts",
-      value: progress.doubtsSolved,
-    },
-    {
-      name: "Notes",
-      value: progress.notesCreated,
-    },
-    {
-      name: "Chats",
-      value: progress.totalChats,
-    },
-  ];
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
 
-  const COLORS = [
-    "#6C63FF",
-    "#00C9A7",
-    "#FF9800",
-  ];
+    if (!file) return;
 
-  const barData = [
+    setSelectedFile(file);
+    setImage(URL.createObjectURL(file));
+    setImageChanged(true);
+    setIsEditing(true);
+  };
+
+const uploadProfilePic = async () => {
+  if (!selectedFile) return;
+
+  const formData = new FormData();
+
+  formData.append(
+    "profilePic",
+    selectedFile
+  );
+
+  const res = await axios.post(
+    `https://doubtify-0q6d.onrender.com/api/user/upload-profile/${userId}`,
+    formData,
     {
-      name: "Doubts",
-      count: progress.doubtsSolved,
-    },
-    {
-      name: "Notes",
-      count: progress.notesCreated,
-    },
-    {
-      name: "Chats",
-      count: progress.totalChats,
-    },
-  ];
+      headers: {
+        "Content-Type":
+          "multipart/form-data",
+      },
+    }
+  );
+
+  if (res.data.profilePic) {
+    setImage(
+      `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
+    );
+  }
+};
+
+const handleSave = async () => {
+  try {
+    if (selectedFile) {
+      await uploadProfilePic();
+    }
+
+    await axios.put(
+      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`,
+      user
+    );
+
+    setIsEditing(false);
+    setImageChanged(false);
+    setSelectedFile(null);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...storedUser,
+        ...user,
+      })
+    );
+
+    alert("Profile Updated ✅");
+  } catch (err) {
+    console.log(err);
+    alert("Update Failed ❌");
+  }
+};
 
   return (
     <>
       <BackButton />
-      <Navbar />
 
-      <div className="dashboard">
+      <div className="profile-container">
 
-        <h1 className="dashboard-title">
-          My Progress 📊
-        </h1>
+        {/* SIDEBAR */}
 
-        {/* Stats */}
+        <div className="profile-sidebar">
 
-        <div className="stats-grid">
-
-          <div className="stat-card">
-            🔥 {progress.streak} Day Streak
+          <div className="avatar">
+            {image ? (
+              <img
+                src={image}
+                alt="profile"
+              />
+            ) : (
+              <span>👤</span>
+            )}
           </div>
 
-          <div className="stat-card">
-            📘 {progress.doubtsSolved} Doubts Solved
-          </div>
+          <label className="upload-btn">
+            {image
+              ? "Change Photo"
+              : "Upload Photo"}
 
-          <div className="stat-card">
-            📝 {progress.notesCreated} Notes Uploaded
-          </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={
+                handleImageUpload
+              }
+              hidden
+            />
+          </label>
 
-          <div className="stat-card">
-            🤖 {progress.totalChats} AI Chats
-          </div>
+          <ul>
+            <li
+              className={
+                activeTab === "profile"
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                setActiveTab("profile")
+              }
+            >
+              Profile Details
+            </li>
+
+            <li
+              className={
+                activeTab === "activity"
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                setActiveTab(
+                  "activity"
+                )
+              }
+            >
+              My Activity
+            </li>
+          </ul>
 
         </div>
 
-        {/* Charts */}
+        {/* CONTENT */}
 
-        <div className="charts-grid">
+        <div className="profile-content">
 
-          {/* Pie Chart */}
+          {activeTab === "profile" && (
+            <>
+              <div className="profile-header">
 
-          <div className="chart-card">
+                <h2>
+                  Profile Details
+                </h2>
 
-            <h3>
-              Activity Distribution
-            </h3>
-
-            <PieChart
-              width={280}
-              height={280}
-            >
-              <Pie
-                data={pieData}
-                cx="50%"
-                cy="50%"
-                outerRadius={90}
-                dataKey="value"
-                label
-              >
-                {pieData.map(
-                  (entry, index) => (
-                    <Cell
-                      key={index}
-                      fill={
-                        COLORS[
-                          index %
-                            COLORS.length
-                        ]
-                      }
-                    />
-                  )
+                {!isEditing &&
+                !imageChanged ? (
+                  <button
+                    onClick={() =>
+                      setIsEditing(
+                        true
+                      )
+                    }
+                  >
+                    Edit ✏️
+                  </button>
+                ) : (
+                  <button
+                    onClick={
+                      handleSave
+                    }
+                  >
+                    Save ✅
+                  </button>
                 )}
-              </Pie>
 
-              <Tooltip />
+              </div>
 
-            </PieChart>
+              <div className="profile-grid">
 
-          </div>
+                <div className="field">
+                  <label>Name</label>
 
-          {/* Bar Chart */}
+                  <input
+                    name="name"
+                    value={user.name}
+                    onChange={
+                      handleChange
+                    }
+                    disabled={
+                      !isEditing
+                    }
+                  />
+                </div>
 
-          <div className="chart-card">
+                <div className="field">
+                  <label>Email</label>
 
-            <h3>
-              Overall Activity
-            </h3>
+                  <input
+                    name="email"
+                    value={user.email}
+                    onChange={
+                      handleChange
+                    }
+                    disabled={
+                      !isEditing
+                    }
+                  />
+                </div>
 
-            <BarChart
-              width={350}
-              height={280}
-              data={barData}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
+                <div className="field">
+                  <label>Exam</label>
 
-              <XAxis dataKey="name" />
+                  <input
+                    name="exam"
+                    value={user.exam}
+                    onChange={
+                      handleChange
+                    }
+                    disabled={
+                      !isEditing
+                    }
+                  />
+                </div>
 
-              <YAxis />
+                <div className="field">
+                  <label>Class</label>
 
-              <Tooltip />
+                  <input
+                    name="className"
+                    value={
+                      user.className
+                    }
+                    onChange={
+                      handleChange
+                    }
+                    disabled={
+                      !isEditing
+                    }
+                  />
+                </div>
 
-              <Bar
-                dataKey="count"
-                fill="#6C63FF"
-              />
+                <div className="field">
+                  <label>City</label>
 
-            </BarChart>
+                  <input
+                    name="city"
+                    value={user.city}
+                    onChange={
+                      handleChange
+                    }
+                    disabled={
+                      !isEditing
+                    }
+                  />
+                </div>
 
-          </div>
+                <div className="field">
+                  <label>Phone</label>
+
+                  <input
+                    name="phone"
+                    value={user.phone}
+                    onChange={
+                      handleChange
+                    }
+                    disabled={
+                      !isEditing
+                    }
+                  />
+                </div>
+
+                <div className="field">
+                  <label>College</label>
+
+                  <input
+                    name="college"
+                    value={
+                      user.college
+                    }
+                    onChange={
+                      handleChange
+                    }
+                    disabled={
+                      !isEditing
+                    }
+                  />
+                </div>
+
+              </div>
+            </>
+          )}
+
+          {activeTab === "activity" && (
+            <div className="tab-box">
+
+              <h2>
+                My Activity 📊
+              </h2>
+
+              <div className="activity-card">
+                <h3>12</h3>
+                <span>
+                  Doubts Saved
+                </span>
+              </div>
+
+              <div className="activity-card">
+                <h3>8</h3>
+                <span>
+                  Notes Uploaded
+                </span>
+              </div>
+
+              <div className="activity-card">
+                <h3>5</h3>
+                <span>
+                  Events Created
+                </span>
+              </div>
+
+            </div>
+          )}
 
         </div>
 
