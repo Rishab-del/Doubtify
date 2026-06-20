@@ -10,7 +10,7 @@ import BackButton from "./BackButton";
 export default function Calendar() {
   const [date, setDate] = useState(new Date());
 
-  const [events, setEvents] = useState([]);
+  const [events] = useState([]);
 
   return (
     <>
