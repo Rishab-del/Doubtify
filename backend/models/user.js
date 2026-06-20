@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    profilePic: {
-  type: String,
-  default: "",
-},
     name: {
       type: String,
       required: true,
@@ -17,36 +13,45 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
-    phone: {
-  type: String,
-  default: "",
-},
-
-city: {
-  type: String,
-  default: "",
-},
-
-college: {
-  type: String,
-  default: "",
-},
-
-profilePic: {
-  type: String,
-  default: "",
-},
-
     password: {
       type: String,
       required: true,
+    },
+
+    exam: {
+      type: String,
+      default: "",
+    },
+
+    className: {
+      type: String,
+      default: "",
+    },
+
+    phone: {
+      type: String,
+      default: "",
+    },
+
+    city: {
+      type: String,
+      default: "",
+    },
+
+    college: {
+      type: String,
+      default: "",
+    },
+
+    profilePic: {
+      type: String,
+      default: "",
     },
   },
   {
     timestamps: true,
   }
 );
-
 
 module.exports = mongoose.model(
   "User",

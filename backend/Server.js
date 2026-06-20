@@ -179,25 +179,65 @@ io.on("connection", async (socket) => {
 ========================= */
 app.post("/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password,
+      exam,
+      className,
+      city,
+      phone,
+      college,
+    } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      email,
+    });
+
     if (existingUser) {
-      return res.json({ success: false, message: "Email already exists" });
+      return res.json({
+        success: false,
+        message: "Email already exists",
+      });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword });
+    const hashedPassword =
+      await bcrypt.hash(password, 10);
 
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+
+      exam,
+      className,
+      city,
+      phone,
+      college,
+    });
 
     res.json({
       success: true,
-      message: "Account created successfully",
-      user,
+      message:
+        "Account created successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        exam: user.exam,
+        className: user.className,
+        city: user.city,
+        phone: user.phone,
+        college: user.college,
+      },
     });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, message: "Signup failed" });
+
+    res.status(500).json({
+      success: false,
+      message: "Signup failed",
+    });
   }
 });
 
@@ -217,10 +257,24 @@ app.post("/login", async (req, res) => {
 
 
     res.json({
-      success: true,
-      message: "Login successful",
-      user: { id: user._id, name: user.name, email: user.email },
-    });
+  success: true,
+  message: "Login successful",
+  user: {
+    id: user._id,
+
+    name: user.name,
+    email: user.email,
+
+    exam: user.exam,
+    className: user.className,
+
+    city: user.city,
+    phone: user.phone,
+    college: user.college,
+
+    profilePic: user.profilePic,
+  },
+});
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "Login failed" });
@@ -270,45 +324,62 @@ app.post("/doubt", (req, res) => {
 /* =========================
    PROFILE ROUTES
 ========================= */
-app.get("/api/user/profile", async (req, res) => {
+app.get("/api/user/profile/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(
+      req.params.id
+    ).select("-password");
+
     res.json(user);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({
+      message: err.message,
+    });
   }
 });
 
-app.put("/api/user/profile", async (req, res) => {
+app.put("/api/user/profile/:id", async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, {
-      new: true,
-    }).select("-password");
+    const updatedUser =
+      await User.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      ).select("-password");
 
     res.json(updatedUser);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({
+      message: err.message,
+    });
   }
 });
 
 app.post(
-  "/api/user/upload-profile",
+  "/api/user/upload-profile/:id",
   upload.single("profilePic"),
   async (req, res) => {
     try {
-      const imageUrl = `/uploads/${req.file.filename}`;
+      const imageUrl =
+        `/uploads/${req.file.filename}`;
 
       await User.findByIdAndUpdate(
-        req.user.id,
-        { profilePic: imageUrl },
-        { new: true },
+        req.params.id,
+        {
+          profilePic: imageUrl,
+        }
       );
 
-      res.json({ success: true, profilePic: imageUrl });
+      res.json({
+        success: true,
+        profilePic: imageUrl,
+      });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({
+        message: err.message,
+      });
     }
-  },
+  }
 );
 
 /* =========================
