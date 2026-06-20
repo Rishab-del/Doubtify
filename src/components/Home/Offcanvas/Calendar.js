@@ -9,9 +9,7 @@ import BackButton from "./BackButton";
 
 export default function Calendar() {
   const [date, setDate] = useState(new Date());
-
   const [events, setEvents] = useState([]);
-
   const [showForm, setShowForm] = useState(false);
 
   const [eventData, setEventData] = useState({
@@ -31,22 +29,24 @@ export default function Calendar() {
   ===================== */
 
   useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        if (!userId) return;
+
+        const res = await fetch(
+          `https://doubtify-0q6d.onrender.com/events/${userId}`
+        );
+
+        const data = await res.json();
+
+        setEvents(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const res = await fetch(
-        `https://doubtify-0q6d.onrender.com/events/${userId}`
-      );
-
-      const data = await res.json();
-
-      setEvents(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  }, [userId]);
 
   /* =====================
      ADD EVENT
@@ -63,11 +63,9 @@ export default function Calendar() {
         "https://doubtify-0q6d.onrender.com/add-event",
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
             ...eventData,
             userId,
@@ -78,7 +76,18 @@ export default function Calendar() {
       const data = await res.json();
 
       if (data.success) {
-        fetchEvents();
+        const refreshRes = await fetch(
+          `https://doubtify-0q6d.onrender.com/events/${userId}`
+        );
+
+        const refreshData =
+          await refreshRes.json();
+
+        setEvents(
+          Array.isArray(refreshData)
+            ? refreshData
+            : []
+        );
 
         setShowForm(false);
 
@@ -112,7 +121,11 @@ export default function Calendar() {
         }
       );
 
-      fetchEvents();
+      setEvents((prev) =>
+        prev.filter(
+          (event) => event._id !== id
+        )
+      );
     } catch (err) {
       console.log(err);
     }
@@ -158,8 +171,6 @@ export default function Calendar() {
               + Add Event
             </button>
 
-            {/* FORM */}
-
             {showForm && (
               <div className="event-form">
 
@@ -181,7 +192,8 @@ export default function Calendar() {
                   onChange={(e) =>
                     setEventData({
                       ...eventData,
-                      description: e.target.value,
+                      description:
+                        e.target.value,
                     })
                   }
                 />
@@ -206,20 +218,16 @@ export default function Calendar() {
               </div>
             )}
 
-            {/* EVENTS LIST */}
-
             {events.length === 0 ? (
               <div className="no-events">
-                <div>
-                  <h4>
-                    📅 No Active Events
-                  </h4>
+                <h4>
+                  📅 No Active Events
+                </h4>
 
-                  <span>
-                    Create an event to get
-                    started.
-                  </span>
-                </div>
+                <span>
+                  Create an event to get
+                  started.
+                </span>
               </div>
             ) : (
               <div className="events-list">
@@ -240,12 +248,8 @@ export default function Calendar() {
                     </div>
 
                     {event.description && (
-                      <div
-                        className="event-desc"
-                      >
-                        {
-                          event.description
-                        }
+                      <div className="event-desc">
+                        {event.description}
                       </div>
                     )}
 
