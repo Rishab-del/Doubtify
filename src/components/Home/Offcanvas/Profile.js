@@ -1,388 +1,198 @@
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./Profile.css";
+import "./Progress.css";
+
 import BackButton from "./BackButton";
-import React, { useState, useEffect } from "react";
+import Navbar from "../Navbar";
 
-export default function Profile() {
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
+
+export default function Progress() {
   const storedUser = JSON.parse(
-  localStorage.getItem("user") || "{}"
-);
+    localStorage.getItem("user") || "{}"
+  );
 
-const userId = storedUser?.id;
-  const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("profile");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const userId = storedUser?.id;
 
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    exam: "",
-    className: "",
-    city: "",
-    phone: "",
-    college: "",
+  const [progress, setProgress] = useState({
+    streak: 0,
+    doubtsSolved: 0,
+    notesCreated: 0,
+    totalChats: 0,
   });
 
-  const [image, setImage] = useState(null);
-  const [imageChanged, setImageChanged] = useState(false);
+  useEffect(() => {
+    if (userId) {
+      fetchProgress();
+    }
+  }, [userId]);
 
-useEffect(() => {
-  const fetchProfile = async () => {
-  try {
-    const res = await axios.get(
-      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`
-    );
-
-    setUser({
-      name: res.data.name || "",
-      email: res.data.email || "",
-      exam: res.data.exam || "",
-      className: res.data.className || "",
-      city: res.data.city || "",
-      phone: res.data.phone || "",
-      college: res.data.college || "",
-    });
-
-    if (res.data.profilePic) {
-      setImage(
-        `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
+  const fetchProgress = async () => {
+    try {
+      const res = await axios.get(
+        `https://doubtify-0q6d.onrender.com/progress/${userId}`
       );
+
+      setProgress(res.data);
+    } catch (err) {
+      console.log(err);
     }
-  } catch (err) {
-    console.log(err);
-  }
-};
-  if (userId) {
-    fetchProfile();
-  }
-}, [userId]);
-
-
-
-  const handleChange = (e) => {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value,
-    });
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    setSelectedFile(file);
-    setImage(URL.createObjectURL(file));
-    setImageChanged(true);
-    setIsEditing(true);
-  };
-
-const uploadProfilePic = async () => {
-  if (!selectedFile) return;
-
-  const formData = new FormData();
-
-  formData.append(
-    "profilePic",
-    selectedFile
-  );
-
-  const res = await axios.post(
-    `https://doubtify-0q6d.onrender.com/api/user/upload-profile/${userId}`,
-    formData,
+  // Temporary chart data
+  const pieData = [
     {
-      headers: {
-        "Content-Type":
-          "multipart/form-data",
-      },
-    }
-  );
+      name: "Doubts",
+      value: progress.doubtsSolved,
+    },
+    {
+      name: "Notes",
+      value: progress.notesCreated,
+    },
+    {
+      name: "Chats",
+      value: progress.totalChats,
+    },
+  ];
 
-  if (res.data.profilePic) {
-    setImage(
-      `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
-    );
-  }
-};
+  const COLORS = [
+    "#6C63FF",
+    "#00C9A7",
+    "#FF9800",
+  ];
 
-const handleSave = async () => {
-  try {
-    if (selectedFile) {
-      await uploadProfilePic();
-    }
-
-    await axios.put(
-      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`,
-      user
-    );
-
-    setIsEditing(false);
-    setImageChanged(false);
-    setSelectedFile(null);
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        ...storedUser,
-        ...user,
-      })
-    );
-
-    alert("Profile Updated ✅");
-  } catch (err) {
-    console.log(err);
-    alert("Update Failed ❌");
-  }
-};
+  const barData = [
+    {
+      name: "Doubts",
+      count: progress.doubtsSolved,
+    },
+    {
+      name: "Notes",
+      count: progress.notesCreated,
+    },
+    {
+      name: "Chats",
+      count: progress.totalChats,
+    },
+  ];
 
   return (
     <>
       <BackButton />
+      <Navbar />
 
-      <div className="profile-container">
+      <div className="dashboard">
 
-        {/* SIDEBAR */}
+        <h1 className="dashboard-title">
+          My Progress 📊
+        </h1>
 
-        <div className="profile-sidebar">
+        {/* Stats */}
 
-          <div className="avatar">
-            {image ? (
-              <img
-                src={image}
-                alt="profile"
-              />
-            ) : (
-              <span>👤</span>
-            )}
+        <div className="stats-grid">
+
+          <div className="stat-card">
+            🔥 {progress.streak} Day Streak
           </div>
 
-          <label className="upload-btn">
-            {image
-              ? "Change Photo"
-              : "Upload Photo"}
+          <div className="stat-card">
+            📘 {progress.doubtsSolved} Doubts Solved
+          </div>
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={
-                handleImageUpload
-              }
-              hidden
-            />
-          </label>
+          <div className="stat-card">
+            📝 {progress.notesCreated} Notes Uploaded
+          </div>
 
-          <ul>
-            <li
-              className={
-                activeTab === "profile"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setActiveTab("profile")
-              }
-            >
-              Profile Details
-            </li>
-
-            <li
-              className={
-                activeTab === "activity"
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                setActiveTab(
-                  "activity"
-                )
-              }
-            >
-              My Activity
-            </li>
-          </ul>
+          <div className="stat-card">
+            🤖 {progress.totalChats} AI Chats
+          </div>
 
         </div>
 
-        {/* CONTENT */}
+        {/* Charts */}
 
-        <div className="profile-content">
+        <div className="charts-grid">
 
-          {activeTab === "profile" && (
-            <>
-              <div className="profile-header">
+          {/* Pie Chart */}
 
-                <h2>
-                  Profile Details
-                </h2>
+          <div className="chart-card">
 
-                {!isEditing &&
-                !imageChanged ? (
-                  <button
-                    onClick={() =>
-                      setIsEditing(
-                        true
-                      )
-                    }
-                  >
-                    Edit ✏️
-                  </button>
-                ) : (
-                  <button
-                    onClick={
-                      handleSave
-                    }
-                  >
-                    Save ✅
-                  </button>
+            <h3>
+              Activity Distribution
+            </h3>
+
+            <PieChart
+              width={280}
+              height={280}
+            >
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                outerRadius={90}
+                dataKey="value"
+                label
+              >
+                {pieData.map(
+                  (entry, index) => (
+                    <Cell
+                      key={index}
+                      fill={
+                        COLORS[
+                          index %
+                            COLORS.length
+                        ]
+                      }
+                    />
+                  )
                 )}
+              </Pie>
 
-              </div>
+              <Tooltip />
 
-              <div className="profile-grid">
+            </PieChart>
 
-                <div className="field">
-                  <label>Name</label>
+          </div>
 
-                  <input
-                    name="name"
-                    value={user.name}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
-                  />
-                </div>
+          {/* Bar Chart */}
 
-                <div className="field">
-                  <label>Email</label>
+          <div className="chart-card">
 
-                  <input
-                    name="email"
-                    value={user.email}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
-                  />
-                </div>
+            <h3>
+              Overall Activity
+            </h3>
 
-                <div className="field">
-                  <label>Exam</label>
+            <BarChart
+              width={350}
+              height={280}
+              data={barData}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
 
-                  <input
-                    name="exam"
-                    value={user.exam}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
-                  />
-                </div>
+              <XAxis dataKey="name" />
 
-                <div className="field">
-                  <label>Class</label>
+              <YAxis />
 
-                  <input
-                    name="className"
-                    value={
-                      user.className
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
-                  />
-                </div>
+              <Tooltip />
 
-                <div className="field">
-                  <label>City</label>
+              <Bar
+                dataKey="count"
+                fill="#6C63FF"
+              />
 
-                  <input
-                    name="city"
-                    value={user.city}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
-                  />
-                </div>
+            </BarChart>
 
-                <div className="field">
-                  <label>Phone</label>
-
-                  <input
-                    name="phone"
-                    value={user.phone}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
-                  />
-                </div>
-
-                <div className="field">
-                  <label>College</label>
-
-                  <input
-                    name="college"
-                    value={
-                      user.college
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
-                  />
-                </div>
-
-              </div>
-            </>
-          )}
-
-          {activeTab === "activity" && (
-            <div className="tab-box">
-
-              <h2>
-                My Activity 📊
-              </h2>
-
-              <div className="activity-card">
-                <h3>12</h3>
-                <span>
-                  Doubts Saved
-                </span>
-              </div>
-
-              <div className="activity-card">
-                <h3>8</h3>
-                <span>
-                  Notes Uploaded
-                </span>
-              </div>
-
-              <div className="activity-card">
-                <h3>5</h3>
-                <span>
-                  Events Created
-                </span>
-              </div>
-
-            </div>
-          )}
+          </div>
 
         </div>
 

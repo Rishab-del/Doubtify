@@ -736,6 +736,35 @@ if (!user) {
 });
 
 
+//PROGRESS
+
+app.get("/progress/:userId", async (req, res) => {
+  try {
+    const doubts = await Doubt.countDocuments({
+      userId: req.params.userId,
+    });
+
+    const notes = await Note.countDocuments();
+
+    const chats = await Chat.find({
+      userId: req.params.userId,
+    });
+
+    res.json({
+      doubtsSolved: doubts,
+      notesCreated: notes,
+      totalChats: chats.length,
+      streak: 7,
+    });
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      error: "Failed to fetch progress",
+    });
+  }
+});
+
 /* =========================
    SERVER START
 ========================= */
