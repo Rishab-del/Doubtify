@@ -11,6 +11,8 @@ export default function Calendar() {
   const [date, setDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [selectedEvent, setSelectedEvent] =
+    useState([]);
 
   const [eventData, setEventData] = useState({
     title: "",
@@ -39,7 +41,9 @@ export default function Calendar() {
 
         const data = await res.json();
 
-        setEvents(Array.isArray(data) ? data : []);
+        setEvents(
+          Array.isArray(data) ? data : []
+        );
       } catch (err) {
         console.log(err);
       }
@@ -64,7 +68,8 @@ export default function Calendar() {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
           body: JSON.stringify({
             ...eventData,
@@ -76,18 +81,10 @@ export default function Calendar() {
       const data = await res.json();
 
       if (data.success) {
-        const refreshRes = await fetch(
-          `https://doubtify-0q6d.onrender.com/events/${userId}`
-        );
-
-        const refreshData =
-          await refreshRes.json();
-
-        setEvents(
-          Array.isArray(refreshData)
-            ? refreshData
-            : []
-        );
+        setEvents((prev) => [
+          data.event,
+          ...prev,
+        ]);
 
         setShowForm(false);
 
@@ -145,21 +142,44 @@ export default function Calendar() {
             <h1>📅 Study Calendar</h1>
 
             <ReactCalendar
-              onChange={setDate}
-              value={date}
-            />
+  value={date}
+  onChange={(value) => {
+    setDate(value);
+
+    const foundEvents = events.filter(
+      (event) =>
+        new Date(event.date).toDateString() ===
+        value.toDateString()
+    );
+
+    if (foundEvents.length > 0) {
+      setSelectedEvent(foundEvents);
+    } else {
+      setSelectedEvent([]);
+    }
+  }}
+  tileClassName={({ date }) => {
+    const hasEvent = events.some(
+      (event) =>
+        new Date(event.date).toDateString() ===
+        date.toDateString()
+    );
+
+    return hasEvent
+      ? "event-date-tile"
+      : null;
+  }}
+/>
 
             <div className="selected-date">
-              Selected Date:
-              {" "}
+              Selected Date:{" "}
               {date.toDateString()}
             </div>
           </div>
 
-          {/* EVENTS */}
+          {/* EVENTS SIDEBAR */}
 
           <div className="events-sidebar">
-
             <h3>📌 Events</h3>
 
             <button
@@ -181,14 +201,17 @@ export default function Calendar() {
                   onChange={(e) =>
                     setEventData({
                       ...eventData,
-                      title: e.target.value,
+                      title:
+                        e.target.value,
                     })
                   }
                 />
 
                 <textarea
                   placeholder="Description"
-                  value={eventData.description}
+                  value={
+                    eventData.description
+                  }
                   onChange={(e) =>
                     setEventData({
                       ...eventData,
@@ -204,17 +227,37 @@ export default function Calendar() {
                   onChange={(e) =>
                     setEventData({
                       ...eventData,
-                      date: e.target.value,
+                      date:
+                        e.target.value,
                     })
                   }
                 />
 
-                <button
-                  className="save-event-btn"
-                  onClick={addEvent}
-                >
-                  Save Event
-                </button>
+                <div className="event-form-buttons">
+
+  <button
+    className="save-event-btn"
+    onClick={addEvent}
+  >
+    Save Event
+  </button>
+
+  <button
+    className="cancel-event-btn"
+    onClick={() => {
+      setShowForm(false);
+
+      setEventData({
+        title: "",
+        description: "",
+        date: "",
+      });
+    }}
+  >
+    Cancel
+  </button>
+
+</div>
               </div>
             )}
 
@@ -231,7 +274,6 @@ export default function Calendar() {
               </div>
             ) : (
               <div className="events-list">
-
                 {events.map((event) => (
                   <div
                     key={event._id}
@@ -249,7 +291,9 @@ export default function Calendar() {
 
                     {event.description && (
                       <div className="event-desc">
-                        {event.description}
+                        {
+                          event.description
+                        }
                       </div>
                     )}
 
@@ -265,13 +309,62 @@ export default function Calendar() {
                     </button>
                   </div>
                 ))}
-
               </div>
             )}
-
           </div>
-
         </div>
+
+        {/* EVENT POPUP */}
+
+        {selectedEvent.length > 0 && (
+  <div
+    className="event-popup-overlay"
+    onClick={() =>
+      setSelectedEvent([])
+    }
+  >
+    <div
+      className="event-popup"
+      onClick={(e) =>
+        e.stopPropagation()
+      }
+    >
+      <h2>📌 Events</h2>
+
+      {selectedEvent.map((event) => (
+        <div
+          key={event._id}
+          className="popup-event"
+        >
+          <h3>{event.title}</h3>
+
+          <p>
+            <strong>Date:</strong>{" "}
+            {new Date(
+              event.date
+            ).toDateString()}
+          </p>
+
+          {event.description && (
+            <p>
+              {event.description}
+            </p>
+          )}
+
+          <hr />
+        </div>
+      ))}
+
+      <button
+        onClick={() =>
+          setSelectedEvent([])
+        }
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
       </div>
     </>
   );
