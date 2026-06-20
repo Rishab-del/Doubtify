@@ -14,6 +14,7 @@ const Chat = require("./models/Chat");
 const Note = require("./models/Notes");
 const Discussion = require("./models/Discussion");
 const Event = require("./models/Events");
+const Doubt = require("./models/Doubt");
 
 const app = express();
 
@@ -553,6 +554,64 @@ app.delete("/event/:id", async (req, res) => {
   res.json({
     success: true,
   });
+});
+
+//DOUBT SECTION
+
+app.post("/add-doubt", async (req, res) => {
+  try {
+    const { userId, question } = req.body;
+
+    const doubt = await Doubt.create({
+      userId,
+      question,
+    });
+
+    res.json({
+      success: true,
+      doubt,
+    });
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+    });
+  }
+});
+
+app.get("/doubts/:userId", async (req, res) => {
+  try {
+    const doubts = await Doubt.find({
+      userId: req.params.userId,
+    }).sort({
+      createdAt: -1,
+    });
+
+    res.json(doubts);
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      error: "Failed to fetch doubts",
+    });
+  }
+});
+
+app.delete("/doubt/:id", async (req, res) => {
+  try {
+    await Doubt.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.json({
+      success: true,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+    });
+  }
 });
 
 

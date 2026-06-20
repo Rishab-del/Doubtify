@@ -1,97 +1,144 @@
-/* PAGE SAME AS DASHBOARD */
-.doubts-page {
-  padding-top: 100px;
-  min-height: 100vh;
+/* =========================
+   ADD DOUBT BOX
+========================= */
+
+.doubt-input-box {
+  width: 90%;
+  max-width: 800px;
+
+  margin: 0 auto 35px;
+
+  display: flex;
+  gap: 15px;
+}
+
+.doubt-input-box input {
+  flex: 1;
+
+  border: none;
+  outline: none;
+
+  padding: 16px 20px;
+
+  border-radius: 15px;
+
+  background: rgba(255,255,255,0.9);
+
+  font-size: 16px;
+}
+
+.doubt-input-box button {
+  border: none;
+
+  padding: 16px 25px;
+
+  border-radius: 15px;
 
   background: linear-gradient(
     135deg,
-    #89f7fe,
-    #66a6ff,
-    #89f7fe
+    #6c63ff,
+    #00d4b8
   );
 
-  text-align: center;
-  color: whitesmoke;
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.3s;
 }
 
-/* TITLE */
-.doubts-page h1 {
-  margin-bottom: 40px;
-  font-size: 32px;
-  margin-top: 40px;
-}
-.doubts-container{
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  box-sizing: border-box;
+.doubt-input-box button:hover {
+  transform: translateY(-2px);
 }
 
-.doubts-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-
-  width: 100%;
-  margin: 0;
-}
+/* =========================
+   DOUBT CARD
+========================= */
 
 .doubt-card {
   width: 100%;
   box-sizing: border-box;
 
   padding: 25px;
+
   border-radius: 18px;
 
-  background:  rgba(255,255,255,0.22) !important ;
+  background: rgba(255,255,255,0.22);
+
   backdrop-filter: blur(18px);
 
   color: black;
+
+  transition: 0.3s;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.doubts-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-
-  width: 90%;
-  max-width: 1200px;
-
-  margin: 0 auto;
-}
-/* HOVER SAME */
-.doubt-card:hover {
-  transform: translateY(-10px) scale(1.04);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+.doubt-card h3 {
+  margin: 0;
+  line-height: 1.5;
 }
 
-/* STATUS */
-.status {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 6px 12px;
-  border-radius: 10px;
-  font-size: 12px;
-  color: #000;
+/* =========================
+   DELETE BUTTON
+========================= */
+
+.delete-doubt-btn {
+  border: none;
+
+  padding: 10px;
+
+  border-radius: 12px;
+
+  background: #ff4d4d;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: 600;
+
+  transition: 0.3s;
 }
 
-.solved {
-  background: #00c853;
+.delete-doubt-btn:hover {
+  background: #e53935;
 }
 
-.pending {
-  background: #ff9800;
-}
+/* =========================
+   EMPTY STATE
+========================= */
 
-/* EMPTY */
 .empty {
-  opacity: 0.7;
+  text-align: center;
+
+  font-size: 18px;
+
+  color: white;
+
+  opacity: 0.8;
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
+
 @media (max-width: 768px) {
+
+  .doubt-input-box {
+    flex-direction: column;
+  }
+
   .doubts-list {
     grid-template-columns: 1fr;
   }
+
+  .doubts-page h1 {
+    font-size: 26px;
+  }
+
 }
