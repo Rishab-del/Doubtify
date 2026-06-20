@@ -15,7 +15,7 @@ export default function Hero() {
         </span>
 
         <h1>
-          Solve Your Doubts <br/>
+          Solve Your Doubts
           <span> Instantly </span> with AI
         </h1>
 
