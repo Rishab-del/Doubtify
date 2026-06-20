@@ -740,25 +740,28 @@ if (!user) {
 
 app.get("/progress/:userId", async (req, res) => {
   try {
-    const doubts = await Doubt.countDocuments({
+    const doubtsSolved = await Doubt.countDocuments({
       userId: req.params.userId,
     });
 
-    const notes = await Note.countDocuments();
+    const notesCreated = await Note.countDocuments();
 
-    const chats = await Chat.find({
+    const totalChats = await Chat.countDocuments({
       userId: req.params.userId,
     });
+
+    const streak =
+      doubtsSolved > 0
+        ? Math.min(doubtsSolved, 30)
+        : 0;
 
     res.json({
-      doubtsSolved: doubts,
-      notesCreated: notes,
-      totalChats: chats.length,
-      streak: 7,
+      streak,
+      doubtsSolved,
+      notesCreated,
+      totalChats,
     });
   } catch (err) {
-    console.log(err);
-
     res.status(500).json({
       error: "Failed to fetch progress",
     });
