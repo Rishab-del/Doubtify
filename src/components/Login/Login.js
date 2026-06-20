@@ -3,6 +3,8 @@ import "./login.css";
 import { useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { toast } from "react-toastify";
+import {signInWithPopup,} from "firebase/auth";
+import {auth,provider, } from "./firebase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -69,9 +71,50 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    toast.info("🚀 Google Login Coming Soon");
-  };
+const handleGoogleLogin = async () => {
+  try {
+    const result = await signInWithPopup(
+      auth,
+      provider
+    );
+
+    const res = await fetch(
+      "https://doubtify-0q6d.onrender.com/google-login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          name: result.user.displayName,
+          email: result.user.email,
+          profilePic:
+            result.user.photoURL,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(data.user)
+    );
+
+    toast.success(
+      "Google Login Successful ✅"
+    );
+
+    navigate("/dashboard");
+  } catch (err) {
+    console.log(err);
+
+    toast.error(
+      "Google Login Failed ❌"
+    );
+  }
+};
 
   const handleFacebookLogin = () => {
     toast.info("🚀 Facebook Login Coming Soon");

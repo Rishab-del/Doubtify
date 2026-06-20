@@ -685,6 +685,56 @@ app.delete("/doubt/:id", async (req, res) => {
   }
 });
 
+//google login
+
+app.post("/google-login", async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      profilePic,
+    } = req.body;
+
+    let user = await User.findOne({
+  email,
+});
+
+if (!user) {
+  user = await User.create({
+    name,
+    email,
+    password: "",
+    profilePic,
+  });
+} else if (profilePic && !user.profilePic) {
+  user.profilePic = profilePic;
+  await user.save();
+}
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+        exam: user.exam,
+        className: user.className,
+        city: user.city,
+        phone: user.phone,
+        college: user.college,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Google login failed",
+    });
+  }
+});
+
 
 /* =========================
    SERVER START
