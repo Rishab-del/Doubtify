@@ -1,12 +1,47 @@
 /* =========================
+   PAGE
+========================= */
+
+.doubts-page {
+  min-height: 100vh;
+  padding: 120px 20px 40px;
+
+  background: linear-gradient(
+    135deg,
+    #89f7fe,
+    #66a6ff,
+    #89f7fe
+  );
+
+  color: white;
+}
+
+.doubts-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.doubts-page h1 {
+  text-align: center;
+  margin-bottom: 35px;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+/* =========================
    ADD DOUBT BOX
 ========================= */
 
 .doubt-input-box {
-  width: 90%;
-  max-width: 800px;
+  width: 100%;
+  max-width: 850px;
 
-  margin: 0 auto 35px;
+  margin: 0 auto 40px;
 
   display: flex;
   gap: 15px;
@@ -54,22 +89,36 @@
 }
 
 /* =========================
+   DOUBTS GRID
+========================= */
+
+.doubts-list {
+  display: grid;
+
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(320px, 1fr)
+  );
+
+  gap: 20px;
+}
+
+/* =========================
    DOUBT CARD
 ========================= */
 
 .doubt-card {
-  width: 100%;
-  box-sizing: border-box;
-
   padding: 25px;
 
-  border-radius: 18px;
+  border-radius: 20px;
 
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.18);
 
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(15px);
 
-  color: black;
+  border: 1px solid rgba(255,255,255,0.2);
+
+  color: white;
 
   transition: 0.3s;
 
@@ -78,9 +127,43 @@
   gap: 12px;
 }
 
+.doubt-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow: 0 10px 25px
+    rgba(0,0,0,0.15);
+}
+
 .doubt-card h3 {
   margin: 0;
   line-height: 1.5;
+  font-size: 1.1rem;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status {
+  width: fit-content;
+
+  padding: 7px 14px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.solved {
+  background: #00c853;
+  color: white;
+}
+
+.pending {
+  background: #ff9800;
+  color: white;
 }
 
 /* =========================
@@ -103,6 +186,8 @@
   font-weight: 600;
 
   transition: 0.3s;
+
+  margin-top: auto;
 }
 
 .delete-doubt-btn:hover {
@@ -110,17 +195,17 @@
 }
 
 /* =========================
-   EMPTY STATE
+   EMPTY
 ========================= */
 
 .empty {
   text-align: center;
 
-  font-size: 18px;
+  font-size: 20px;
+
+  margin-top: 60px;
 
   color: white;
-
-  opacity: 0.8;
 }
 
 /* =========================
@@ -128,17 +213,19 @@
 ========================= */
 
 @media (max-width: 768px) {
+  .doubts-page {
+    padding-top: 110px;
+  }
 
   .doubt-input-box {
     flex-direction: column;
   }
 
+  .doubts-page h1 {
+    font-size: 2rem;
+  }
+
   .doubts-list {
     grid-template-columns: 1fr;
   }
-
-  .doubts-page h1 {
-    font-size: 26px;
-  }
-
 }
