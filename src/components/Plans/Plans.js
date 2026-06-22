@@ -3,7 +3,6 @@ import "./Plans.css";
 import Navbar from "../Home/Navbar";
 
 export default function Plans() {
-
   const handlePayment = async (amount, planName) => {
     try {
       const res = await fetch(
@@ -14,13 +13,13 @@ export default function Plans() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ amount }),
-        }
+        },
       );
 
       const order = await res.json();
 
       const options = {
-        key: "rzp_test_YOUR_KEY_HERE",
+        key: "rzp_live_T4fSHyvJ7hbhQk",
 
         amount: order.amount,
         currency: order.currency,
@@ -36,20 +35,17 @@ export default function Plans() {
           console.log("Payment Response:", response);
 
           try {
-            await fetch(
-              "https://doubtify-0q6d.onrender.com/payment-success",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  plan: planName,
-                  paymentId: response.razorpay_payment_id,
-                  orderId: response.razorpay_order_id,
-                }),
-              }
-            );
+            await fetch("https://doubtify-0q6d.onrender.com/payment-success", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                plan: planName,
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+              }),
+            });
           } catch (err) {
             console.log(err);
           }
@@ -73,12 +69,9 @@ export default function Plans() {
     <div className="plans-page">
       <Navbar />
 
-      <h1 className="plans-title">
-        Choose Your Plan 🚀
-      </h1>
+      <h1 className="plans-title">Choose Your Plan 🚀</h1>
 
       <div className="plans-container">
-
         <div className="plan-card">
           <h2>Free</h2>
 
@@ -92,9 +85,7 @@ export default function Plans() {
             <li>❌ No AI Priority</li>
           </ul>
 
-          <button className="plan-btn">
-            Start Free
-          </button>
+          <button className="plan-btn">Start Free</button>
         </div>
 
         {/* MONTHLY PLAN */}
@@ -140,7 +131,6 @@ export default function Plans() {
             Buy Yearly
           </button>
         </div>
-
       </div>
     </div>
   );
