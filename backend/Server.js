@@ -450,6 +450,7 @@ Rules:
 - Use examples and analogies
 - For code, also specify language and explain the intution and algorithm 
 - dont give only solution explain the intution.
+-Always wrap programming code inside markdown code blocks.
 `
   },
 

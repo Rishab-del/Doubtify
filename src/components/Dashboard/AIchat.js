@@ -10,6 +10,11 @@ import { FaMicrophone } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import remarkGfm from "remark-gfm";
+
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import "katex/dist/katex.min.css";
 
@@ -320,11 +325,48 @@ setChatList(Array.isArray(chatsData) ? chatsData : []);
           {messages.map((msg, index) => (
             <div key={index} className={`chat-message ${msg.sender}`}>
               <ReactMarkdown
-                remarkPlugins={[remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-              >
-                {msg.text}
-              </ReactMarkdown>
+  remarkPlugins={[remarkMath, remarkGfm]}
+  rehypePlugins={[rehypeKatex]}
+  components={{
+    code({ inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || "");
+
+      if (!inline) {
+        return (
+          <div className="code-block-wrapper">
+            <button
+              className="copy-btn"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  String(children).replace(/\n$/, "")
+                )
+              }
+            >
+              Copy
+            </button>
+
+            <SyntaxHighlighter
+              style={oneDark}
+              language={match ? match[1] : "text"}
+              PreTag="div"
+              {...props}
+            >
+              {String(children).replace(/\n$/, "")}
+            </SyntaxHighlighter>
+          </div>
+        );
+      }
+
+      return (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+  }}
+>
+  {msg.text}
+</ReactMarkdown>
             </div>
           ))}
 
