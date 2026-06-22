@@ -342,7 +342,7 @@ setChatList(Array.isArray(chatsData) ? chatsData : []);
                 )
               }
             >
-              Copy
+              ⧉ copy
             </button>
 
             <SyntaxHighlighter
