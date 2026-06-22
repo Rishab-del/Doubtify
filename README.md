@@ -1,126 +1,253 @@
-🚀 Doubtify
+# 🚀 Doubtify – AI Powered Learning Platform
 
 <p align="center">
-  <b>✨ AI-powered learning platform to solve doubts, collaborate with peers, and track your progress 🚀</b>
+  <img src="https://img.shields.io/badge/React-Frontend-blue?logo=react" />
+  <img src="https://img.shields.io/badge/Node.js-Backend-green?logo=node.js" />
+  <img src="https://img.shields.io/badge/MongoDB-Database-brightgreen?logo=mongodb" />
+  <img src="https://img.shields.io/badge/OpenAI-AI-orange" />
+  <img src="https://img.shields.io/badge/Razorpay-Payments-blueviolet" />
 </p>
 
-🌐 Live Demo: https://doubtify-git-main-rishabh-team.vercel.app/
+<p align="center">
+  <b>An AI-powered learning platform that helps students solve doubts instantly, collaborate with peers, manage study resources, and track learning progress.</b>
+</p>
 
-Use Versel for Frontend deployment and Render for Backend deployment.
+---
 
-⸻
+## 🌐 Live Demo
 
-🌟 Features
+https://doubtify-git-main-rishabh-team.vercel.app/
 
-✨ AI Doubt Solver
-	•	Get instant answers using AI
-	•	Supports coding, math, and concepts
+---
 
-💬 Community Discussions
-	•	Ask doubts and interact with other learners
-	•	Real-time discussion panel
+## ✨ Key Features
 
-📝 Smart Notes
-	•	Organize and manage study material
-	•	Upload and access PDFs easily
+### 🤖 AI Doubt Solver
 
-📊 Progress Tracking
-	•	Track your learning journey
-	•	Visual insights and analytics
+- AI-powered chatbot
+- Step-by-step explanations
+- Coding, Mathematics, Science support
+- Markdown rendering
+- KaTeX mathematical equations
+- Voice input support
+- Chat history management
 
-⚡ Fast & Clean UI
-	•	Modern glassmorphism design
-	•	Smooth and responsive experience
+---
 
-☁️ Cloud Sync
-	•	Access your data anytime, anywhere
+### 📚 Smart Notes
 
-⸻
+- Upload PDF notes
+- Cloud storage support
+- Download notes anytime
+- Delete notes
+- Organize study resources
 
-🛠️ Tech Stack
+---
 
-	•	⚛️ React.js (Frontend)
-	
-	•	🎨 CSS (Glassmorphism UI)
-	
-	•	🌐 Node.js + Express (Backend)
-	
-	•	🤖 AI API (for chatbot)
-	
-	•	🎤 Web Speech API (Voice input)
+### 📅 Study Planner & Calendar
 
-⸻
+- Add study events
+- Manage schedules
+- Track important deadlines
+- Personal learning calendar
 
-📸 Screenshots
+---
 
-🤖 AI Chat
-	•	Interactive chatbot with markdown support
-	•	Voice input enabled
+### 📊 Progress Dashboard
 
-💬 Discussion Panel
-	•	Chat-style UI
-	•	Real-time doubt sharing
+- Total doubts solved
+- Learning streak tracking
+- Total AI chats
+- Notes statistics
+- Visual learning insights
 
-📊 Dashboard
-	•	Track progress and activity
+---
 
-⸻
+### 👤 User Management
 
-⚙️ Installation
+- Email & Password Authentication
+- Google Sign-In
+- Profile Management
+- Profile Picture Upload
+- Personal Information Management
 
-# Clone the repository
-git clone https://github.com/Rishab-del/doubtify.git
+---
 
-# Go to project folder
-cd doubtify
+### 💳 Premium Plans
 
-# Install dependencies
-npm install
+- Free Plan
+- Monthly Subscription
+- Yearly Subscription
+- Razorpay Payment Gateway Integration
 
-# Run the app
-npm start
+---
 
-🔥 Usage
-	•	Ask doubts in AI Chat 🤖
-	•	Discuss with peers 💬
-	•	Track your learning 📊
+### 🎤 Voice Features
 
-⸻
+- Web Speech API Integration
+- Voice-to-Text Doubt Input
 
-📦 Build
-npm run build
+---
 
-🚀 Future Improvements
+### 🎨 Modern UI/UX
 
-	•	🔄 Real-time chat (Socket.io)
-	
-	•	👤 User authentication
-	
-	•	📱 Mobile responsive optimization
-	
-	•	📊 Advanced analytics dashboard
-	
-	•	💻 Syntax highlighting for code
+- Glassmorphism Design
+- Fully Responsive Layout
+- Smooth Animations
+- Mobile Friendly Interface
 
-⸻
+---
 
-🤝 Contributing
+## 🛠 Tech Stack
 
-Contributions are welcome!
-Feel free to fork the repo and submit a PR.
+### Frontend
 
-⸻
+- React.js
+- React Router DOM
+- Axios
+- Bootstrap
+- React Icons
+- React Markdown
+- KaTeX
+- Socket.IO Client
 
-📄 License
+### Backend
 
-This project is licensed under the MIT License.
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- Socket.IO
+- Multer
+- OpenAI API
+- Razorpay API
 
-⸻
+### Authentication
 
-💡 Author
+- Google Authentication
+- JWT Authentication
 
-Made with ❤️ by Rishabh Patel
+### Deployment
 
-⸻
+- Vercel (Frontend)
+- Render (Backend)
 
-⭐ If you like this project, don’t forget to star the repo!
+---
+
+## 📂 Project Structure
+
+bash Doubtify │ ├── src │   ├── components │   ├── pages │   ├── AI Chat │   ├── Discussion │   ├── Notes │   ├── Dashboard │   └── Profile │ ├── backend │   ├── models │   ├── routes │   ├── uploads │   └── Server.js │ └── public 
+
+---
+
+## ⚙️ Installation
+
+### Clone Repository
+
+bash git clone https://github.com/Rishab-del/Doubtify.git cd Doubtify 
+
+### Install Frontend
+
+bash npm install 
+
+### Install Backend
+
+bash cd backend npm install 
+
+### Environment Variables
+
+Create a .env file inside backend:
+
+env PORT=5001  MONGO_URL=your_mongodb_url  OPENROUTER_API_KEY=your_api_key  RAZORPAY_KEY_ID=your_key  RAZORPAY_KEY_SECRET=your_secret 
+
+---
+
+## 🚀 Run Project
+
+### Frontend
+
+bash npm start 
+
+### Backend
+
+bash cd backend npm start 
+
+---
+
+## 📸 Features Showcase
+
+### 🤖 AI Chat
+- Instant doubt solving
+- Mathematical expressions
+- Code explanations
+- Voice input
+
+### 💬 Discussion Panel
+- Real-time communication
+- Community doubt solving
+- Live reactions
+
+### 📚 Notes System
+- PDF Upload
+- Cloud-based access
+
+### 📊 Dashboard
+- Progress Analytics
+- Streak Tracking
+
+### 👤 Profile
+- Editable Profile
+- Profile Picture Upload
+
+---
+
+## 🔒 Security
+
+- Password Hashing using bcrypt
+- Secure API communication
+- Protected user data
+- Environment variable based secrets
+
+---
+
+## 🚧 Future Roadmap
+
+- AI Generated Notes
+- AI Quiz Generator
+- Study Groups
+- Leaderboards
+- Dark Mode
+- Mobile App (Android & iOS)
+- Push Notifications
+- Video Discussions
+- Advanced Analytics
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes
+4. Push your branch
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+Licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+### Rishabh Patel
+
+Built with ❤️ to make learning smarter and more accessible.
+
+---
+
+⭐ If you found this project useful, please consider giving it a star on GitH
