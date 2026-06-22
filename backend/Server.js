@@ -15,6 +15,7 @@ const Note = require("./models/Notes");
 const Discussion = require("./models/Discussion");
 const Event = require("./models/Events");
 const Doubt = require("./models/Doubt");
+const Razorpay = require("razorpay");
 
 const app = express();
 
@@ -56,6 +57,15 @@ app.use(express.json());
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+/* =========================
+   RAZORPAY 
+========================= */
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 /* =========================
@@ -768,6 +778,30 @@ app.get("/progress/:userId", async (req, res) => {
     });
   }
 });
+
+/* =========================
+   PLANS
+========================= */
+
+app.post("/create-order", async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    const order = await razorpay.orders.create({
+      amount: amount * 100,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`
+    });
+
+    res.json(order);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 
 /* =========================
    SERVER START
