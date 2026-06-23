@@ -19,7 +19,7 @@ export default function Plans() {
       const order = await res.json();
 
       const options = {
-        key: "rzp_live_T4fSHyvJ7hbhQk",
+        key: "rzp_live_T50tNHP1D6SeIx",
 
         amount: order.amount,
         currency: order.currency,
