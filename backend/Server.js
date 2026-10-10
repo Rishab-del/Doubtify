@@ -395,40 +395,117 @@ app.post(
 /* =========================
    FILE UPLOAD -> NOTES
 ========================= */
+
+// Upload PDF and associate it with a user
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
+    const { userId } = req.body;
+
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid userId is required",
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload a PDF",
+      });
+    }
+
     const note = await Note.create({
       title: req.file.originalname,
       file: `/uploads/${req.file.filename}`,
-      size: (req.file.size / 1024 / 1024).toFixed(2),
+      size: Number((req.file.size / (1024 * 1024)).toFixed(2)),
+      userId: userId,
     });
 
-    res.json(note);
+    res.status(201).json({
+      success: true,
+      note,
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Upload failed" });
+    console.log("Upload error:", err);
+
+    res.status(500).json({
+      success: false,
+      error: "Upload failed",
+    });
   }
 });
 
-app.get("/notes", async (req, res) => {
+// Fetch only the logged-in user's notes
+app.get("/notes/:userId", async (req, res) => {
   try {
-    const notes = await Note.find().sort({ createdAt: -1 });
+    const { userId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        message: "Invalid userId",
+      });
+    }
+
+    const notes = await Note.find({
+      userId: userId,
+    }).sort({ createdAt: -1 });
+
     res.json(notes);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to fetch notes" });
+    console.log("Fetch notes error:", err);
+
+    res.status(500).json({
+      error: "Failed to fetch notes",
+    });
   }
 });
 
+// Delete only a note belonging to the specified user
 app.delete("/delete-note/:id", async (req, res) => {
   try {
-    const note = await Note.findByIdAndDelete(req.params.id);
-    res.json({ success: true, note });
+    const { userId } = req.body;
+    const { id } = req.params;
+
+    if (
+      !userId ||
+      !mongoose.Types.ObjectId.isValid(userId) ||
+      !mongoose.Types.ObjectId.isValid(id)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid userId and note ID are required",
+      });
+    }
+
+    const note = await Note.findOne({
+      _id: id,
+      userId: userId,
+    });
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found or you do not own this note",
+      });
+    }
+
+    await Note.deleteOne({ _id: note._id });
+
+    res.json({
+      success: true,
+      message: "Note deleted successfully",
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Delete failed" });
+    console.log("Delete note error:", err);
+
+    res.status(500).json({
+      success: false,
+      error: "Delete failed",
+    });
   }
 });
+
 
 /* =========================
    AI CHAT (ASK-AI)

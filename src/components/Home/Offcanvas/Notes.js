@@ -1,11 +1,17 @@
-import React, { useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./Notes.css";
 import BackButton from "./BackButton";
 import Navbar from "../Navbar";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
+
 export default function Notes() {
   const [notes, setNotes] = useState([]);
+
+  // Delete modal states
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   /* =========================
      FETCH NOTES
@@ -16,15 +22,17 @@ export default function Notes() {
       const res = await axios.get(
         "https://doubtify-0q6d.onrender.com/notes"
       );
+
       setNotes(res.data);
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching notes:", err);
     }
   };
 
   /* =========================
      LOAD NOTES ON START
   ========================= */
+
   useEffect(() => {
     fetchNotes();
   }, []);
@@ -36,26 +44,25 @@ export default function Notes() {
   const onDrop = async (acceptedFiles) => {
     for (const file of acceptedFiles) {
       try {
-        const formData =new FormData();
-        formData.append("file",file);
+        const formData = new FormData();
+
+        formData.append("file", file);
 
         await axios.post(
           "https://doubtify-0q6d.onrender.com/upload",
           formData,
           {
             headers: {
-              "Content-Type":
-                "multipart/form-data",
+              "Content-Type": "multipart/form-data",
             },
           }
         );
-
       } catch (err) {
-        console.log(err);
+        console.error("Error uploading PDF:", err);
       }
     }
 
-    /* REFRESH NOTES */
+    // Refresh notes after upload
     fetchNotes();
   };
 
@@ -68,39 +75,70 @@ export default function Notes() {
     getInputProps,
     isDragActive,
   } = useDropzone({
-
     onDrop,
-
     accept: {
       "application/pdf": [".pdf"],
     },
   });
 
   /* =========================
-   DELETE NOTE
-========================= */
+     OPEN DELETE MODAL
+  ========================= */
 
-const deleteNote = async (id) => {
+  const openDeleteModal = (id) => {
+    setSelectedNoteId(id);
+    setShowDeleteModal(true);
+  };
 
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this note?"
-  );
+  /* =========================
+     CLOSE DELETE MODAL
+  ========================= */
 
-  if (!confirmDelete) return;
+  const closeDeleteModal = () => {
+    if (deleting) return;
 
-  try {
+    setShowDeleteModal(false);
+    setSelectedNoteId(null);
+  };
 
-    await axios.delete(
-      `https://doubtify-0q6d.onrender.com/delete-note/${id}`
-    );
+  /* =========================
+     CONFIRM DELETE NOTE
+  ========================= */
 
-    fetchNotes();
+  const confirmDeleteNote = async () => {
+    if (!selectedNoteId || deleting) return;
 
-  } catch (err) {
+    try {
+      setDeleting(true);
 
-    console.log(err);
-  }
-};
+      await axios.delete(
+        `https://doubtify-0q6d.onrender.com/delete-note/${selectedNoteId}`
+      );
+
+      // Remove deleted note from UI
+      setNotes((prevNotes) =>
+        prevNotes.filter(
+          (note) => note._id !== selectedNoteId
+        )
+      );
+
+      // Close modal
+      setShowDeleteModal(false);
+      setSelectedNoteId(null);
+    } catch (err) {
+      console.error("Error deleting note:", err);
+
+      window.alert(
+        "Unable to delete this note. Please try again."
+      );
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  /* =========================
+     RENDER UI
+  ========================= */
 
   return (
     <>
@@ -108,92 +146,183 @@ const deleteNote = async (id) => {
       <BackButton />
 
       <div className="dashboard">
+        {/* Dashboard Title */}
 
         <h1 className="dashboard-title">
           My Notes 📘
         </h1>
 
         {/* ======================
-            UPLOAD BOX
+            PDF UPLOAD BOX
         ====================== */}
 
         <div
           {...getRootProps()}
           className="upload-box"
         >
-          <input
-            {...getInputProps()}
-          />
+          <input {...getInputProps()} />
 
           {isDragActive ? (
-
-            <p>
-              Drop the PDF here...
-            </p>
-
+            <p>Drop the PDF here...</p>
           ) : (
-
-            <p> + Drag / Click to Upload</p>
+            <p>+ Drag / Click to Upload</p>
           )}
         </div>
 
         {/* ======================
-            NOTES
+            NOTES GRID
         ====================== */}
 
         <div className="dashboard-grid">
-
           {notes.length > 0 ? (
-
             notes.map((note) => (
-
               <div
                 className="dashboard-card"
                 key={note._id}
               >
+                {/* Note Title */}
+
                 <h2>
                   📄 {note.title}
                 </h2>
 
-                <p>
-                  {note.size} MB
-                </p>
+                {/* File Size */}
+
+                <p>{note.size} MB</p>
+
+                {/* Action Buttons */}
 
                 <div className="btn-group">
+                  <button
+                    type="button"
+                    className="open-btn"
+                    onClick={() =>
+                      window.open(
+                        `https://doubtify-0q6d.onrender.com${note.file}`,
+                        "_blank",
+                        "noopener,noreferrer"
+                      )
+                    }
+                  >
+                    Open PDF
+                  </button>
 
-  <button
-    className="open-btn"
-    onClick={() =>
-      window.open(
-        `https://doubtify-0q6d.onrender.com${note.file}`
-      )
-    }
-  >
-    Open PDF
-  </button>
-
-  <button
-    className="delete-btns"
-    onClick={() =>
-      deleteNote(note._id)
-    }
-  >
-    🗑 Delete
-  </button>
-
-</div>
-                
+                  <button
+                    type="button"
+                    className="delete-btns"
+                    onClick={() =>
+                      openDeleteModal(note._id)
+                    }
+                  >
+                    🗑 Delete
+                  </button>
+                </div>
               </div>
             ))
-
           ) : (
-
             <p className="empty-text">
               No notes uploaded yet 📂
             </p>
           )}
         </div>
       </div>
+
+      {/* =================================
+          PREMIUM DELETE CONFIRMATION MODAL
+      ================================= */}
+
+      {showDeleteModal && (
+        <div
+          className="delete-modal-overlay"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) {
+              closeDeleteModal();
+            }
+          }}
+        >
+          <div
+            className="delete-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            aria-describedby="delete-modal-description"
+          >
+            {/* Close Button */}
+
+            <button
+              type="button"
+              className="delete-modal-close"
+              onClick={closeDeleteModal}
+              disabled={deleting}
+              aria-label="Close confirmation"
+            >
+              ×
+            </button>
+
+            {/* Warning Icon */}
+
+            <div className="delete-modal-icon">
+              <span>!</span>
+            </div>
+
+            {/* Heading */}
+
+            <h2 id="delete-modal-title">
+              Delete this note?
+            </h2>
+
+            {/* Description */}
+
+            <p id="delete-modal-description">
+              Are you sure you want to delete this note?
+
+              <br />
+
+              <span className="delete-warning">
+                This action cannot be undone.
+              </span>
+            </p>
+
+            {/* Action Buttons */}
+
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="delete-cancel-btn"
+                onClick={closeDeleteModal}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="delete-confirm-btn"
+                onClick={confirmDeleteNote}
+                disabled={deleting}
+              >
+                {deleting ? (
+                  <>
+                    <span className="delete-spinner" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <span>🗑</span>
+                    Delete Note
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Footer */}
+
+            <div className="delete-modal-footer">
+              <span className="delete-footer-dot" />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
