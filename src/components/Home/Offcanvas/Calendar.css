@@ -898,3 +898,364 @@
     animation: none;
   }
 }
+/* =====================================
+   DELETE EVENT MODAL OVERLAY
+===================================== */
+
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(3, 5, 15, 0.78);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  animation: deleteOverlayIn 0.22s ease;
+}
+
+/* =====================================
+   DELETE MODAL CARD
+===================================== */
+
+.delete-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 420px;
+
+  padding: 36px 28px 28px;
+
+  overflow: hidden;
+
+  text-align: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(139, 92, 246, 0.17),
+      transparent 55%
+    ),
+    #11172b;
+
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 24px;
+
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.55),
+    0 0 35px rgba(139, 92, 246, 0.1);
+
+  animation: deleteModalIn 0.28s ease;
+}
+
+/* Top gradient accent */
+
+.delete-modal::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 15%;
+
+  width: 70%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #8b5cf6,
+    #22d3ee,
+    transparent
+  );
+}
+
+/* =====================================
+   CLOSE BUTTON
+===================================== */
+
+.delete-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #a5b4cc;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.delete-modal-close:hover:not(:disabled) {
+  color: #ffffff;
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(167, 139, 250, 0.3);
+
+  transform: rotate(90deg);
+}
+
+.delete-modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =====================================
+   WARNING ICON
+===================================== */
+
+.delete-modal-icon {
+  width: 68px;
+  height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 22px;
+
+  color: #fca5a5;
+
+  background: rgba(239, 68, 68, 0.12);
+
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 20px;
+
+  font-size: 27px;
+
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.07);
+}
+
+/* =====================================
+   MODAL TEXT
+===================================== */
+
+.delete-modal h2 {
+  margin: 0 0 13px;
+
+  color: #f8fafc;
+
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.delete-modal-message {
+  margin: 0 auto;
+
+  max-width: 330px;
+
+  color: #a5b4cc;
+
+  font-size: 14px;
+  line-height: 1.8;
+
+  overflow-wrap: anywhere;
+}
+
+.delete-modal-message strong {
+  color: #ddd6fe;
+  font-weight: 700;
+}
+
+/* =====================================
+   MODAL BUTTONS
+===================================== */
+
+.delete-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 30px;
+}
+
+.delete-modal-actions button {
+  flex: 1;
+
+  min-height: 46px;
+  padding: 12px 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 12px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* CANCEL BUTTON */
+
+.delete-cancel-btn {
+  color: #e2e8f0;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.delete-cancel-btn:hover:not(:disabled) {
+  color: #ffffff;
+
+  background: rgba(148, 163, 184, 0.13);
+
+  border-color: rgba(148, 163, 184, 0.35);
+
+  transform: translateY(-2px);
+}
+
+/* CONFIRM DELETE BUTTON */
+
+.delete-confirm-btn {
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #ef4444,
+    #b91c1c
+  );
+
+  border: 1px solid rgba(248, 113, 113, 0.3);
+
+  box-shadow: 0 5px 18px rgba(239, 68, 68, 0.15);
+}
+
+.delete-confirm-btn:hover:not(:disabled) {
+  background: linear-gradient(
+    135deg,
+    #f87171,
+    #dc2626
+  );
+
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+
+  transform: translateY(-2px);
+}
+
+/* Disabled buttons */
+
+.delete-modal-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =====================================
+   ANIMATIONS
+===================================== */
+
+@keyframes deleteOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes deleteModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 480px) {
+  .delete-modal {
+    max-width: 360px;
+    padding: 32px 20px 23px;
+
+    border-radius: 20px;
+  }
+
+  .delete-modal-icon {
+    width: 60px;
+    height: 60px;
+
+    margin-bottom: 18px;
+
+    font-size: 24px;
+    border-radius: 17px;
+  }
+
+  .delete-modal h2 {
+    font-size: 22px;
+  }
+
+  .delete-modal-message {
+    font-size: 13px;
+  }
+
+  .delete-modal-actions {
+    gap: 9px;
+    margin-top: 25px;
+  }
+
+  .delete-modal-actions button {
+    min-height: 44px;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
+
+/* =====================================
+   ACCESSIBILITY
+===================================== */
+
+.delete-modal-actions button:focus-visible,
+.delete-modal-close:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .delete-modal-overlay,
+  .delete-modal {
+    animation: none;
+  }
+
+  .delete-modal *,
+  .delete-modal *::before,
+  .delete-modal *::after {
+    transition: none !important;
+  }
+}
