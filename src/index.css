@@ -1,23 +1,185 @@
+/* ========================================
+   DOUBTIFY — GLOBAL STYLES
+======================================== */
+
+:root {
+  --bg-primary: #080b16;
+  --bg-secondary: #11172b;
+  --bg-card: #171d35;
+
+  --accent-violet: #8b5cf6;
+  --accent-purple: #a78bfa;
+  --accent-cyan: #22d3ee;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #a5b4cc;
+
+  --border-color: rgba(148, 163, 184, 0.16);
+}
+
+/* ========================================
+   RESET
+======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg-primary);
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
+
   font-family: "Poppins", sans-serif;
 
-  background: linear-gradient(
-    150deg,
-    #89f7fe,
-    #66a6ff,
-    #89f7fe
-  );
+  color: var(--text-primary);
+
+  background-color: var(--bg-primary);
+
+  background-image:
+    radial-gradient(
+      ellipse at 10% 10%,
+      rgba(139, 92, 246, 0.08),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 90% 80%,
+      rgba(34, 211, 238, 0.05),
+      transparent 40%
+    );
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* React root */
+
+#root {
+  min-height: 100vh;
+}
+
+/* ========================================
+   CODE FONT
+======================================== */
+
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family:
+    source-code-pro,
+    Menlo,
+    Monaco,
+    Consolas,
+    "Courier New",
     monospace;
 }
 
-.doubt-card {
-  background-color: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  padding: 25px;
-  border-radius: 18px;
-  text-align: center;
+/* ========================================
+   TEXT SELECTION
+======================================== */
+
+::selection {
+  color: #ffffff;
+  background: rgba(139, 92, 246, 0.4);
+}
+
+/* ========================================
+   GLOBAL SCROLLBAR
+======================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.4);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.7);
+}
+
+/* ========================================
+   GLOBAL LINKS
+======================================== */
+
+a {
+  color: var(--accent-purple);
+  text-decoration: none;
+
+  transition: color 0.25s ease;
+}
+
+a:hover {
+  color: var(--accent-cyan);
+}
+
+/* ========================================
+   GLOBAL BUTTON FOCUS
+======================================== */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+/* ========================================
+   DARK MODE
+======================================== */
+
+body.dark {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Timer input */
+
+body.dark .timer-input {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+body.dark .timer-input::placeholder {
+  color: #8490a8;
+}
+
+body.dark .timer-input:focus {
+  border-color: var(--accent-violet);
+
+  box-shadow:
+    0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,506 +1,777 @@
-/* =========================
-   MAIN CONTAINER
-========================= */
+/* =========================================
+   DOUBTIFY — DISCUSSION ROOM
+   Premium Dark Navy + Violet + Cyan
+========================================= */
+
+/* MAIN CONTAINER */
 
 .discussion-container {
+  position: relative;
+  isolation: isolate;
 
+  width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
 
-  padding-top: 120px;
-  padding-bottom: 40px;
+  box-sizing: border-box;
+  padding: 125px 20px 45px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  background:
-    linear-gradient(
-      135deg,
-      #89f7fe,
-      #66a6ff,
-      #89f7fe
-    );
-
   font-family: "Poppins", sans-serif;
+  color: #f8fafc;
+
+  background:
+    radial-gradient(
+      ellipse at 12% 15%,
+      rgba(139, 92, 246, 0.14),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 88% 75%,
+      rgba(34, 211, 238, 0.08),
+      transparent 40%
+    ),
+    #080b16;
 }
 
-/* =========================
+/* =========================================
    HEADING
-========================= */
+========================================= */
 
 .heading {
+  margin: 0 0 25px;
 
-  color: white;
+  color: #ffffff;
 
-  font-size: 52px;
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -1px;
 
-  font-weight: 700;
+  text-align: center;
 
-  margin-bottom: 20px;
+  text-shadow:
+    0 0 25px rgba(139, 92, 246, 0.15);
 }
 
-/* =========================
-   ROOM BUTTONS
-========================= */
+/* Optional gradient text */
+
+.heading span {
+  background: linear-gradient(
+    135deg,
+    #a78bfa,
+    #8b5cf6,
+    #22d3ee
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =========================================
+   ROOM SELECTOR
+========================================= */
 
 .room-selector {
-
   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 
   gap: 12px;
+  margin-bottom: 25px;
 
-  margin-bottom: 20px;
+  max-width: 100%;
 }
 
 .room-selector button {
+  padding: 10px 20px;
 
-  border: none;
-
-  padding: 10px 18px;
-
+  border: 1px solid rgba(139, 92, 246, 0.25);
   border-radius: 12px;
+
+  background: rgba(24, 29, 53, 0.85);
+  color: #cbd5e1;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
 
   cursor: pointer;
 
-  color: white;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
-  font-weight: 600;
-
-  background:
-    rgba(255,255,255,0.15);
-
-  backdrop-filter: blur(10px);
-
-  transition: 0.25s;
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .room-selector button:hover {
-
   transform: translateY(-2px);
 
-  background:
-    linear-gradient(
-      135deg,
-      #6C63FF,
-      #00C9A7
-    );
+  border-color: rgba(139, 92, 246, 0.65);
+
+  background: rgba(139, 92, 246, 0.15);
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 20px rgba(139, 92, 246, 0.10);
 }
 
-/* =========================
-   INPUT BOX
-========================= */
+/* Active room button */
+
+.room-selector button.active {
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #6d4aff 60%,
+    #06b6d4
+  );
+
+  border-color: transparent;
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 18px rgba(139, 92, 246, 0.22);
+}
+
+/* =========================================
+   POST INPUT BOX
+========================================= */
 
 .post-box {
-
-  width: 65%;
-
   display: flex;
+  align-items: stretch;
 
   gap: 12px;
 
-  margin-bottom: 20px;
+  width: 65%;
+  max-width: 900px;
+
+  margin-bottom: 22px;
 }
 
 .post-box input {
-
   flex: 1;
+  min-width: 0;
 
-  padding: 16px;
+  box-sizing: border-box;
+  padding: 15px 18px;
 
-  border: none;
+  border: 1px solid rgba(148, 163, 184, 0.20);
+  border-radius: 14px;
 
   outline: none;
 
-  border-radius: 16px;
+  background: rgba(17, 23, 43, 0.92);
+  color: #f8fafc;
 
-  font-size: 15px;
-
-  background:
-    rgba(255,255,255,0.9);
+  font-family: inherit;
+  font-size: 14px;
 
   box-shadow:
-    0 4px 20px rgba(0,0,0,0.08);
+    0 5px 20px rgba(0, 0, 0, 0.12);
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.post-box input::placeholder {
+  color: #8490a8;
+}
+
+.post-box input:focus {
+  border-color: #8b5cf6;
+
+  box-shadow:
+    0 0 0 3px rgba(139, 92, 246, 0.12),
+    0 5px 20px rgba(0, 0, 0, 0.12);
 }
 
 .post-box button {
+  flex-shrink: 0;
 
-  border: none;
+  padding: 0 26px;
 
-  padding: 0 28px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
 
-  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #6d4aff 55%,
+    #06b6d4
+  );
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
 
   cursor: pointer;
 
-  color: white;
+  box-shadow:
+    0 6px 20px rgba(139, 92, 246, 0.18);
 
-  font-weight: 700;
-
-  background:
-    linear-gradient(
-      135deg,
-      #6C63FF,
-      #00C9A7
-    );
-
-  transition: 0.25s;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
 }
 
 .post-box button:hover {
+  transform: translateY(-2px);
 
-  transform: scale(1.04);
+  filter: brightness(1.08);
 
   box-shadow:
-    0 8px 25px rgba(0,0,0,0.15);
+    0 10px 25px rgba(139, 92, 246, 0.28);
 }
 
-/* =========================
+.post-box button:active {
+  transform: scale(0.98);
+}
+
+/* =========================================
    CHAT AREA
-========================= */
+========================================= */
 
 .doubt-list {
-
-  width: 65%;
-
-  height: 65vh;
-
-  overflow-y: auto;
-
-  padding: 24px;
-
-  border-radius: 28px;
-
   display: flex;
   flex-direction: column;
+  align-items: stretch;
 
   gap: 18px;
 
-  background:
-    rgba(255,255,255,0.08);
+  width: 65%;
+  max-width: 900px;
+
+  height: 65vh;
+  min-height: 300px;
+  max-height: 700px;
+
+  box-sizing: border-box;
+  padding: 24px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  border-radius: 22px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(17, 23, 43, 0.80),
+    rgba(10, 14, 29, 0.88)
+  );
 
   backdrop-filter: blur(18px);
-
-  border:
-    1px solid rgba(255,255,255,0.15);
+  -webkit-backdrop-filter: blur(18px);
 
   box-shadow:
-    0 8px 30px rgba(0,0,0,0.1);
+    0 15px 40px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.55) transparent;
 }
 
-/* =========================
-   SCROLLBAR
-========================= */
+/* Scrollbar */
 
 .doubt-list::-webkit-scrollbar {
-
   width: 6px;
 }
 
+.doubt-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .doubt-list::-webkit-scrollbar-thumb {
-
-  background:
-    rgba(255,255,255,0.4);
-
+  background: rgba(139, 92, 246, 0.45);
   border-radius: 20px;
 }
 
-/* =========================
-   CHAT BUBBLE
-========================= */
+.doubt-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.75);
+}
+
+/* =========================================
+   MESSAGE BUBBLES
+========================================= */
 
 .doubt-card {
+  position: relative;
 
   display: flex;
-
   align-items: flex-start;
 
-  gap: 14px;
+  gap: 12px;
 
-  max-width: 75%;
+  width: fit-content;
+  max-width: 80%;
+  min-width: 0;
 
-  padding: 16px;
+  box-sizing: border-box;
+  padding: 15px;
 
-  border-radius: 22px;
+  border-radius: 18px;
 
-  animation: fadeIn 0.25s ease;
+  animation: discussionFadeIn 0.25s ease;
 
-  position: relative;
+  overflow-wrap: anywhere;
 }
 
 /* MY MESSAGE */
 
 .doubt-card.right {
-
   align-self: flex-end;
 
-  background:
-    linear-gradient(
-      135deg,
-      #6C63FF,
-      #00C9A7
-    );
+  background: linear-gradient(
+    135deg,
+    #7048e8,
+    #6d4aff 60%,
+    #4c63dc
+  );
 
-  border-top-right-radius: 6px;
+  border: 1px solid rgba(196, 181, 253, 0.20);
+  border-top-right-radius: 5px;
 
-  color: white;
+  color: #ffffff;
 
   box-shadow:
-    0 10px 30px rgba(0,0,0,0.15);
+    0 8px 25px rgba(109, 74, 255, 0.15);
 }
 
-/* OTHER MESSAGE */
+/* OTHER USER MESSAGE */
 
 .doubt-card.left {
-
   align-self: flex-start;
 
-  background:
-    rgba(255,255,255,0.14);
+  background: linear-gradient(
+    145deg,
+    rgba(30, 35, 65, 0.96),
+    rgba(18, 23, 44, 0.96)
+  );
 
-  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-top-left-radius: 5px;
 
-  border-top-left-radius: 6px;
+  color: #f1f5f9;
 
-  color: white;
-
-  border:
-    1px solid rgba(255,255,255,0.1);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* =========================
+/* =========================================
    AVATAR
-========================= */
+========================================= */
 
 .avatar {
+  flex-shrink: 0;
 
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
 
   border-radius: 50%;
 
   object-fit: cover;
 
-  border:
-    2px solid rgba(255,255,255,0.4);
+  border: 2px solid rgba(167, 139, 250, 0.45);
+
+  background: #171d35;
 }
 
-/* =========================
-   CONTENT
-========================= */
+/* =========================================
+   MESSAGE CONTENT
+========================================= */
 
 .content {
-
   flex: 1;
+  min-width: 0;
 }
 
-/* =========================
-   MESSAGE
-========================= */
+/* =========================================
+   MESSAGE TEXT
+========================================= */
 
 .message {
-
   margin: 0;
 
-  font-size: 15px;
+  color: inherit;
 
-  line-height: 1.5;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
 
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
-/* =========================
+/* =========================================
    REACTIONS
-========================= */
+========================================= */
 
 .reactions {
-
   display: flex;
-
   align-items: center;
+  flex-wrap: wrap;
 
   gap: 8px;
-
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .reactions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  border: none;
+  min-height: 30px;
+  padding: 5px 10px;
 
-  background:
-    rgba(255,255,255,0.18);
-
-  color: white;
-
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
 
-  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #e2e8f0;
+
+  font-family: inherit;
+  font-size: 13px;
 
   cursor: pointer;
 
-  transition: 0.2s;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .reactions button:hover {
+  transform: translateY(-1px);
 
-  transform: scale(1.1);
-
-  background:
-    rgba(255,255,255,0.28);
+  background: rgba(139, 92, 246, 0.18);
+  border-color: rgba(167, 139, 250, 0.35);
 }
 
-/* =========================
-   META
-========================= */
-
-.meta {
-
-  margin-top: 12px;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 15px;
-
-  flex-wrap: wrap;
-
-  font-size: 11px;
-
-  opacity: 0.85;
-}
-
-.user {
-
-  font-weight: 700;
-}
-
-/* =========================
-   DELETE BUTTON
-========================= */
-
-.delete-btn {
-
-  border: none;
-
-  background: transparent;
-
-  color: white;
-
-  cursor: pointer;
-
-  font-size: 16px;
-
-  opacity: 0.7;
-
-  transition: 0.2s;
-}
-
-.delete-btn:hover {
-
-  opacity: 1;
-
-  transform: scale(1.15);
-}
-
-/* =========================
-   EMPTY
-========================= */
-
-.empty {
-
-  color: white;
-
-  opacity: 0.6;
-
-  text-align: center;
-
-  margin-top: 120px;
-
-  font-size: 24px;
-}
-
-/* =========================
-   TYPING
-========================= */
-
-.typing-text {
-
-  color: white;
-
-  margin-bottom: 10px;
-
-  opacity: 0.8;
-}
-
-/* =========================
-   ANIMATION
-========================= */
-
-@keyframes fadeIn {
-
-  from {
-
-    opacity: 0;
-
-    transform:
-      translateY(8px);
-  }
-
-  to {
-
-    opacity: 1;
-
-    transform:
-      translateY(0);
-  }
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 768px) {
-
-  .post-box,
-  .doubt-list {
-
-    width: 92%;
-  }
-
-  .heading {
-
-    font-size: 36px;
-  }
-
-  .doubt-card {
-
-    max-width: 95%;
-  }
-
-}
+/* =========================================
+   REACTION DISPLAY
+========================================= */
 
 .reaction-display {
-
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
 
   gap: 6px;
-
-  margin-top: 8px;
-
-  flex-wrap: wrap;
+  margin-top: 9px;
 }
 
 .reaction-display span {
+  display: inline-flex;
+  align-items: center;
 
-  background:
-    rgba(255,255,255,0.18);
+  padding: 5px 10px;
 
-  padding: 4px 10px;
-
+  border: 1px solid rgba(167, 139, 250, 0.18);
   border-radius: 12px;
 
-  font-size: 14px;
+  background: rgba(139, 92, 246, 0.12);
 
-  color: white;
+  color: #ddd6fe;
+
+  font-size: 13px;
+}
+
+/* =========================================
+   MESSAGE META
+========================================= */
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  margin-top: 12px;
+
+  color: #a5b4cc;
+
+  font-size: 11px;
+  line-height: 1.5;
+
+  opacity: 0.9;
+}
+
+.doubt-card.right .meta {
+  color: rgba(255, 255, 255, 0.80);
+}
+
+.user {
+  color: #c4b5fd;
+  font-weight: 700;
+}
+
+.doubt-card.right .user {
+  color: #ffffff;
+}
+
+/* =========================================
+   DELETE BUTTON
+========================================= */
+
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+  color: #cbd5e1;
+
+  font-size: 15px;
+
+  cursor: pointer;
+  opacity: 0.75;
+
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #fca5a5;
+
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty {
+  margin: auto 0;
+
+  color: #94a3b8;
+
+  font-size: 18px;
+  line-height: 1.7;
+
+  text-align: center;
+}
+
+/* =========================================
+   TYPING INDICATOR
+========================================= */
+
+.typing-text {
+  align-self: flex-start;
+
+  margin: 0 0 12px;
+
+  color: #a78bfa;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  opacity: 0.9;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes discussionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 900px) {
+  .discussion-container {
+    padding: 115px 20px 35px;
+  }
+
+  .post-box,
+  .doubt-list {
+    width: 85%;
+  }
+
+  .doubt-list {
+    height: 62vh;
+  }
+
+  .doubt-card {
+    max-width: 88%;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+  .discussion-container {
+    padding: 100px 12px 25px;
+  }
+
+  .heading {
+    font-size: 32px;
+    margin-bottom: 22px;
+  }
+
+  .room-selector {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .room-selector button {
+    padding: 9px 13px;
+    font-size: 12px;
+  }
+
+  .post-box {
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .post-box input {
+    padding: 12px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  .post-box button {
+    padding: 0 16px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
+
+  .doubt-list {
+    width: 100%;
+
+    height: 60vh;
+    min-height: 280px;
+
+    padding: 14px;
+    gap: 14px;
+
+    border-radius: 18px;
+  }
+
+  .doubt-card {
+    gap: 9px;
+
+    max-width: 95%;
+    padding: 11px;
+
+    border-radius: 15px;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .message {
+    font-size: 13px;
+  }
+
+  .meta {
+    gap: 8px;
+    font-size: 10px;
+  }
+
+  .empty {
+    font-size: 15px;
+  }
+
+  .reaction-display span {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 380px) {
+  .discussion-container {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .heading {
+    font-size: 28px;
+  }
+
+  .room-selector {
+    gap: 6px;
+  }
+
+  .room-selector button {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .doubt-list {
+    padding: 10px;
+  }
+
+  .doubt-card {
+    max-width: 98%;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+.room-selector button:focus-visible,
+.post-box button:focus-visible,
+.reactions button:focus-visible,
+.delete-btn:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doubt-card {
+    animation: none;
+  }
+
+  .room-selector button,
+  .post-box button,
+  .reactions button,
+  .delete-btn {
+    transition: none;
+  }
 }

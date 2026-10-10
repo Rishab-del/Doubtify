@@ -1,176 +1,590 @@
+/* ========================================
+   DOUBTIFY — PREMIUM PRICING PLANS
+======================================== */
+
 .plans-page {
-  padding-top: 120px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
   min-height: 100vh;
+  min-height: 100dvh;
 
-  background: linear-gradient(
-    135deg,
-    #89f7fe,
-    #66a6ff,
-    #89f7fe
-  );
+  box-sizing: border-box;
+  padding: 130px 24px 80px;
 
+  font-family: "Poppins", sans-serif;
   text-align: center;
+  color: #f8fafc;
+
+  background:
+    radial-gradient(
+      ellipse at 15% 15%,
+      rgba(139, 92, 246, 0.17),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 85% 60%,
+      rgba(34, 211, 238, 0.10),
+      transparent 40%
+    ),
+    #080b16;
 }
 
+/* ========================================
+   BACKGROUND GLOW
+======================================== */
+
+.plans-page::before,
+.plans-page::after {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  width: 300px;
+  height: 300px;
+
+  border-radius: 50%;
+  filter: blur(100px);
+
+  pointer-events: none;
+}
+
+.plans-page::before {
+  top: 120px;
+  left: -150px;
+
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.plans-page::after {
+  right: -150px;
+  bottom: 80px;
+
+  background: rgba(34, 211, 238, 0.09);
+}
+
+/* ========================================
+   PAGE TITLE
+======================================== */
 
 .plans-title {
-  font-size: 38px;
-  font-weight: bold;
-  margin-bottom: 50px;
-  color: #fff;
+  position: relative;
 
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  margin: 0 0 18px;
+
+  color: #ffffff;
+
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -1.2px;
+
+  text-shadow:
+    0 0 25px rgba(139, 92, 246, 0.15);
 }
 
+/* Optional gradient text */
+
+.plans-title span {
+  background: linear-gradient(
+    135deg,
+    #a78bfa,
+    #8b5cf6,
+    #22d3ee
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ========================================
+   PLANS CONTAINER
+======================================== */
 
 .plans-container {
+  position: relative;
+
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: 30px;
-  flex-wrap: wrap;
 
-  padding: 20px;
+  flex-wrap: wrap;
+  gap: 28px;
+
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 45px auto 0;
+  padding: 15px 10px;
+
+  box-sizing: border-box;
 }
 
+/* ========================================
+   PLAN CARD
+======================================== */
 
 .plan-card {
-  background: rgba(255, 255, 255, 0.25);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  width: 290px;
+  max-width: 100%;
 
-  border-radius: 20px;
+  box-sizing: border-box;
+  padding: 35px 27px 30px;
 
-  width: 280px;
+  text-align: left;
 
-  padding: 30px 25px;
+  background: linear-gradient(
+    145deg,
+    rgba(24, 29, 53, 0.94),
+    rgba(13, 17, 35, 0.96)
+  );
 
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 23px;
 
-  transition: all 0.3s ease;
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+}
+
+/* Card glow */
+
+.plan-card::after {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  top: -100px;
+  right: -100px;
+
+  width: 200px;
+  height: 200px;
+
+  background: rgba(139, 92, 246, 0.12);
+  border-radius: 50%;
+
+  filter: blur(60px);
+  opacity: 0;
+
+  transition: opacity 0.35s ease;
 }
 
 .plan-card:hover {
-  transform: translateY(-12px);
+  transform: translateY(-8px);
 
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  border-color: rgba(139, 92, 246, 0.42);
+
+  box-shadow:
+    0 25px 55px rgba(0, 0, 0, 0.30),
+    0 0 25px rgba(139, 92, 246, 0.08);
 }
 
-
-.popular {
-  position: relative;
-
-  border: 3px solid #0072ff;
-
-  transform: scale(1.05);
+.plan-card:hover::after {
+  opacity: 1;
 }
 
-.popular::before {
-  content: "🔥 MOST POPULAR";
+/* ========================================
+   MOST POPULAR PLAN
+======================================== */
+
+.plan-card.popular {
+  border: 1px solid rgba(139, 92, 246, 0.75);
+
+  background: linear-gradient(
+    145deg,
+    rgba(35, 31, 69, 0.98),
+    rgba(15, 20, 42, 0.98)
+  );
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.25),
+    0 0 30px rgba(139, 92, 246, 0.10),
+    inset 0 1px 0 rgba(167, 139, 250, 0.12);
+
+  transform: translateY(-8px);
+}
+
+.plan-card.popular:hover {
+  transform: translateY(-14px);
+
+  border-color: rgba(167, 139, 250, 0.95);
+
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.32),
+    0 0 35px rgba(139, 92, 246, 0.15);
+}
+
+/* Popular badge */
+
+.plan-card.popular::before {
+  content: "✦ MOST POPULAR";
 
   position: absolute;
 
-  top: -15px;
+  top: 0;
   left: 50%;
 
   transform: translateX(-50%);
 
-  background: #0072ff;
+  padding: 9px 18px;
 
-  color: white;
+  border-radius: 0 0 13px 13px;
 
-  font-size: 12px;
-  font-weight: bold;
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #6d4aff 55%,
+    #06b6d4
+  );
 
-  padding: 6px 14px;
+  color: #ffffff;
 
-  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
 
-  box-shadow: 0 4px 10px rgba(0, 114, 255, 0.4);
+  box-shadow:
+    0 5px 20px rgba(139, 92, 246, 0.25);
 }
 
+/* Add extra space to popular plan */
+
+.plan-card.popular {
+  padding-top: 55px;
+}
+
+/* ========================================
+   PLAN NAME
+======================================== */
 
 .plan-card h2 {
-  font-size: 28px;
-  margin-bottom: 10px;
+  margin: 0 0 15px;
+
+  color: #f8fafc;
+
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
 }
+
+/* ========================================
+   PRICE
+======================================== */
 
 .plan-card h3 {
-  font-size: 34px;
-  font-weight: bold;
+  margin: 0 0 15px;
 
-  color: #0072ff;
+  color: #a78bfa;
 
-  margin-bottom: 15px;
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -1px;
+
+  overflow-wrap: anywhere;
 }
+
+/* Price gradient for popular plan */
+
+.plan-card.popular h3 {
+  background: linear-gradient(
+    135deg,
+    #c4b5fd,
+    #a78bfa,
+    #22d3ee
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ========================================
+   PLAN DESCRIPTION
+======================================== */
 
 .plan-card p {
-  color: #444;
-  margin-bottom: 20px;
+  margin: 0 0 20px;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.8;
 }
 
+/* ========================================
+   FEATURE LIST
+======================================== */
 
 .plan-card ul {
   list-style: none;
 
   padding: 0;
-  margin: 20px 0;
+  margin: 10px 0 28px;
+
+  flex: 1;
 }
 
 .plan-card li {
-  margin: 12px 0;
+  position: relative;
 
-  font-size: 15px;
+  margin: 14px 0;
+  padding-left: 27px;
 
-  color: #222;
+  color: #cbd5e1;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
 }
 
+/* Checkmark */
+
+.plan-card li::before {
+  content: "✓";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 19px;
+  height: 19px;
+
+  border-radius: 50%;
+
+  background: rgba(34, 211, 238, 0.10);
+
+  color: #22d3ee;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ========================================
+   PLAN BUTTON
+======================================== */
 
 .plan-btn {
+  position: relative;
+  overflow: hidden;
+
+  display: block;
+
   width: 100%;
+  min-height: 47px;
 
-  padding: 12px;
+  box-sizing: border-box;
+  padding: 12px 18px;
+  margin-top: auto;
 
-  border: none;
-  border-radius: 10px;
+  border: 1px solid rgba(139, 92, 246, 0.30);
+  border-radius: 12px;
 
-  background: linear-gradient(
-    135deg,
-    #0072ff,
-    #00c6ff
-  );
+  background: rgba(139, 92, 246, 0.10);
 
-  color: white;
+  color: #c4b5fd;
 
-  font-size: 16px;
-  font-weight: bold;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
 
   cursor: pointer;
 
-  transition: all 0.3s ease;
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .plan-btn:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px);
 
-  box-shadow: 0 6px 20px rgba(0, 114, 255, 0.4);
+  background: rgba(139, 92, 246, 0.18);
+
+  border-color: rgba(167, 139, 250, 0.70);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 8px 24px rgba(139, 92, 246, 0.14);
 }
 
+/* Popular plan button */
 
-@media (max-width: 768px) {
-  .plans-title {
-    font-size: 30px;
+.plan-card.popular .plan-btn {
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #6d4aff 55%,
+    #06b6d4
+  );
+
+  border-color: rgba(255, 255, 255, 0.12);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 7px 22px rgba(139, 92, 246, 0.23),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.plan-card.popular .plan-btn:hover {
+  filter: brightness(1.1);
+
+  box-shadow:
+    0 12px 30px rgba(139, 92, 246, 0.35),
+    0 0 18px rgba(34, 211, 238, 0.10);
+}
+
+.plan-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.plan-btn:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 4px;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 950px) {
+  .plans-page {
+    padding: 115px 20px 65px;
+  }
+
+  .plans-container {
+    gap: 24px;
   }
 
   .plan-card {
-    width: 90%;
-    max-width: 320px;
+    width: 280px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 650px) {
+  .plans-page {
+    padding: 105px 16px 50px;
   }
 
-  .popular {
-    transform: scale(1);
+  .plans-title {
+    font-size: 32px;
+    letter-spacing: -0.7px;
+  }
+
+  .plans-container {
+    flex-direction: column;
+    align-items: center;
+
+    gap: 25px;
+
+    margin-top: 30px;
+    padding: 15px 0;
+  }
+
+  .plan-card {
+    width: 100%;
+    max-width: 390px;
+
+    padding: 30px 24px;
+    border-radius: 20px;
+  }
+
+  .plan-card.popular {
+    padding-top: 52px;
+    transform: none;
+  }
+
+  .plan-card.popular:hover {
+    transform: translateY(-5px);
+  }
+
+  .plan-card h2 {
+    font-size: 22px;
+  }
+
+  .plan-card h3 {
+    font-size: 33px;
+  }
+
+  .plan-card:hover {
+    transform: translateY(-5px);
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 380px) {
+  .plans-page {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .plans-title {
+    font-size: 28px;
+  }
+
+  .plan-card {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .plan-card.popular {
+    padding-top: 52px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-card,
+  .plan-card::after,
+  .plan-btn {
+    transition: none;
+  }
+
+  .plan-card:hover,
+  .plan-card.popular,
+  .plan-card.popular:hover {
+    transform: none;
   }
 }

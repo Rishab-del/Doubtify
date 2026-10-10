@@ -3,12 +3,15 @@ import "./Profile.css";
 import BackButton from "./BackButton";
 import React, { useState, useEffect } from "react";
 
+const API_URL = "https://doubtify-0q6d.onrender.com";
+
 export default function Profile() {
   const storedUser = JSON.parse(
-  localStorage.getItem("user") || "{}"
-);
+    localStorage.getItem("user") || "{}"
+  );
 
-const userId = storedUser?.id;
+  const userId = storedUser?.id;
+
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -25,367 +28,484 @@ const userId = storedUser?.id;
 
   const [image, setImage] = useState(null);
   const [imageChanged, setImageChanged] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-useEffect(() => {
-  const fetchProfile = async () => {
-  try {
-    const res = await axios.get(
-      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`
-    );
+  // =====================================
+  // FETCH PROFILE
+  // =====================================
 
-    setUser({
-      name: res.data.name || "",
-      email: res.data.email || "",
-      exam: res.data.exam || "",
-      className: res.data.className || "",
-      city: res.data.city || "",
-      phone: res.data.phone || "",
-      college: res.data.college || "",
-    });
+  useEffect(() => {
+    let cancelled = false;
 
-    if (res.data.profilePic) {
-      setImage(
-        `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
-      );
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-  if (userId) {
+    const fetchProfile = async () => {
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `${API_URL}/api/user/profile/${userId}`
+        );
+
+        if (cancelled) return;
+
+        setUser({
+          name: res.data.name || "",
+          email: res.data.email || "",
+          exam: res.data.exam || "",
+          className: res.data.className || "",
+          city: res.data.city || "",
+          phone: res.data.phone || "",
+          college: res.data.college || "",
+        });
+
+        if (res.data.profilePic) {
+          setImage(
+            `${API_URL}${res.data.profilePic}`
+          );
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("Profile fetch failed:", err);
+          alert("Unable to load profile.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchProfile();
-  }
-}, [userId]);
 
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
+  // =====================================
+  // INPUT CHANGE
+  // =====================================
 
   const handleChange = (e) => {
-    setUser({
-      ...user,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
   };
 
+  // =====================================
+  // IMAGE UPLOAD PREVIEW
+  // =====================================
+
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
 
     if (!file) return;
 
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image.");
+      e.target.value = "";
+      return;
+    }
+
+    // Limit image size to 5 MB.
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5 MB.");
+      e.target.value = "";
+      return;
+    }
+
     setSelectedFile(file);
+
     setImage(URL.createObjectURL(file));
+
     setImageChanged(true);
     setIsEditing(true);
   };
 
-const uploadProfilePic = async () => {
-  if (!selectedFile) return;
+  // =====================================
+  // UPLOAD PROFILE PHOTO
+  // =====================================
 
-  const formData = new FormData();
+  const uploadProfilePic = async () => {
+    if (!selectedFile) return;
 
-  formData.append(
-    "profilePic",
-    selectedFile
-  );
+    const formData = new FormData();
 
-  const res = await axios.post(
-    `https://doubtify-0q6d.onrender.com/api/user/upload-profile/${userId}`,
-    formData,
-    {
-      headers: {
-        "Content-Type":
-          "multipart/form-data",
-      },
-    }
-  );
+    formData.append("profilePic", selectedFile);
 
-  if (res.data.profilePic) {
-    setImage(
-      `https://doubtify-0q6d.onrender.com${res.data.profilePic}`
-    );
-  }
-};
-
-const handleSave = async () => {
-  try {
-    if (selectedFile) {
-      await uploadProfilePic();
-    }
-
-    await axios.put(
-      `https://doubtify-0q6d.onrender.com/api/user/profile/${userId}`,
-      user
+    const res = await axios.post(
+      `${API_URL}/api/user/upload-profile/${userId}`,
+      formData
     );
 
+    if (res.data.profilePic) {
+      setImage(
+        `${API_URL}${res.data.profilePic}`
+      );
+    }
+  };
+
+  // =====================================
+  // SAVE PROFILE
+  // =====================================
+
+  const handleSave = async () => {
+    if (!userId) {
+      alert("Please log in again.");
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      if (selectedFile) {
+        await uploadProfilePic();
+      }
+
+      await axios.put(
+        `${API_URL}/api/user/profile/${userId}`,
+        user
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...storedUser,
+          ...user,
+        })
+      );
+
+      setIsEditing(false);
+      setImageChanged(false);
+      setSelectedFile(null);
+
+      alert("Profile updated successfully! ✅");
+    } catch (err) {
+      console.error("Profile update failed:", err);
+
+      alert(
+        err.response?.data?.message ||
+          "Profile update failed. Please try again."
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // =====================================
+  // CANCEL EDITING
+  // =====================================
+
+  const handleCancel = () => {
     setIsEditing(false);
     setImageChanged(false);
     setSelectedFile(null);
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        ...storedUser,
-        ...user,
-      })
-    );
+    // Reload the saved profile to discard unsaved changes.
+    if (userId) {
+      axios
+        .get(`${API_URL}/api/user/profile/${userId}`)
+        .then((res) => {
+          setUser({
+            name: res.data.name || "",
+            email: res.data.email || "",
+            exam: res.data.exam || "",
+            className: res.data.className || "",
+            city: res.data.city || "",
+            phone: res.data.phone || "",
+            college: res.data.college || "",
+          });
 
-    alert("Profile Updated ✅");
-  } catch (err) {
-    console.log(err);
-    alert("Update Failed ❌");
+          setImage(
+            res.data.profilePic
+              ? `${API_URL}${res.data.profilePic}`
+              : null
+          );
+        })
+        .catch((err) => {
+          console.error("Unable to reload profile:", err);
+        });
+    }
+  };
+
+  // =====================================
+  // LOADING STATE
+  // =====================================
+
+  if (loading) {
+    return (
+      <>
+        <BackButton />
+
+        <div className="profile-container profile-loading">
+          <div className="profile-loader" />
+          <p>Loading your profile...</p>
+        </div>
+      </>
+    );
   }
-};
+
+  // =====================================
+  // MAIN UI
+  // =====================================
 
   return (
     <>
       <BackButton />
 
       <div className="profile-container">
+        {/* LEFT SIDEBAR */}
 
-        {/* SIDEBAR */}
-
-        <div className="profile-sidebar">
+        <aside className="profile-sidebar">
+          {/* Profile Photo */}
 
           <div className="avatar">
             {image ? (
               <img
                 src={image}
-                alt="profile"
+                alt="Profile"
               />
             ) : (
               <span>👤</span>
             )}
           </div>
 
-          <label className="upload-btn">
-            {image
-              ? "Change Photo"
-              : "Upload Photo"}
+          {/* Upload Photo */}
+
+          <label
+            className="upload-btn"
+            htmlFor="profile-photo-input"
+          >
+            {image ? "📷 Change Photo" : "＋ Upload Photo"}
 
             <input
+              id="profile-photo-input"
               type="file"
               accept="image/*"
-              onChange={
-                handleImageUpload
-              }
+              onChange={handleImageUpload}
               hidden
             />
           </label>
 
-          <ul>
-            <li
+          {/* Sidebar Navigation */}
+
+          <nav className="profile-navigation">
+            <button
+              type="button"
               className={
                 activeTab === "profile"
-                  ? "active"
-                  : ""
+                  ? "profile-nav-item active"
+                  : "profile-nav-item"
               }
-              onClick={() =>
-                setActiveTab("profile")
-              }
+              onClick={() => setActiveTab("profile")}
             >
-              Profile Details
-            </li>
+              <span className="profile-nav-icon">👤</span>
+              <span>Profile Details</span>
+            </button>
 
-            <li
+            <button
+              type="button"
               className={
                 activeTab === "activity"
-                  ? "active"
-                  : ""
+                  ? "profile-nav-item active"
+                  : "profile-nav-item"
               }
-              onClick={() =>
-                setActiveTab(
-                  "activity"
-                )
-              }
+              onClick={() => setActiveTab("activity")}
             >
-              My Activity
-            </li>
-          </ul>
+              <span className="profile-nav-icon">📊</span>
+              <span>My Activity</span>
+            </button>
+          </nav>
+        </aside>
 
-        </div>
+        {/* RIGHT CONTENT */}
 
-        {/* CONTENT */}
-
-        <div className="profile-content">
+        <main className="profile-content">
+          {/* PROFILE DETAILS */}
 
           {activeTab === "profile" && (
             <>
               <div className="profile-header">
+                <div>
+                  <h1>Profile Details</h1>
 
-                <h2>
-                  Profile Details
-                </h2>
+                  <p className="profile-description">
+                    Manage your personal information.
+                  </p>
+                </div>
 
-                {!isEditing &&
-                !imageChanged ? (
+                {!isEditing && !imageChanged ? (
                   <button
-                    onClick={() =>
-                      setIsEditing(
-                        true
-                      )
-                    }
+                    type="button"
+                    className="profile-action-btn"
+                    onClick={() => setIsEditing(true)}
                   >
-                    Edit ✏️
+                    ✏️ Edit
                   </button>
                 ) : (
-                  <button
-                    onClick={
-                      handleSave
-                    }
-                  >
-                    Save ✅
-                  </button>
-                )}
+                  <div className="profile-action-group">
+                    <button
+                      type="button"
+                      className="profile-action-btn save"
+                      onClick={handleSave}
+                      disabled={saving}
+                    >
+                      {saving ? "Saving..." : "✓ Save"}
+                    </button>
 
+                    <button
+                      type="button"
+                      className="profile-cancel-btn"
+                      onClick={handleCancel}
+                      disabled={saving}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="profile-grid">
-
                 <div className="field">
-                  <label>Name</label>
+                  <label htmlFor="profile-name">Name</label>
 
                   <input
+                    id="profile-name"
                     name="name"
                     value={user.name}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
+                    onChange={handleChange}
+                    disabled={!isEditing || saving}
+                    placeholder="Enter your name"
                   />
                 </div>
 
                 <div className="field">
-                  <label>Email</label>
+                  <label htmlFor="profile-email">Email</label>
 
                   <input
+                    id="profile-email"
+                    type="email"
                     name="email"
                     value={user.email}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
+                    onChange={handleChange}
+                    disabled={!isEditing || saving}
+                    placeholder="Enter your email"
                   />
                 </div>
 
                 <div className="field">
-                  <label>Exam</label>
+                  <label htmlFor="profile-exam">Exam</label>
 
                   <input
+                    id="profile-exam"
                     name="exam"
                     value={user.exam}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
+                    onChange={handleChange}
+                    disabled={!isEditing || saving}
+                    placeholder="Enter your exam"
                   />
                 </div>
 
                 <div className="field">
-                  <label>Class</label>
+                  <label htmlFor="profile-class">Class</label>
 
                   <input
+                    id="profile-class"
                     name="className"
-                    value={
-                      user.className
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
+                    value={user.className}
+                    onChange={handleChange}
+                    disabled={!isEditing || saving}
+                    placeholder="Enter your class"
                   />
                 </div>
 
                 <div className="field">
-                  <label>City</label>
+                  <label htmlFor="profile-city">City</label>
 
                   <input
+                    id="profile-city"
                     name="city"
                     value={user.city}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
+                    onChange={handleChange}
+                    disabled={!isEditing || saving}
+                    placeholder="Enter your city"
                   />
                 </div>
 
                 <div className="field">
-                  <label>Phone</label>
+                  <label htmlFor="profile-phone">Phone</label>
 
                   <input
+                    id="profile-phone"
+                    type="tel"
                     name="phone"
                     value={user.phone}
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
+                    onChange={handleChange}
+                    disabled={!isEditing || saving}
+                    placeholder="Enter your phone number"
                   />
                 </div>
 
                 <div className="field">
-                  <label>College</label>
+                  <label htmlFor="profile-college">College</label>
 
                   <input
+                    id="profile-college"
                     name="college"
-                    value={
-                      user.college
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    disabled={
-                      !isEditing
-                    }
+                    value={user.college}
+                    onChange={handleChange}
+                    disabled={!isEditing || saving}
+                    placeholder="Enter your college"
                   />
                 </div>
-
               </div>
             </>
           )}
 
+          {/* MY ACTIVITY */}
+
           {activeTab === "activity" && (
-            <div className="tab-box">
+            <section className="tab-box">
+              <div className="activity-header">
+                <h1>My Activity</h1>
 
-              <h2>
-                My Activity 📊
-              </h2>
-
-              <div className="activity-card">
-                <h3>12</h3>
-                <span>
-                  Doubts Saved
-                </span>
+                <p className="profile-description">
+                  Your Doubtify learning overview.
+                </p>
               </div>
 
-              <div className="activity-card">
-                <h3>8</h3>
-                <span>
-                  Notes Uploaded
-                </span>
+              <div className="activity-grid">
+                <div className="activity-card">
+                  <div className="activity-icon">💡</div>
+                  <h3>12</h3>
+                  <span>Doubts Saved</span>
+                </div>
+
+                <div className="activity-card">
+                  <div className="activity-icon">📚</div>
+                  <h3>8</h3>
+                  <span>Notes Uploaded</span>
+                </div>
+
+                <div className="activity-card">
+                  <div className="activity-icon">📅</div>
+                  <h3>5</h3>
+                  <span>Events Created</span>
+                </div>
               </div>
 
-              <div className="activity-card">
-                <h3>5</h3>
-                <span>
-                  Events Created
-                </span>
-              </div>
-
-            </div>
+              <p className="activity-note">
+                Activity figures are sample values from the current UI.
+              </p>
+            </section>
           )}
-
-        </div>
-
+        </main>
       </div>
     </>
   );

@@ -4,22 +4,32 @@
 
 .doubts-page {
   min-height: 100vh;
-  padding: 120px 20px 40px;
+  padding: 120px 20px 60px;
+  position: relative;
+  overflow: hidden;
 
-  background: linear-gradient(
-    135deg,
-    #89f7fe,
-    #66a6ff,
-    #89f7fe
-  );
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(139, 92, 246, 0.13),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(34, 211, 238, 0.09),
+      transparent 35%
+    ),
+    #080b16;
 
-  color: white;
+  color: #f8fafc;
 }
 
 .doubts-container {
   width: 100%;
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 /* =========================
@@ -28,9 +38,31 @@
 
 .doubts-page h1 {
   text-align: center;
-  margin-bottom: 35px;
-  font-size: 2.5rem;
-  font-weight: 700;
+  margin: 0 0 40px;
+
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.2;
+
+  color: #f8fafc;
+}
+
+.doubts-page h1::after {
+  content: "";
+  display: block;
+
+  width: 75px;
+  height: 4px;
+
+  margin: 16px auto 0;
+  border-radius: 10px;
+
+  background: linear-gradient(
+    90deg,
+    #8b5cf6,
+    #22d3ee
+  );
 }
 
 /* =========================
@@ -41,51 +73,97 @@
   width: 100%;
   max-width: 850px;
 
-  margin: 0 auto 40px;
+  margin: 0 auto 45px;
 
   display: flex;
-  gap: 15px;
+  align-items: stretch;
+  gap: 14px;
 }
 
 .doubt-input-box input {
   flex: 1;
-
-  border: none;
-  outline: none;
+  min-width: 0;
 
   padding: 16px 20px;
 
-  border-radius: 15px;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 14px;
+  outline: none;
 
-  background: rgba(255,255,255,0.9);
+  background: rgba(17, 23, 43, 0.9);
 
-  font-size: 16px;
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 15px;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.doubt-input-box input::placeholder {
+  color: #8491aa;
+}
+
+.doubt-input-box input:hover {
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+.doubt-input-box input:focus {
+  border-color: #8b5cf6;
+
+  background: #11172b;
+
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
 }
 
 .doubt-input-box button {
-  border: none;
+  flex-shrink: 0;
 
-  padding: 16px 25px;
+  padding: 15px 25px;
 
-  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
 
   background: linear-gradient(
     135deg,
-    #6c63ff,
-    #00d4b8
+    #8b5cf6,
+    #6366f1 55%,
+    #22d3ee
   );
 
-  color: white;
+  color: #ffffff;
 
+  font-family: inherit;
+  font-size: 15px;
   font-weight: 700;
 
   cursor: pointer;
 
-  transition: 0.3s;
+  box-shadow: 0 5px 18px rgba(139, 92, 246, 0.2);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
 }
 
 .doubt-input-box button:hover {
   transform: translateY(-2px);
+
+  box-shadow: 0 9px 25px rgba(139, 92, 246, 0.32);
+
+  filter: brightness(1.08);
+}
+
+.doubt-input-box button:active {
+  transform: translateY(0);
+}
+
+.doubt-input-box button:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 4px;
 }
 
 /* =========================
@@ -97,115 +175,206 @@
 
   grid-template-columns: repeat(
     auto-fit,
-    minmax(320px, 1fr)
+    minmax(min(100%, 320px), 1fr)
   );
 
-  gap: 20px;
+  gap: 22px;
+  align-items: stretch;
 }
 
 /* =========================
    DOUBT CARD
 ========================= */
 
-.doubt-card {
+.doubts-page .doubt-card {
+  min-width: 0;
   padding: 25px;
 
+  border: 1px solid rgba(167, 139, 250, 0.16);
   border-radius: 20px;
 
-  background: rgba(255,255,255,0.18);
+  background: linear-gradient(
+    145deg,
+    rgba(23, 29, 53, 0.96),
+    rgba(17, 23, 43, 0.96)
+  );
 
-  backdrop-filter: blur(15px);
+  color: #f8fafc;
 
-  border: 1px solid rgba(255,255,255,0.2);
-
-  color: white;
-
-  transition: 0.3s;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
 
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 14px;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.doubt-card:hover {
-  transform: translateY(-5px);
+.doubts-page .doubt-card:hover {
+  transform: translateY(-4px);
 
-  box-shadow: 0 10px 25px
-    rgba(0,0,0,0.15);
+  border-color: rgba(139, 92, 246, 0.48);
+
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(139, 92, 246, 0.07);
 }
 
-.doubt-card h3 {
+.doubts-page .doubt-card h3 {
+  width: 100%;
   margin: 0;
-  line-height: 1.5;
+
+  color: #f1f5f9;
+
   font-size: 1.1rem;
+  font-weight: 650;
+  line-height: 1.65;
+
+  overflow-wrap: anywhere;
 }
 
 /* =========================
    STATUS
 ========================= */
 
-.status {
+.doubts-page .status {
   width: fit-content;
 
-  padding: 7px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
 
-  border-radius: 10px;
+  padding: 7px 12px;
 
-  font-size: 13px;
+  border: 1px solid transparent;
+  border-radius: 999px;
 
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
 }
 
-.solved {
-  background: #00c853;
-  color: white;
+.doubts-page .solved {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.25);
+
+  color: #4ade80;
 }
 
-.pending {
-  background: #ff9800;
-  color: white;
+.doubts-page .pending {
+  background: rgba(251, 146, 60, 0.12);
+  border-color: rgba(251, 146, 60, 0.25);
+
+  color: #fdba74;
 }
 
 /* =========================
    DELETE BUTTON
 ========================= */
 
-.delete-doubt-btn {
-  border: none;
+.doubts-page .delete-doubt-btn {
+  width: 100%;
+  margin-top: auto;
 
-  padding: 10px;
+  padding: 11px 15px;
 
+  border: 1px solid rgba(248, 113, 113, 0.22);
   border-radius: 12px;
 
-  background: #ff4d4d;
+  background: rgba(239, 68, 68, 0.09);
 
-  color: white;
+  color: #fca5a5;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 650;
 
   cursor: pointer;
 
-  font-weight: 600;
-
-  transition: 0.3s;
-
-  margin-top: auto;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
-.delete-doubt-btn:hover {
-  background: #e53935;
+.doubts-page .delete-doubt-btn:hover {
+  background: rgba(239, 68, 68, 0.18);
+
+  border-color: rgba(248, 113, 113, 0.5);
+
+  color: #fecaca;
+
+  transform: translateY(-1px);
+}
+
+.doubts-page .delete-doubt-btn:active {
+  transform: translateY(0);
+}
+
+.doubts-page .delete-doubt-btn:focus-visible {
+  outline: 2px solid #f87171;
+  outline-offset: 3px;
 }
 
 /* =========================
-   EMPTY
+   EMPTY STATE
 ========================= */
 
-.empty {
+.doubts-page .empty {
+  grid-column: 1 / -1;
+
+  margin: 35px auto;
+  padding: 35px 20px;
+
+  color: #a5b4cc;
+
+  font-size: 17px;
+  line-height: 1.7;
   text-align: center;
+}
 
-  font-size: 20px;
+/* =========================
+   SCROLLBAR
+========================= */
 
-  margin-top: 60px;
+.doubts-page::-webkit-scrollbar {
+  width: 8px;
+}
 
-  color: white;
+.doubts-page::-webkit-scrollbar-track {
+  background: #080b16;
+}
+
+.doubts-page::-webkit-scrollbar-thumb {
+  background: #34304f;
+  border-radius: 10px;
+}
+
+.doubts-page::-webkit-scrollbar-thumb:hover {
+  background: #8b5cf6;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+  .doubts-page {
+    padding: 115px 22px 45px;
+  }
+
+  .doubts-list {
+    gap: 18px;
+  }
+
+  .doubts-page .doubt-card {
+    padding: 22px;
+  }
 }
 
 /* =========================
@@ -214,18 +383,85 @@
 
 @media (max-width: 768px) {
   .doubts-page {
-    padding-top: 110px;
+    padding: 105px 16px 35px;
+  }
+
+  .doubts-page h1 {
+    margin-bottom: 30px;
+    font-size: 2rem;
   }
 
   .doubt-input-box {
     flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
   }
 
-  .doubts-page h1 {
-    font-size: 2rem;
+  .doubt-input-box input {
+    width: 100%;
+    min-height: 52px;
+  }
+
+  .doubt-input-box button {
+    width: 100%;
+    min-height: 50px;
   }
 
   .doubts-list {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .doubts-page .doubt-card {
+    padding: 21px;
+    border-radius: 17px;
+  }
+
+  .doubts-page .doubt-card h3 {
+    font-size: 1rem;
+  }
+
+  .doubts-page .empty {
+    font-size: 16px;
+    padding: 25px 15px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 380px) {
+  .doubts-page {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .doubts-page h1 {
+    font-size: 1.8rem;
+  }
+
+  .doubts-page .doubt-card {
+    padding: 17px;
+  }
+
+  .doubt-input-box input,
+  .doubt-input-box button {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .doubts-page *,
+  .doubts-page *::before,
+  .doubts-page *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
   }
 }

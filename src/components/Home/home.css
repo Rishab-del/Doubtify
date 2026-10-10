@@ -1,26 +1,399 @@
+/* =========================================
+   DOUBTIFY — PREMIUM MAIN CONTENT
+   Dark Navy + Violet + Cyan
+========================================= */
+
+/* Design variables */
+
+:root {
+  --main-bg: #080b16;
+  --main-violet: #8b5cf6;
+  --main-violet-light: #a78bfa;
+  --main-cyan: #22d3ee;
+
+  --main-text: #f4f5ff;
+  --main-text-muted: #a1acc5;
+
+  --main-border: rgba(255, 255, 255, 0.09);
+  --main-transition: 0.3s ease;
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
 .main-content {
-  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   width: 100%;
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  min-height: 100dvh;
 
-  background: linear-gradient(
-    135deg,
-    #89f7fe,
-    #66a6ff,
-    #89f7fe
+  padding: 120px 24px 60px;
+
+  overflow: hidden;
+
+  color: var(--main-text);
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(139, 92, 246, 0.15),
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 5% 80%,
+      rgba(34, 211, 238, 0.065),
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 100% 100%,
+      rgba(45, 212, 191, 0.045),
+      transparent 35%
+    ),
+    var(--main-bg);
+}
+
+/* =========================================
+   AMBIENT BACKGROUND GLOW
+========================================= */
+
+.main-content::before {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  top: 15%;
+  left: 50%;
+
+  width: min(700px, 90vw);
+  height: 400px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: rgba(113, 75, 230, 0.075);
+
+  filter: blur(100px);
+
+  pointer-events: none;
+
+  animation: mainGlow 8s ease-in-out infinite alternate;
+}
+
+/* Cyan glow */
+
+.main-content::after {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  right: -130px;
+  bottom: -180px;
+
+  width: 350px;
+  height: 350px;
+
+  border-radius: 50%;
+
+  background: rgba(34, 211, 238, 0.055);
+
+  filter: blur(90px);
+
+  pointer-events: none;
+}
+
+/* =========================================
+   MAIN HEADING
+========================================= */
+
+.main-content h1 {
+  position: relative;
+  z-index: 1;
+
+  max-width: 1000px;
+
+  margin: 0 0 24px;
+
+  color: var(--main-text);
+
+  font-size: clamp(36px, 5.5vw, 64px);
+  font-weight: 800;
+
+  line-height: 1.12;
+  letter-spacing: -2px;
+
+  text-align: center;
+  text-wrap: balance;
+
+  animation: mainEnter 0.7s ease both;
+}
+
+/* Gradient text */
+
+.main-content h1 span {
+  color: var(--main-violet-light);
+
+  background:
+    linear-gradient(
+      100deg,
+      #c4b5fd 0%,
+      #a78bfa 40%,
+      #67e8f9 100%
+    );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  filter: drop-shadow(
+    0 0 22px rgba(139, 92, 246, 0.13)
   );
 }
 
-h1 {
-  color: white;
-  font-size: 52px;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 100px;
+/* =========================================
+   OPTIONAL PARAGRAPHS
+========================================= */
 
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+.main-content p {
+  position: relative;
+  z-index: 1;
+
+  max-width: 700px;
+
+  margin: 0 auto 20px;
+
+  color: var(--main-text-muted);
+
+  font-size: 16px;
+  line-height: 1.85;
+
+  text-align: center;
+
+  animation: mainEnter 0.8s ease both;
+}
+
+/* =========================================
+   OPTIONAL GLASS CARDS
+========================================= */
+
+.main-content .glass-card {
+  width: 100%;
+  max-width: 850px;
+
+  padding: 28px;
+
+  border: 1px solid var(--main-border);
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.018)
+    );
+
+  box-shadow:
+    0 18px 55px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  transition:
+    transform var(--main-transition),
+    border-color var(--main-transition),
+    box-shadow var(--main-transition);
+}
+
+.main-content .glass-card:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(139, 92, 246, 0.25);
+
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.25),
+    0 0 25px rgba(139, 92, 246, 0.045);
+}
+
+/* =========================================
+   OPTIONAL BUTTONS
+========================================= */
+
+.main-content .primary-btn,
+.main-content .secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  min-height: 48px;
+
+  padding: 13px 22px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 650;
+
+  border-radius: 13px;
+
+  cursor: pointer;
+
+  transition:
+    transform var(--main-transition),
+    box-shadow var(--main-transition),
+    background var(--main-transition);
+}
+
+/* Primary */
+
+.main-content .primary-btn {
+  color: #fff;
+
+  border: 1px solid rgba(255, 255, 255, 0.13);
+
+  background:
+    linear-gradient(
+      115deg,
+      #8b5cf6,
+      #7057ed,
+      #536ff0
+    );
+
+  box-shadow:
+    0 8px 24px rgba(111, 81, 230, 0.2);
+}
+
+.main-content .primary-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 32px rgba(111, 81, 230, 0.3);
+}
+
+/* Secondary */
+
+.main-content .secondary-btn {
+  color: var(--main-text);
+
+  border: 1px solid var(--main-border);
+
+  background: rgba(255, 255, 255, 0.04);
+
+  backdrop-filter: blur(14px);
+}
+
+.main-content .secondary-btn:hover {
+  transform: translateY(-3px);
+
+  border-color: rgba(34, 211, 238, 0.3);
+
+  background: rgba(34, 211, 238, 0.055);
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes mainEnter {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mainGlow {
+  from {
+    opacity: 0.65;
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.08);
+  }
+}
+
+/* =========================================
+   RESPONSIVE TABLET
+========================================= */
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 105px 20px 45px;
+  }
+
+  .main-content h1 {
+    margin-bottom: 20px;
+
+    font-size: clamp(32px, 7vw, 46px);
+
+    letter-spacing: -1.2px;
+  }
+
+  .main-content p {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .main-content .glass-card {
+    padding: 22px;
+
+    border-radius: 18px;
+  }
+}
+
+/* =========================================
+   RESPONSIVE MOBILE
+========================================= */
+
+@media (max-width: 420px) {
+  .main-content {
+    padding: 95px 15px 35px;
+  }
+
+  .main-content h1 {
+    font-size: 32px;
+    letter-spacing: -0.9px;
+  }
+
+  .main-content p {
+    font-size: 13px;
+  }
+
+  .main-content .glass-card {
+    padding: 17px;
+
+    border-radius: 15px;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .main-content,
+  .main-content *,
+  .main-content::before,
+  .main-content::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

@@ -1,113 +1,358 @@
+/* =========================
+   CUSTOM SIDEBAR
+========================= */
+
 .custom-sidebar {
-  background: linear-gradient(135deg, #66a6ff, skyblue, #66a6ff);
-  color: white;
-  width: 260px;
-  backdrop-filter: blur(10px);
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+  width: 260px !important;
+  max-width: 85vw;
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(139, 92, 246, 0.13),
+      transparent 35%
+    ),
+    #0b1020 !important;
+
+  color: #f8fafc;
+
+  border-right: 1px solid rgba(167, 139, 250, 0.15);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  box-shadow: 8px 0 35px rgba(0, 0, 0, 0.3);
 }
 
-.offcanvas-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+/* =========================
+   SIDEBAR HEADER
+========================= */
+
+.custom-sidebar .offcanvas-header {
+  padding: 24px 20px;
+
+  border-bottom: 1px solid rgba(167, 139, 250, 0.16);
 }
 
-.offcanvas-header h5 {
-  font-weight: bold;
-  font-size: 22px;
-  letter-spacing: 1px;
+.custom-sidebar .offcanvas-header h5 {
+  margin: 0;
+
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+
+  color: #f8fafc;
+}
+
+.custom-sidebar .offcanvas-header h5 span {
+  color: #a78bfa;
+}
+
+/* Bootstrap close button */
+
+.custom-sidebar .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.7;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.custom-sidebar .btn-close:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+
+/* =========================
+   SIDEBAR BODY
+========================= */
+
+.custom-sidebar .offcanvas-body {
+  padding: 22px 16px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   SIDEBAR MENU
+========================= */
+
+.sidebar-menu {
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
 }
 
 .sidebar-menu li {
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
-/* MAIN LINK STYLE */
+/* =========================
+   MENU LINKS
+========================= */
+
+.sidebar-menu li a,
 .sidebar-menu a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: whitesmoke;
-  text-decoration: none;
-  padding: 12px 15px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-/* Hover */
-.sidebar-menu a:hover {
-  background: linear-gradient(45deg, #00c6ff, #0072ff);
-  transform: translateX(6px) scale(1.02);
-}
-
-/* Click press */
-.sidebar-menu a:active {
-  transform: scale(0.95);
-}
-
-/* Active route */
-.active {
-  background: linear-gradient(45deg, #0072ff, #00c6ff);
-  color: white !important;
-  box-shadow: 0 0 15px rgba(0, 114, 255, 0.6);
-}
-
-/* ICON STYLE */
-.sidebar-menu svg {
-  font-size: 18px;
-  transition: 0.3s;
-}
-
-/* ICON ANIMATION */
-.sidebar-menu a:hover svg {
-  transform: scale(1.2);
-}
-
-/* OPTIONAL: LEFT BORDER INDICATOR 🔥 */
-.active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 20%;
-  height: 60%;
-  width: 4px;
-  background: white;
-  border-radius: 5px;
-}
-
-.logout-btn {
   width: 100%;
-  background: none;
-  border: none;
-  color: red;
+  min-height: 46px;
+
+  position: relative;
+
   display: flex;
   align-items: center;
   gap: 12px;
+
   padding: 12px 15px;
+
+  border: 1px solid transparent;
   border-radius: 12px;
-  cursor: pointer;
-  transition: 0.3s;
+
+  background: transparent;
+
+  color: #a5b4cc;
+
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 550;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.logout-btn:hover {
-  background: linear-gradient(45deg, #ff4d4d, #ff0000);
-  color: red;
+/* =========================
+   MENU ICONS
+========================= */
+
+.sidebar-menu svg {
+  flex-shrink: 0;
+
+  font-size: 18px;
+  color: #a78bfa;
+
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
 }
-.sidebar-menu li a {
+
+/* =========================
+   HOVER EFFECT
+========================= */
+
+.sidebar-menu li a:hover,
+.sidebar-menu a:hover {
+  background: linear-gradient(
+    100deg,
+    rgba(139, 92, 246, 0.16),
+    rgba(34, 211, 238, 0.06)
+  );
+
+  border-color: rgba(167, 139, 250, 0.2);
+
+  color: #ffffff;
+
+  transform: translateX(4px);
+}
+
+.sidebar-menu li a:hover svg,
+.sidebar-menu a:hover svg {
+  color: #22d3ee;
+  transform: scale(1.12);
+}
+
+/* =========================
+   ACTIVE ROUTE
+========================= */
+
+/* Supports both .active and .sidebar-menu li a.active */
+
+.sidebar-menu a.active,
+.sidebar-menu li a.active,
+.sidebar-menu .active {
+  background: linear-gradient(
+    100deg,
+    rgba(139, 92, 246, 0.23),
+    rgba(99, 102, 241, 0.12)
+  ) !important;
+
+  border: 1px solid rgba(167, 139, 250, 0.3);
+
+  color: #c4b5fd !important;
+
+  box-shadow: 0 4px 18px rgba(139, 92, 246, 0.08);
+}
+
+/* Active icon */
+
+.sidebar-menu a.active svg,
+.sidebar-menu li a.active svg {
+  color: #22d3ee;
+}
+
+/* Active left indicator */
+
+.sidebar-menu a.active::before,
+.sidebar-menu li a.active::before {
+  content: "";
+
+  position: absolute;
+  left: -1px;
+  top: 20%;
+
+  width: 3px;
+  height: 60%;
+
+  border-radius: 0 5px 5px 0;
+
+  background: linear-gradient(
+    180deg,
+    #a78bfa,
+    #22d3ee
+  );
+
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+/* =========================
+   CLICK EFFECT
+========================= */
+
+.sidebar-menu li a:active,
+.sidebar-menu a:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+
+.custom-sidebar .logout-btn {
+  width: 100%;
+  min-height: 46px;
+
+  margin-top: auto;
+  padding: 12px 15px;
+
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  background: transparent;
+
+  color: #f87171;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.custom-sidebar .logout-btn svg {
+  flex-shrink: 0;
+  font-size: 18px;
+
+  transition: transform 0.25s ease;
+}
+
+.custom-sidebar .logout-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+
+  border-color: rgba(248, 113, 113, 0.2);
+
+  color: #fca5a5;
+
+  transform: translateX(3px);
+}
+
+.custom-sidebar .logout-btn:hover svg {
+  transform: translateX(2px);
+}
+
+.custom-sidebar .logout-btn:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+   SIDEBAR SCROLLBAR
+========================= */
+
+.custom-sidebar .offcanvas-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-sidebar .offcanvas-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-sidebar .offcanvas-body::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
   border-radius: 10px;
-  color: white;
-  text-decoration: none;
-  transition: 0.3s;
 }
 
-.sidebar-menu li a:hover {
-  background: rgba(255,255,255,0.2);
-  transform: translateX(5px);
+.custom-sidebar .offcanvas-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
 }
 
-.sidebar-menu li a.active {
-  background: linear-gradient(90deg, #0072ff, #00c6ff);
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 480px) {
+  .custom-sidebar {
+    width: 280px !important;
+    max-width: 85vw;
+  }
+
+  .custom-sidebar .offcanvas-header {
+    padding: 20px 17px;
+  }
+
+  .custom-sidebar .offcanvas-body {
+    padding: 18px 13px;
+  }
+
+  .sidebar-menu li a,
+  .sidebar-menu a {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+.sidebar-menu a:focus-visible,
+.custom-sidebar .logout-btn:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-sidebar *,
+  .custom-sidebar *::before,
+  .custom-sidebar *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

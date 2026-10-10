@@ -1,172 +1,558 @@
+/* ========================================
+   DOUBTIFY — PREMIUM LOGIN PAGE
+======================================== */
+
 .login-page {
-  height: 100vh;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+
+  box-sizing: border-box;
+  padding: 110px 20px 50px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  background: linear-gradient(135deg,#89f7fe, #66a6ff,#89f7fe);
+  font-family: "Poppins", sans-serif;
+
+  background:
+    radial-gradient(
+      ellipse at 15% 20%,
+      rgba(139, 92, 246, 0.18),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 85% 75%,
+      rgba(34, 211, 238, 0.10),
+      transparent 40%
+    ),
+    #080b16;
 }
+
+/* Background glow */
+
+.login-page::before,
+.login-page::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+
+  width: 300px;
+  height: 300px;
+
+  border-radius: 50%;
+  filter: blur(100px);
+
+  pointer-events: none;
+}
+
+.login-page::before {
+  top: 5%;
+  left: -120px;
+  background: rgba(139, 92, 246, 0.14);
+}
+
+.login-page::after {
+  right: -120px;
+  bottom: 5%;
+  background: rgba(34, 211, 238, 0.10);
+}
+
+/* ========================================
+   WELCOME HEADING
+======================================== */
 
 .welcome {
-  margin-top: 0.5 px;
-  margin-bottom: 60px;
-  color: white;
-  font-size: 32px;
-  text-shadow: 0 0 5px rgba(0,0,0,0.3); ;
+  position: relative;
+
+  margin: 0 0 35px;
+
+  color: #ffffff;
+
+  font-size: clamp(27px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.3;
+
+  text-align: center;
+
+  text-shadow:
+    0 0 25px rgba(139, 92, 246, 0.18);
 }
+
+/* Optional gradient text */
+
+.welcome span {
+  background: linear-gradient(
+    135deg,
+    #a78bfa,
+    #8b5cf6,
+    #22d3ee
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ========================================
+   LOGIN FORM CARD
+======================================== */
 
 .login-form {
-  background: linear-gradient(135deg , skyblue , white );
-  padding: 30px;
-  border-radius: 15px;
-  width: 300px;
+  position: relative;
 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 390px;
+
+  box-sizing: border-box;
+  padding: 35px 30px;
+
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(24, 29, 53, 0.92),
+    rgba(13, 17, 35, 0.95)
+  );
+
+  border: 1px solid rgba(139, 92, 246, 0.22);
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.30),
+    0 0 30px rgba(139, 92, 246, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  animation: loginFadeIn 0.6s ease both;
 }
+
+/* ========================================
+   INPUT FIELDS
+======================================== */
 
 .login-form input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
+  display: block;
 
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  width: 100%;
+  min-height: 46px;
+
+  box-sizing: border-box;
+  padding: 12px 14px;
+  margin: 0 0 16px;
+
+  border: 1px solid rgba(148, 163, 184, 0.20);
+  border-radius: 12px;
+
+  outline: none;
+
+  background: rgba(8, 11, 22, 0.75);
+  color: #f8fafc;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
 }
 
-/* Forgot password */
+.login-form input::placeholder {
+  color: #8490a8;
+}
+
+.login-form input:hover {
+  border-color: rgba(139, 92, 246, 0.40);
+}
+
+.login-form input:focus {
+  border-color: #8b5cf6;
+
+  background: rgba(8, 11, 22, 0.95);
+
+  box-shadow:
+    0 0 0 3px rgba(139, 92, 246, 0.13),
+    0 0 18px rgba(139, 92, 246, 0.06);
+}
+
+/* ========================================
+   FORGOT PASSWORD
+======================================== */
+
 .forgot {
-  text-align: right;
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+
+  margin: -4px 0 18px;
+
+  font-size: 13px;
 }
 
 .forgot span {
-  color: #0072ff;
+  color: #a78bfa;
+
   cursor: pointer;
-  font-size: 14px;
+
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease;
 }
 
 .forgot span:hover {
+  color: #22d3ee;
   text-decoration: underline;
 }
+
+/* Optional helper line */
+
 .line {
   display: block;
   margin-top: 8px;
+
+  color: #94a3b8;
+  font-size: 13px;
 }
 
-/* Login button */
+/* ========================================
+   LOGIN BUTTON
+======================================== */
+
 .login-btn {
+  position: relative;
+  overflow: hidden;
+
+  display: block;
+
   width: 100%;
-  padding: 10px;
-  background: #0072ff;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  min-height: 47px;
+
+  padding: 12px 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #6d4aff 55%,
+    #06b6d4
+  );
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+
   cursor: pointer;
+
+  box-shadow:
+    0 7px 22px rgba(139, 92, 246, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
 }
 
 .login-btn:hover {
-  background: #005bd1;
+  transform: translateY(-2px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 12px 30px rgba(139, 92, 246, 0.32),
+    0 0 18px rgba(34, 211, 238, 0.10);
 }
 
-/* Divider */
+.login-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.login-btn:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 4px;
+}
+
+/* ========================================
+   DIVIDER
+======================================== */
+
 .divider {
-  margin: 20px 0;
-  text-align: center;
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin: 24px 0;
+
+  color: #8490a8;
+  font-size: 12px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+
+  flex: 1;
+  height: 1px;
+
+  background: rgba(148, 163, 184, 0.20);
 }
 
 .divider span {
-  background: white;
-  padding: 0 10px;
-  color: #555;
-  font-size: 14px;
+  flex-shrink: 0;
+
+  padding: 0 4px;
+
+  background: transparent;
+  color: #94a3b8;
+
+  font-size: 12px;
 }
 
-.divider::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 1px;
-  background: #ccc;
-  top: 50%;
-  left: 0;
-  z-index: -1;
-}
-/* SOCIAL BUTTON CONTAINER */
+/* ========================================
+   SOCIAL LOGIN BUTTONS
+======================================== */
+
 .social-login {
   display: flex;
   flex-direction: row;
   gap: 12px;
+
+  width: 100%;
   margin-top: 15px;
 }
 
-/* GOOGLE BUTTON */
+/* Google button */
+
 .google-btn {
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
 
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
 
-  background: white;
-  color: #333;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+
+  font-family: inherit;
+  font-size: 13px;
   font-weight: 500;
 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   cursor: pointer;
-  transition: 0.3s;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .google-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(148, 163, 184, 0.40);
 }
 
-/* FACEBOOK BUTTON */
+/* Facebook button */
+
 .fb-btn {
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
 
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
 
-  background: linear-gradient(135deg, #1877f2, #0d5ed7);
-  color: white;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(24, 119, 242, 0.95),
+    rgba(13, 94, 215, 0.95)
+  );
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 13px;
   font-weight: 500;
 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   cursor: pointer;
-  transition: 0.3s;
+
+  box-shadow:
+    0 5px 15px rgba(24, 119, 242, 0.12);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
 }
 
 .fb-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 8px 22px rgba(24, 119, 242, 0.22);
 }
+
+/* ========================================
+   ERROR MESSAGE
+======================================== */
+
 .error-msg {
-  background: #ffe0e0;
-  color: #d8000c;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  font-size: 14px;
+  box-sizing: border-box;
+  width: 100%;
+
+  padding: 12px 14px;
+  margin-bottom: 18px;
+
+  border: 1px solid rgba(248, 113, 113, 0.30);
+  border-radius: 10px;
+
+  background: rgba(239, 68, 68, 0.10);
+  color: #fca5a5;
+
+  font-size: 13px;
+  line-height: 1.6;
   text-align: center;
 }
 
+/* ========================================
+   SIGNUP LINK
+======================================== */
+
 .signup-link {
-  margin-top: 15px;
+  margin-top: 24px;
+
+  color: #94a3b8;
+
+  font-size: 13px;
   text-align: center;
+  line-height: 1.7;
 }
 
 .signup-link span {
-  color: #667eea;
+  color: #a78bfa;
+
+  font-weight: 600;
   cursor: pointer;
-  font-weight: bold;
+
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+.signup-link span:hover {
+  color: #22d3ee;
+  text-shadow: 0 0 15px rgba(34, 211, 238, 0.18);
+}
+
+/* ========================================
+   ANIMATION
+======================================== */
+
+@keyframes loginFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 768px) {
+  .login-page {
+    padding: 100px 20px 40px;
+  }
+
+  .welcome {
+    margin-bottom: 30px;
+  }
+
+  .login-form {
+    max-width: 380px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 95px 16px 35px;
+  }
+
+  .welcome {
+    font-size: 28px;
+    margin-bottom: 25px;
+  }
+
+  .login-form {
+    max-width: 100%;
+    padding: 28px 22px;
+
+    border-radius: 20px;
+  }
+
+  .social-login {
+    gap: 9px;
+  }
+
+  .google-btn,
+  .fb-btn {
+    gap: 6px;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .login-form {
+    animation: none;
+  }
+
+  .login-form input,
+  .login-btn,
+  .google-btn,
+  .fb-btn,
+  .forgot span,
+  .signup-link span {
+    transition: none;
+  }
 }

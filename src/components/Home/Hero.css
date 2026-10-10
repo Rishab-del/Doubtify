@@ -1,230 +1,868 @@
+/* =====================================================
+   DOUBTIFY — PREMIUM AI SAAS HERO
+   Theme: Midnight Navy + Violet + Cyan
+===================================================== */
+
+/* =========================
+   DESIGN VARIABLES
+========================= */
+
+:root {
+  --hero-bg: #080b16;
+  --hero-surface: #10172a;
+
+  --hero-violet: #8b5cf6;
+  --hero-violet-light: #a78bfa;
+  --hero-cyan: #22d3ee;
+  --hero-teal: #2dd4bf;
+
+  --hero-text: #f4f5ff;
+  --hero-text-secondary: #a1acc5;
+
+  --hero-border: rgba(255, 255, 255, 0.09);
+
+  --hero-transition: 0.3s ease;
+}
+
+/* =========================
+   GLOBAL HERO SECTION
+========================= */
+
 .hero {
-  min-height: calc(100vh - 90px);
+  position: relative;
+  isolation: isolate;
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+
+  padding: 155px 24px 85px;
+
+  overflow: hidden;
 
   text-align: center;
 
-  padding: 180px 20px 80px;
+  color: var(--hero-text);
 
-  position: relative;
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(139, 92, 246, 0.15),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse at 5% 65%,
+      rgba(34, 211, 238, 0.07),
+      transparent 35%
+    ),
+    radial-gradient(
+      ellipse at 95% 75%,
+      rgba(45, 212, 191, 0.045),
+      transparent 32%
+    ),
+    var(--hero-bg);
 }
+
+/* =========================
+   AMBIENT GLOW
+========================= */
+
+.hero::before {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  top: 8%;
+  left: 50%;
+
+  width: min(750px, 90vw);
+  height: 420px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: rgba(110, 75, 240, 0.09);
+
+  filter: blur(100px);
+
+  pointer-events: none;
+
+  animation: heroGlow 8s ease-in-out infinite alternate;
+}
+
+/* Subtle bottom cyan glow */
+
+.hero::after {
+  content: "";
+
+  position: absolute;
+  z-index: -1;
+
+  right: -100px;
+  bottom: -220px;
+
+  width: 450px;
+  height: 450px;
+
+  border-radius: 50%;
+
+  background: rgba(34, 211, 238, 0.055);
+
+  filter: blur(100px);
+
+  pointer-events: none;
+}
+
+/* =========================
+   HERO CONTENT
+========================= */
 
 .hero-content {
-  max-width: 950px;
+  position: relative;
+  z-index: 1;
 
   width: 100%;
+  max-width: 1050px;
+
+  margin: 0 auto;
+
+  animation: heroEnter 0.8s ease both;
 }
 
-/* Badge */
+/* =========================
+   HERO BADGE
+========================= */
 
 .hero-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  padding: 12px 25px;
+  gap: 10px;
 
-  border-radius: 50px;
+  max-width: 100%;
 
-  background: rgba(255,255,255,0.15);
+  margin-bottom: 32px;
+  padding: 11px 19px;
 
-  backdrop-filter: blur(20px);
+  color: #d9d4ff;
 
-  border: 1px solid rgba(255,255,255,0.15);
-
-  color: white;
-
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
 
-  margin-bottom: 40px;
+  letter-spacing: 0.25px;
+
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 50px;
+
+  background:
+    linear-gradient(
+      110deg,
+      rgba(139, 92, 246, 0.13),
+      rgba(34, 211, 238, 0.055)
+    );
+
+  box-shadow:
+    0 0 30px rgba(139, 92, 246, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  transition:
+    border-color var(--hero-transition),
+    background var(--hero-transition),
+    transform var(--hero-transition);
 }
 
-/* Heading */
+.hero-badge:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(167, 139, 250, 0.45);
+
+  background:
+    linear-gradient(
+      110deg,
+      rgba(139, 92, 246, 0.18),
+      rgba(34, 211, 238, 0.085)
+    );
+}
+
+/* Optional badge icon */
+
+.hero-badge svg {
+  flex-shrink: 0;
+
+  color: var(--hero-cyan);
+}
+
+/* =========================
+   HERO HEADING
+========================= */
 
 .hero h1 {
-  font-size: 5rem;
+  max-width: 1000px;
 
-  color: white;
+  margin: 0 auto 25px;
 
+  color: var(--hero-text);
+
+  font-size: clamp(42px, 6.2vw, 78px);
   font-weight: 800;
 
-  line-height: 1.1;
+  line-height: 1.08;
+  letter-spacing: -3px;
 
-  margin-bottom: 25px;
+  text-wrap: balance;
 }
+
+/* Gradient heading text */
 
 .hero h1 span {
-  color: #6c63ff;
+  display: inline-block;
 
-  text-shadow:
-    0 0 20px rgba(108,99,255,.4),
-    0 0 40px rgba(108,99,255,.2);
+  color: var(--hero-violet-light);
+
+  background:
+    linear-gradient(
+      100deg,
+      #c4b5fd 0%,
+      #9b8afb 38%,
+      #67e8f9 78%,
+      #5eead4 100%
+    );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  filter: drop-shadow(
+    0 0 24px rgba(139, 92, 246, 0.14)
+  );
 }
 
-/* Description */
+/* =========================
+   HERO DESCRIPTION
+========================= */
 
 .hero p {
-  max-width: 850px;
+  max-width: 760px;
 
-  margin: auto;
+  margin: 0 auto;
 
-  color: rgba(255,255,255,0.92);
+  color: var(--hero-text-secondary);
 
-  font-size: 1.35rem;
+  font-size: clamp(15px, 1.5vw, 18px);
+  font-weight: 400;
 
-  line-height: 1.8;
+  line-height: 1.9;
+
+  text-wrap: pretty;
 }
 
-/* Features */
+/* =========================
+   HERO FEATURES
+========================= */
 
 .hero-features {
-  margin-top: 40px;
-
   display: flex;
+  align-items: center;
   justify-content: center;
+
   flex-wrap: wrap;
 
-  gap: 15px;
+  gap: 12px;
+
+  margin-top: 34px;
 }
 
+/* Individual feature cards */
+
 .hero-features div {
-  padding: 14px 22px;
+  position: relative;
 
-  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  background: rgba(255,255,255,0.12);
+  gap: 9px;
 
-  backdrop-filter: blur(12px);
+  padding: 12px 17px;
 
-  border: 1px solid rgba(255,255,255,0.15);
+  color: #dce3f8;
 
-  color: white;
-
+  font-size: 13px;
   font-weight: 500;
 
-  transition: .3s;
+  border: 1px solid var(--hero-border);
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  transition:
+    transform var(--hero-transition),
+    background var(--hero-transition),
+    border-color var(--hero-transition),
+    box-shadow var(--hero-transition);
 }
 
 .hero-features div:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
+
+  color: #fff;
+
+  border-color: rgba(139, 92, 246, 0.32);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(139, 92, 246, 0.12),
+      rgba(34, 211, 238, 0.045)
+    );
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.13),
+    0 0 20px rgba(139, 92, 246, 0.045);
 }
 
-/* Buttons */
+/* =========================
+   HERO BUTTONS
+========================= */
 
 .buttons {
-  margin-top: 45px;
-
   display: flex;
+  align-items: center;
   justify-content: center;
 
-  gap: 20px;
-
   flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin-top: 38px;
 }
+
+/* Shared button styling */
 
 .primary-btn,
 .secondary-btn {
-  border: none;
+  position: relative;
 
-  padding: 16px 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  border-radius: 16px;
+  gap: 10px;
+
+  min-height: 54px;
+
+  padding: 15px 25px;
+
+  overflow: hidden;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 650;
+
+  text-decoration: none;
+
+  border-radius: 15px;
 
   cursor: pointer;
 
-  font-size: 17px;
-
-  font-weight: 700;
-
-  transition: .3s;
+  transition:
+    transform var(--hero-transition),
+    box-shadow var(--hero-transition),
+    border-color var(--hero-transition),
+    background var(--hero-transition),
+    filter var(--hero-transition);
 }
+
+/* =========================
+   PRIMARY BUTTON
+========================= */
 
 .primary-btn {
-  background: linear-gradient(
-    135deg,
-    #6c63ff,
-    #00d4b8
-  );
+  color: #fff;
 
-  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  background:
+    linear-gradient(
+      115deg,
+      #8b5cf6 0%,
+      #7259ee 50%,
+      #526ff0 100%
+    );
 
   box-shadow:
-    0 10px 25px rgba(108,99,255,.3);
+    0 8px 26px rgba(111, 81, 230, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
+
+.primary-btn:hover {
+  transform: translateY(-3px);
+
+  filter: brightness(1.09);
+
+  box-shadow:
+    0 13px 34px rgba(111, 81, 230, 0.31),
+    0 0 22px rgba(139, 92, 246, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.primary-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* =========================
+   SECONDARY BUTTON
+========================= */
 
 .secondary-btn {
-  background: rgba(255,255,255,0.15);
+  color: #e4e8fa;
 
-  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
-  border: 1px solid rgba(255,255,255,0.15);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.025)
+    );
 
-  color: white;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
-.primary-btn:hover,
 .secondary-btn:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
+
+  color: #fff;
+
+  border-color: rgba(34, 211, 238, 0.3);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(139, 92, 246, 0.1),
+      rgba(34, 211, 238, 0.055)
+    );
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.14);
 }
 
-/* Stats */
+.secondary-btn:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* =========================
+   BUTTON ICONS
+========================= */
+
+.primary-btn svg,
+.secondary-btn svg {
+  flex-shrink: 0;
+
+  font-size: 16px;
+
+  transition: transform var(--hero-transition);
+}
+
+.primary-btn:hover svg {
+  transform: translateX(3px);
+}
+
+/* =========================
+   HERO STATS
+========================= */
 
 .hero-stats {
-  margin-top: 60px;
-
   display: flex;
+  align-items: stretch;
   justify-content: center;
 
-  gap: 80px;
-
   flex-wrap: wrap;
+
+  gap: 0;
+
+  margin-top: 66px;
+  padding-top: 32px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.075);
 }
+
+/* Individual stat */
+
+.hero-stats > div {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 150px;
+
+  padding: 5px 30px;
+}
+
+/* Vertical separator */
+
+.hero-stats > div + div::before {
+  content: "";
+
+  position: absolute;
+
+  top: 10%;
+  left: 0;
+
+  width: 1px;
+  height: 80%;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(255, 255, 255, 0.13),
+      transparent
+    );
+}
+
+/* Stat number */
 
 .hero-stats h3 {
-  color: white;
+  margin: 0 0 9px;
 
-  font-size: 2.3rem;
+  color: #f4f5ff;
 
-  margin-bottom: 5px;
+  font-size: clamp(25px, 3vw, 34px);
+  font-weight: 750;
+
+  line-height: 1.2;
+  letter-spacing: -1px;
 }
+
+/* Optional gradient on stat values */
+
+.hero-stats h3 span {
+  color: var(--hero-violet-light);
+}
+
+/* Stat label */
 
 .hero-stats span {
-  color: rgba(255,255,255,0.8);
+  color: #8793af;
 
-  font-size: 1rem;
+  font-size: 12px;
+  font-weight: 500;
+
+  line-height: 1.6;
 }
 
-/* Remove white line issue */
+/* =========================
+   BODY / PAGE BACKGROUND
+========================= */
 
-body,
 html,
+body,
 #root {
   min-height: 100%;
-  overflow-x: hidden;
 }
 
-/* Mobile */
+html,
+body {
+  margin: 0;
+  overflow-x: clip;
 
-@media (max-width: 768px) {
+  background: var(--hero-bg);
+}
+
+body {
+  color: var(--hero-text);
+}
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+.primary-btn:focus-visible,
+.secondary-btn:focus-visible {
+  outline: 2px solid var(--hero-cyan);
+  outline-offset: 4px;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes heroEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroGlow {
+  from {
+    opacity: 0.65;
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.08);
+  }
+}
+
+/* =========================
+   TABLET RESPONSIVENESS
+========================= */
+
+@media (max-width: 1024px) {
   .hero {
-    padding-top: 150px;
+    padding: 145px 28px 75px;
+  }
+
+  .hero-content {
+    max-width: 850px;
   }
 
   .hero h1 {
-    font-size: 3rem;
+    font-size: clamp(42px, 6.5vw, 64px);
+    letter-spacing: -2px;
   }
 
   .hero p {
-    font-size: 1rem;
+    max-width: 700px;
   }
 
   .hero-stats {
-    gap: 35px;
+    margin-top: 55px;
+  }
+
+  .hero-stats > div {
+    min-width: 135px;
+    padding: 5px 22px;
+  }
+}
+
+/* =========================
+   MOBILE RESPONSIVENESS
+========================= */
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: calc(100vh - 65px);
+    min-height: calc(100dvh - 65px);
+
+    padding: 125px 20px 60px;
+  }
+
+  .hero::before {
+    width: 100%;
+    height: 320px;
+
+    filter: blur(75px);
+  }
+
+  .hero-badge {
+    gap: 8px;
+
+    margin-bottom: 25px;
+    padding: 9px 14px;
+
+    font-size: 11px;
+  }
+
+  .hero h1 {
+    margin-bottom: 20px;
+
+    font-size: clamp(36px, 9vw, 52px);
+
+    line-height: 1.12;
+    letter-spacing: -1.7px;
+  }
+
+  .hero h1 span {
+    filter: drop-shadow(
+      0 0 18px rgba(139, 92, 246, 0.1)
+    );
+  }
+
+  .hero p {
+    max-width: 560px;
+
+    font-size: 14px;
+    line-height: 1.85;
+  }
+
+  .hero-features {
+    gap: 9px;
+
+    margin-top: 27px;
+  }
+
+  .hero-features div {
+    padding: 10px 12px;
+
+    font-size: 11px;
+
+    border-radius: 11px;
+  }
+
+  .buttons {
+    gap: 11px;
+
+    margin-top: 30px;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    min-height: 49px;
+
+    padding: 13px 17px;
+
+    font-size: 13px;
+
+    border-radius: 13px;
+  }
+
+  .hero-stats {
+    gap: 0;
+
+    margin-top: 45px;
+    padding-top: 25px;
+  }
+
+  .hero-stats > div {
+    min-width: 33.333%;
+    padding: 8px 12px;
   }
 
   .hero-stats h3 {
-    font-size: 1.6rem;
+    margin-bottom: 6px;
+
+    font-size: 25px;
+  }
+
+  .hero-stats span {
+    font-size: 11px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 420px) {
+  .hero {
+    padding: 110px 15px 45px;
+  }
+
+  .hero-badge {
+    margin-bottom: 22px;
+
+    font-size: 10px;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 9vw, 39px);
+
+    letter-spacing: -1.2px;
+  }
+
+  .hero p {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .hero-features {
+    gap: 8px;
+  }
+
+  .hero-features div {
+    padding: 9px 10px;
+
+    font-size: 10px;
+  }
+
+  .buttons {
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 10px;
+
+    width: 100%;
+    max-width: 300px;
+
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+  }
+
+  .hero-stats {
+    margin-top: 38px;
+    padding-top: 22px;
+  }
+
+  .hero-stats > div {
+    padding: 8px 5px;
+  }
+
+  .hero-stats h3 {
+    font-size: 22px;
+  }
+
+  .hero-stats span {
+    font-size: 10px;
+  }
+
+  .hero-stats > div + div::before {
+    height: 65%;
+    top: 17.5%;
+  }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero *,
+  .hero *::before,
+  .hero *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }

@@ -8,7 +8,7 @@ export default function BackButton() {
 
   return (
     <button className="back-btn" onClick={() => navigate(-1)}>
-      <FaArrowLeft /> Back
+      <FaArrowLeft /> 
     </button>
   );
 }

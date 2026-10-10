@@ -1,210 +1,568 @@
+/* =========================
+   DASHBOARD
+========================= */
+
 .dashboard {
-  padding: 40px;
-  text-align: center;
-  color: white;
-  background: linear-gradient(135deg,#89f7fe, #66a6ff, #89f7fe);
-}
-
-.dashboard-title {
-  margin-top: 60px;
-  font-size: 32px;
-  margin-bottom: 40px;
-}
-
-/* SAME GRID */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-}
-
-/* SAME CARD */
-
-
-.dashboard-card {
-
-  height: 220px;
-
-  padding: 25px;
-
-  border-radius: 22px;
-
-  background: rgba(255,255,255,0.22);
-  backdrop-filter: blur(18px);
-
-  transition: 0.3s;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  overflow: hidden;
-  height: 200px;
-  padding: 18px;
-  width: 400px;
-  color: rgb(96, 94, 94);
-
-}
-
-/* FILE NAME */
-
-.dashboard-card h2 {
-
-  width: 100%;
-
-  max-width: 100%;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
-  white-space: nowrap;
-
-  font-size: 22px;
-
-  margin-bottom: 10px;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-5px) scale(1.03);
-}
-
-.dashboard-card:active {
-  transform: scale(0.95);
-}
-
-.dashboard-card p {
-  opacity: 0.9;
-}
-/* 🔥 Container */
-.notes-container {
   min-height: 100vh;
-  padding-top: 100px;
+  width: 100%;
+  padding: 110px 30px 60px;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center;
+  color: #f8fafc;
 
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(139, 92, 246, 0.13),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(34, 211, 238, 0.08),
+      transparent 35%
+    ),
+    #080b16;
+
   font-family: "Poppins", sans-serif;
 }
 
-/* 🔥 Title */
-.notes-title {
-  font-size: 36px;
-  color: white;
-  margin-bottom: 40px;
+/* =========================
+   DASHBOARD TITLE
+========================= */
+
+.dashboard-title {
+  margin: 15px 0 45px;
+
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+
+  color: #f8fafc;
 }
 
-/* 🔥 Grid Layout */
-.notes-grid {
+.dashboard-title::after {
+  content: "";
+  display: block;
+
+  width: 75px;
+  height: 4px;
+
+  margin: 14px auto 0;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    90deg,
+    #8b5cf6,
+    #22d3ee
+  );
+}
+
+/* =========================
+   DASHBOARD GRID
+========================= */
+
+.dashboard-grid {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1050px;
+
+  margin: 0 auto;
 
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 24px;
+  align-items: stretch;
 }
 
-.open-btn {
-  margin-top: 10px;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 10px;
-  background: #4da6ff;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
+/* =========================
+   DASHBOARD CARDS
+========================= */
 
-.open-btn:hover {
-  background: #1e90ff;
-}
+.dashboard-card {
+  width: 100%;
+  min-width: 0;
+  min-height: 190px;
 
-.empty-text {
-  color: white;
-  margin-top: 30px;
-  font-size: 18px;
-}
-.delete-btns {
+  padding: 25px;
 
-  display: inline-block !important;
+  border: 1px solid rgba(167, 139, 250, 0.18);
+  border-radius: 20px;
 
-  margin-top: 10px;
-  margin-left: 25px;
+  background: linear-gradient(
+    145deg,
+    rgba(23, 29, 53, 0.96),
+    rgba(17, 23, 43, 0.96)
+  );
 
-  padding: 10px 18px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
-  border: none !important;
-  border-radius: 10px;
+  color: #f8fafc;
 
-  background-color: red !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.16);
 
-  color: white !important;
-
-  font-weight: bold;
-  font-size: 15px;
-
-  cursor: pointer;
-  opacity: 1 !important;
-  visibility: visible !important;
-  z-index: 9999;
-  position: relative;
-}
-
-.btn-group {
   display: flex;
-  gap: 12px;
-  margin-top: 15px;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+
+  gap: 15px;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+
+  border-color: rgba(139, 92, 246, 0.55);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.25),
+    0 0 22px rgba(139, 92, 246, 0.08);
+}
+
+.dashboard-card:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+   CARD TITLE
+========================= */
+
+.dashboard-card h2 {
+  width: 100%;
+  max-width: 100%;
+
+  margin: 0 0 5px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 21px;
+  font-weight: 700;
+
+  color: #f8fafc;
+}
+
+/* =========================
+   CARD DESCRIPTION
+========================= */
+
+.dashboard-card p {
+  width: 100%;
+  margin: 0;
+
+  color: #a5b4cc;
+
+  font-size: 14px;
+  line-height: 1.7;
+
+  opacity: 1;
+}
+
+/* =========================
+   NOTES CONTAINER
+========================= */
+
+.notes-container {
+  min-height: 100vh;
+  width: 100%;
+
+  padding: 120px 25px 60px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background:
+    radial-gradient(
+      circle at 12% 12%,
+      rgba(139, 92, 246, 0.13),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 90% 85%,
+      rgba(34, 211, 238, 0.08),
+      transparent 35%
+    ),
+    #080b16;
+
+  font-family: "Poppins", sans-serif;
+  color: #f8fafc;
+}
+
+/* =========================
+   NOTES TITLE
+========================= */
+
+.notes-title {
+  margin: 0 0 40px;
+
+  color: #f8fafc;
+
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+
+  text-align: center;
+}
+
+.notes-title::after {
+  content: "";
+  display: block;
+
+  width: 70px;
+  height: 4px;
+
+  margin: 14px auto 0;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    90deg,
+    #8b5cf6,
+    #22d3ee
+  );
+}
+
+/* =========================
+   NOTES GRID
+========================= */
+
+.notes-grid {
+  width: 100%;
+  max-width: 1050px;
+
+  display: grid;
+
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 280px), 1fr)
+  );
+
+  gap: 22px;
+  align-items: stretch;
+}
+
+/* =========================
+   UPLOAD BOX
+========================= */
 
 .upload-box {
-
-  width: 400%;
-
+  width: 100%;
   max-width: 400px;
-  margin: 0 auto 40px auto;
 
-  padding: 1px 10px;
+  min-height: 95px;
+
+  margin: 0 auto 40px;
+  padding: 22px;
 
   display: flex;
-
+  align-items: center;
   justify-content: center;
 
   text-align: center;
 
-  border-radius: 13px;
+  border: 1px dashed rgba(167, 139, 250, 0.55);
+  border-radius: 17px;
 
-  background: rgba(255,255,255,0.22);
+  background: rgba(17, 23, 43, 0.75);
 
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(157, 148, 148, 0.28);cursor: pointer;
-  transition: 0.3s ease;
-  font-size: 19px;
-  font-weight: 500;
+
+  color: #c4b5fd;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .upload-box:hover {
+  transform: translateY(-3px);
 
-  transform:
-    translateY(-4px)
-    scale(1.01);
+  background: rgba(139, 92, 246, 0.1);
 
-  background:
-    linear-gradient(
-      135deg,
-      rgba(135, 206, 235, 0.45),
-      rgba(255,255,255,0.22)
-    );
+  border-color: #8b5cf6;
 
-  box-shadow:
-    0 12px 35px rgba(0,0,0,0.18);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.12);
+}
+
+/* =========================
+   OPEN BUTTON
+========================= */
+
+.open-btn {
+  margin-top: 10px;
+  padding: 11px 20px;
+
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #6366f1
+  );
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.15);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.open-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 22px rgba(139, 92, 246, 0.3);
+
+  filter: brightness(1.1);
+}
+
+.open-btn:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   BUTTON GROUP
+========================= */
+
+.btn-group {
+  width: 100%;
+  margin-top: 15px;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+}
+
+/* =========================
+   DELETE BUTTON
+========================= */
+
+.delete-btns {
+  display: inline-block !important;
+
+  margin: 10px 0 0;
+  padding: 10px 17px;
+
+  border: 1px solid rgba(248, 113, 113, 0.3) !important;
+  border-radius: 10px;
+
+  background: rgba(239, 68, 68, 0.12) !important;
+
+  color: #fca5a5 !important;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+
+  position: relative;
+  z-index: 1;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.delete-btns:hover {
+  background: rgba(239, 68, 68, 0.23) !important;
+
+  border-color: rgba(248, 113, 113, 0.65) !important;
+
+  color: #fecaca !important;
+
+  transform: translateY(-2px);
+}
+
+.delete-btns:active {
+  transform: scale(0.97);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty-text {
+  width: 100%;
+
+  margin: 30px auto;
+  padding: 25px;
+
+  color: #a5b4cc;
+
+  font-size: 16px;
+  line-height: 1.7;
+
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE - TABLET
+========================= */
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 100px 20px 45px;
+  }
+
+  .dashboard-title {
+    margin-top: 15px;
+    margin-bottom: 35px;
+    font-size: 28px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .dashboard-card {
+    min-height: 175px;
+    padding: 20px 16px;
+    border-radius: 17px;
+  }
+
+  .dashboard-card h2 {
+    font-size: 18px;
+  }
+
+  .dashboard-card p {
+    font-size: 13px;
+  }
+
+  .notes-container {
+    padding: 105px 18px 45px;
+  }
+
+  .notes-grid {
+    gap: 17px;
+  }
+}
+
+/* =========================
+   RESPONSIVE - MOBILE
+========================= */
+
+@media (max-width: 520px) {
+  .dashboard {
+    padding: 95px 16px 35px;
+  }
+
+  .dashboard-title {
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    gap: 16px;
+  }
+
+  .dashboard-card {
+    min-height: 155px;
+    padding: 22px 18px;
+  }
+
+  .dashboard-card h2 {
+    font-size: 19px;
+  }
+
+  .dashboard-card p {
+    font-size: 13px;
+  }
+
+  .notes-container {
+    padding: 100px 14px 35px;
+  }
+
+  .notes-title {
+    margin-bottom: 30px;
+    font-size: 28px;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .upload-box {
+    max-width: 100%;
+    min-height: 85px;
+    margin-bottom: 30px;
+    padding: 18px;
+    font-size: 14px;
+  }
+
+  .btn-group {
+    gap: 10px;
+  }
+
+  .open-btn,
+  .delete-btns {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+.dashboard button:focus-visible,
+.notes-container button:focus-visible,
+.upload-box:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard *,
+  .notes-container *,
+  .dashboard *::before,
+  .notes-container *::before,
+  .dashboard *::after,
+  .notes-container *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
