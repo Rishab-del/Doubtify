@@ -21,7 +21,10 @@ export default function Login() {
 
   const API_URL = "https://doubtify-0q6d.onrender.com";
 
+  // =====================================
   // EMAIL AND PASSWORD LOGIN
+  // =====================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,22 +56,30 @@ export default function Login() {
 
       localStorage.removeItem("currentChatId");
 
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
-      toast.success("✅ " + data.message);
+      toast.success("✅ " + (data.message || "Login successful"));
+
       navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
+
       toast.error("❌ Server error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  // =====================================
   // FORGOT PASSWORD
+  // =====================================
+
   const handleForgotPassword = () => {
     if (!email.trim()) {
-      toast.error("📧 Please enter your email first");
+      toast.info("📧 Please enter your email first");
       return;
     }
 
@@ -77,12 +88,20 @@ export default function Login() {
     );
   };
 
+  // =====================================
   // GOOGLE LOGIN
+  // =====================================
+
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
 
-      // Step 1: Firebase authentication
+      // Step 1: Ask Google to show the account selector.
+      provider.setCustomParameters({
+        prompt: "select_account",
+      });
+
+      // Step 2: Firebase Google authentication.
       const result = await signInWithPopup(auth, provider);
 
       const googleUser = result.user;
@@ -92,9 +111,7 @@ export default function Login() {
         return;
       }
 
-      console.log("Firebase Google authentication successful");
-
-      // Step 2: Save/find user in backend MongoDB
+      // Step 3: Save/find user in backend MongoDB.
       const res = await fetch(`${API_URL}/google-login`, {
         method: "POST",
         headers: {
@@ -115,15 +132,20 @@ export default function Login() {
         toast.error(
           data.message || "Google login failed on server"
         );
+
         return;
       }
 
-      // Step 3: Store user details
+      // Step 4: Store user details.
       localStorage.removeItem("currentChatId");
 
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
       toast.success("Google Login Successful ✅");
+
       navigate("/dashboard");
     } catch (err) {
       console.error("Google Login Error:", err);
@@ -152,10 +174,17 @@ export default function Login() {
     }
   };
 
+  // =====================================
   // FACEBOOK LOGIN
+  // =====================================
+
   const handleFacebookLogin = () => {
     toast.info("🚀 Facebook Login Coming Soon");
   };
+
+  // =====================================
+  // UI
+  // =====================================
 
   return (
     <div className="login-page">
@@ -163,8 +192,12 @@ export default function Login() {
         Welcome to Doubtify 🚀
       </h1>
 
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form
+        className="login-form"
+        onSubmit={handleSubmit}
+      >
         {/* EMAIL */}
+
         <input
           type="email"
           placeholder="Enter Email"
@@ -174,7 +207,8 @@ export default function Login() {
           required
         />
 
-        {/* PASSWORD WITH SHOW/HIDE */}
+        {/* PASSWORD */}
+
         <div className="password-container">
           <input
             type={showPassword ? "text" : "password"}
@@ -187,13 +221,18 @@ export default function Login() {
 
           <span
             className="password-toggle"
-            onClick={() => setShowPassword((prev) => !prev)}
+            onClick={() =>
+              setShowPassword((prev) => !prev)
+            }
             role="button"
             tabIndex={0}
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={
+              showPassword ? "Hide password" : "Show password"
+            }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
+
                 setShowPassword((prev) => !prev);
               }
             }}
@@ -203,6 +242,7 @@ export default function Login() {
         </div>
 
         {/* FORGOT PASSWORD */}
+
         <div className="forgot">
           <span onClick={handleForgotPassword}>
             Forgot Password?
@@ -210,6 +250,7 @@ export default function Login() {
         </div>
 
         {/* LOGIN BUTTON */}
+
         <button
           type="submit"
           className="login-btn"
@@ -219,12 +260,14 @@ export default function Login() {
         </button>
 
         {/* DIVIDER */}
+
         <div className="divider">
           <span>OR</span>
           <span className="line">continue with</span>
         </div>
 
         {/* SOCIAL LOGIN */}
+
         <div className="social-login">
           <button
             type="button"
@@ -247,6 +290,7 @@ export default function Login() {
       </form>
 
       {/* SIGNUP LINK */}
+
       <div className="signup-link">
         <p>
           Don't have an account?{" "}

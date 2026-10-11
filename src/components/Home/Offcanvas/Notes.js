@@ -6,6 +6,31 @@ import { useDropzone } from "react-dropzone";
 import axios from "axios";
 
 const API_URL = "https://doubtify-0q6d.onrender.com";
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+// =====================================
+// ERROR HANDLER
+// =====================================
+
+const getErrorMessage = (err) => {
+  if (err.response?.data?.message) {
+    return err.response.data.message;
+  }
+
+  if (err.response?.data?.error) {
+    return err.response.data.error;
+  }
+
+  if (err.response) {
+    return `Server error (${err.response.status}). Please try again.`;
+  }
+
+  if (err.request) {
+    return "Server se response nahi mila. Please try again.";
+  }
+
+  return err.message || "Something went wrong.";
+};
 
 export default function Notes() {
   // =====================================
@@ -18,7 +43,7 @@ export default function Notes() {
         localStorage.getItem("user") || "{}"
       );
 
-      return storedUser?.id || null;
+      return storedUser?.id || storedUser?._id || null;
     } catch {
       return null;
     }
@@ -29,17 +54,14 @@ export default function Notes() {
   // =====================================
 
   const [notes, setNotes] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState("");
 
-  // Delete modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Notification states
   const [notification, setNotification] = useState({
     show: false,
     type: "success",
@@ -48,27 +70,24 @@ export default function Notes() {
   });
 
   // =====================================
-  // NOTIFICATION
+  // NOTIFICATIONS
   // =====================================
 
-  const showNotification = useCallback(
-    (type, title, message) => {
-      setNotification({
-        show: true,
-        type,
-        title,
-        message,
-      });
-    },
-    []
-  );
+  const showNotification = useCallback((type, title, message) => {
+    setNotification({
+      show: true,
+      type,
+      title,
+      message,
+    });
+  }, []);
 
-  const closeNotification = () => {
+  const closeNotification = useCallback(() => {
     setNotification((prev) => ({
       ...prev,
       show: false,
     }));
-  };
+  }, []);
 
   useEffect(() => {
     if (!notification.show) return;
@@ -78,7 +97,7 @@ export default function Notes() {
         ...prev,
         show: false,
       }));
-    }, 3500);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, [notification]);
@@ -91,24 +110,43 @@ export default function Notes() {
     if (!userId) {
       setNotes([]);
       setLoading(false);
-      return;
+      return false;
     }
 
     try {
-      const res = await axios.get(
-        `${API_URL}/notes/${encodeURIComponent(userId)}`
+      const response = await axios.get(
+        `${API_URL}/notes/${encodeURIComponent(userId)}`,
+        {
+          timeout: 30000,
+        }
       );
 
-      setNotes(Array.isArray(res.data) ? res.data : []);
+      const data = response.data;
+
+      // Support array and common object response formats.
+      const fetchedNotes = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.notes)
+        ? data.notes
+        : [];
+
+      setNotes(fetchedNotes);
+
+      return true;
     } catch (err) {
-      console.error("Error fetching notes:", err);
+      console.error("Error fetching notes:", {
+        status: err.response?.status,
+        response: err.response?.data,
+        message: err.message,
+      });
 
       showNotification(
         "error",
         "Unable to load notes",
-        err.response?.data?.message ||
-          "Please check your connection and try again."
+        getErrorMessage(err)
       );
+
+      return false;
     } finally {
       setLoading(false);
     }
@@ -127,27 +165,85 @@ export default function Notes() {
   // =====================================
 
   const onDrop = useCallback(
-    async (acceptedFiles) => {
+    async (acceptedFiles, rejectedFiles) => {
+      // Check login
       if (!userId) {
         showNotification(
           "error",
           "Login required",
           "Please log in before uploading notes."
         );
-
         return;
       }
 
-      if (acceptedFiles.length === 0) {
+      // -------------------------------------
+      // Handle rejected files
+      // -------------------------------------
+
+      if (rejectedFiles?.length > 0) {
+        const oversizedFiles = rejectedFiles.filter((file) =>
+          file.errors.some(
+            (error) => error.code === "file-too-large"
+          )
+        );
+
+        const invalidFiles = rejectedFiles.filter((file) =>
+          file.errors.some(
+            (error) => error.code === "file-invalid-type"
+          )
+        );
+
+        const otherRejected = rejectedFiles.filter(
+          (file) =>
+            !file.errors.some(
+              (error) =>
+                error.code === "file-too-large" ||
+                error.code === "file-invalid-type"
+            )
+        );
+
+        const messages = [];
+
+        if (oversizedFiles.length > 0) {
+          messages.push(
+            `${oversizedFiles.length} file(s) exceed the 10 MB limit.`
+          );
+        }
+
+        if (invalidFiles.length > 0) {
+          messages.push(
+            `${invalidFiles.length} file(s) are not valid PDFs.`
+          );
+        }
+
+        if (otherRejected.length > 0) {
+          messages.push(
+            `${otherRejected.length} file(s) could not be accepted.`
+          );
+        }
+
+        showNotification(
+          "error",
+          "File upload warning",
+          messages.join(" ") || "Please select valid PDF files under 10 MB."
+        );
+      }
+
+      // No valid files
+      if (!acceptedFiles || acceptedFiles.length === 0) {
         return;
       }
 
       setUploading(true);
 
       let successfulUploads = 0;
-      let failedUploads = 0;
+      const failedFiles = [];
 
       try {
+        // -------------------------------------
+        // Upload files one by one
+        // -------------------------------------
+
         for (let i = 0; i < acceptedFiles.length; i++) {
           const file = acceptedFiles[i];
 
@@ -156,31 +252,79 @@ export default function Notes() {
           );
 
           try {
+            // Extra client-side size check
+            if (file.size > MAX_FILE_SIZE) {
+              throw new Error("PDF size must not exceed 10 MB.");
+            }
+
             const formData = new FormData();
 
+            // Must match backend upload.single("file")
             formData.append("file", file);
+
+            // Must match backend req.body.userId
             formData.append("userId", userId);
 
-            await axios.post(
+            const response = await axios.post(
               `${API_URL}/upload`,
-              formData
+              formData,
+              {
+                timeout: 120000,
+
+                onUploadProgress: (event) => {
+                  if (event.total) {
+                    const percent = Math.round(
+                      (event.loaded * 100) / event.total
+                    );
+
+                    setUploadProgress(
+                      `Uploading ${file.name}: ${percent}%`
+                    );
+                  }
+                },
+              }
             );
+
+            // Check explicit server failure.
+            if (response.data?.success === false) {
+              throw new Error(
+                response.data?.message ||
+                  response.data?.error ||
+                  "The server could not upload this PDF."
+              );
+            }
 
             successfulUploads++;
           } catch (err) {
-            console.error(
-              `Error uploading ${file.name}:`,
-              err
-            );
+            console.error(`Error uploading ${file.name}:`, {
+              status: err.response?.status,
+              response: err.response?.data,
+              message: err.message,
+            });
 
-            failedUploads++;
+            failedFiles.push({
+              name: file.name,
+              message: getErrorMessage(err),
+            });
           }
         }
 
-        // Refresh notes after upload
-        await fetchNotes();
+        // -------------------------------------
+        // Refresh notes after uploads
+        // -------------------------------------
 
-        if (successfulUploads > 0 && failedUploads === 0) {
+        if (successfulUploads > 0) {
+          await fetchNotes();
+        }
+
+        // -------------------------------------
+        // Show upload result
+        // -------------------------------------
+
+        if (
+          successfulUploads > 0 &&
+          failedFiles.length === 0
+        ) {
           showNotification(
             "success",
             "Upload successful!",
@@ -188,19 +332,31 @@ export default function Notes() {
               ? "Your PDF has been uploaded successfully."
               : `${successfulUploads} PDFs uploaded successfully.`
           );
-        } else if (successfulUploads > 0 && failedUploads > 0) {
+        } else if (
+          successfulUploads > 0 &&
+          failedFiles.length > 0
+        ) {
           showNotification(
             "error",
             "Partially uploaded",
-            `${successfulUploads} uploaded successfully; ${failedUploads} failed.`
+            `${successfulUploads} uploaded successfully; ${failedFiles.length} failed. ${failedFiles[0].message}`
           );
-        } else {
+        } else if (failedFiles.length > 0) {
           showNotification(
             "error",
             "Upload failed",
-            "Unable to upload your PDFs. Please try again."
+            failedFiles[0].message ||
+              "Unable to upload your PDFs. Please try again."
           );
         }
+      } catch (err) {
+        console.error("Upload process error:", err);
+
+        showNotification(
+          "error",
+          "Upload failed",
+          getErrorMessage(err)
+        );
       } finally {
         setUploading(false);
         setUploadProgress("");
@@ -220,11 +376,13 @@ export default function Notes() {
     open,
   } = useDropzone({
     onDrop,
+
     accept: {
       "application/pdf": [".pdf"],
     },
+
     multiple: true,
-    maxSize: 10 * 1024 * 1024,
+    maxSize: MAX_FILE_SIZE,
     disabled: uploading,
     noClick: true,
   });
@@ -233,40 +391,34 @@ export default function Notes() {
   // OPEN PDF
   // =====================================
 
-  const openPDF = (filePath) => {
-    if (!filePath) {
-      showNotification(
-        "error",
-        "File unavailable",
-        "The PDF file path could not be found."
-      );
+  const openPDF = useCallback(
+    (filePath) => {
+      if (!filePath) {
+        showNotification(
+          "error",
+          "File unavailable",
+          "The PDF file path could not be found."
+        );
+        return;
+      }
 
-      return;
-    }
+      const pdfUrl = /^https?:\/\//i.test(filePath)
+        ? filePath
+        : `${API_URL}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
 
-    const pdfUrl = filePath.startsWith("http")
-      ? filePath
-      : `${API_URL}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
-
-    window.open(
-      pdfUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
-  };
+      window.open(pdfUrl, "_blank", "noopener,noreferrer");
+    },
+    [showNotification]
+  );
 
   // =====================================
-  // OPEN DELETE MODAL
+  // DELETE MODAL
   // =====================================
 
   const openDeleteModal = (id) => {
     setSelectedNoteId(id);
     setShowDeleteModal(true);
   };
-
-  // =====================================
-  // CLOSE DELETE MODAL
-  // =====================================
 
   const closeDeleteModal = () => {
     if (deleting) return;
@@ -276,7 +428,7 @@ export default function Notes() {
   };
 
   // =====================================
-  // CONFIRM DELETE NOTE
+  // DELETE NOTE
   // =====================================
 
   const confirmDeleteNote = async () => {
@@ -288,7 +440,6 @@ export default function Notes() {
         "Login required",
         "Please log in again to delete notes."
       );
-
       return;
     }
 
@@ -298,13 +449,11 @@ export default function Notes() {
       await axios.delete(
         `${API_URL}/delete-note/${selectedNoteId}`,
         {
-          data: {
-            userId,
-          },
+          data: { userId },
+          timeout: 30000,
         }
       );
 
-      // Remove deleted note from UI
       setNotes((prevNotes) =>
         prevNotes.filter(
           (note) => note._id !== selectedNoteId
@@ -320,13 +469,16 @@ export default function Notes() {
         "Your note has been deleted successfully."
       );
     } catch (err) {
-      console.error("Error deleting note:", err);
+      console.error("Error deleting note:", {
+        status: err.response?.status,
+        response: err.response?.data,
+        message: err.message,
+      });
 
       showNotification(
         "error",
         "Unable to delete note",
-        err.response?.data?.message ||
-          "Please try again."
+        getErrorMessage(err)
       );
     } finally {
       setDeleting(false);
@@ -362,13 +514,13 @@ export default function Notes() {
       <Navbar />
       <BackButton />
 
-      {/* PREMIUM NOTIFICATION */}
+      {/* NOTIFICATIONS */}
 
       {notification.show && (
         <div
           className={`notes-toast ${notification.type}`}
-          role="status"
-          aria-live="polite"
+          role="alert"
+          aria-live="assertive"
         >
           <div className="notes-toast-icon">
             {notification.type === "success" ? "✓" : "!"}
@@ -391,11 +543,7 @@ export default function Notes() {
       )}
 
       <div className="dashboard">
-        {/* DASHBOARD TITLE */}
-
-        <h1 className="dashboard-title">
-          My Notes 📘
-        </h1>
+        <h1 className="dashboard-title">My Notes 📘</h1>
 
         {/* PDF UPLOAD BOX */}
 
@@ -411,7 +559,6 @@ export default function Notes() {
           {uploading ? (
             <>
               <div className="notes-spinner" />
-
               <p className="upload-status">
                 {uploadProgress || "Uploading your PDFs..."}
               </p>
@@ -440,12 +587,14 @@ export default function Notes() {
                 + Choose PDF Files
               </button>
 
-              <small>PDF files only · Maximum 10 MB per file</small>
+              <small>
+                PDF files only · Maximum 10 MB per file
+              </small>
             </>
           )}
         </div>
 
-        {/* NOTES COUNT */}
+        {/* NOTES HEADER */}
 
         <div className="notes-section-header">
           <h2>Your Documents</h2>
@@ -460,17 +609,10 @@ export default function Notes() {
         <div className="dashboard-grid">
           {notes.length > 0 ? (
             notes.map((note) => (
-              <div
-                className="dashboard-card"
-                key={note._id}
-              >
-                <div className="note-file-icon">
-                  📄
-                </div>
+              <div className="dashboard-card" key={note._id}>
+                <div className="note-file-icon">📄</div>
 
-                <h2 title={note.title}>
-                  {note.title}
-                </h2>
+                <h2 title={note.title}>{note.title}</h2>
 
                 <p>
                   {Number(note.size || 0).toFixed(2)} MB
@@ -498,16 +640,13 @@ export default function Notes() {
           ) : (
             <div className="notes-empty-state">
               <div className="empty-notes-icon">📂</div>
-
               <h3>No notes yet</h3>
             </div>
           )}
         </div>
       </div>
 
-      {/* =================================
-          PREMIUM DELETE CONFIRMATION MODAL
-      ================================= */}
+      {/* DELETE CONFIRMATION MODAL */}
 
       {showDeleteModal && (
         <div
@@ -525,8 +664,6 @@ export default function Notes() {
             aria-labelledby="delete-modal-title"
             aria-describedby="delete-modal-description"
           >
-            {/* CLOSE BUTTON */}
-
             <button
               type="button"
               className="delete-modal-close"
@@ -537,31 +674,21 @@ export default function Notes() {
               ×
             </button>
 
-            {/* WARNING ICON */}
-
             <div className="delete-modal-icon">
               <span>!</span>
             </div>
-
-            {/* HEADING */}
 
             <h2 id="delete-modal-title">
               Delete this note?
             </h2>
 
-            {/* DESCRIPTION */}
-
             <p id="delete-modal-description">
               Are you sure you want to delete this note?
-
               <br />
-
               <span className="delete-warning">
                 This action cannot be undone.
               </span>
             </p>
-
-            {/* ACTION BUTTONS */}
 
             <div className="delete-modal-actions">
               <button
@@ -592,8 +719,6 @@ export default function Notes() {
                 )}
               </button>
             </div>
-
-            {/* FOOTER */}
 
             <div className="delete-modal-footer">
               <span className="delete-footer-dot" />
