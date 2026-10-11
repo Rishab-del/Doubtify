@@ -251,18 +251,25 @@ export default function Profile() {
         throw new Error("Profile update failed");
       }
 
+      
       const updatedUser = {
-        ...storedUser,
-        ...user,
-        ...updatedData,
-      };
+  ...storedUser,
+  ...user,
+  ...updatedData,
+  id: userId,
+  name: updatedData.name,
+  email: user.email,
+};
 
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+localStorage.setItem("user", JSON.stringify(updatedUser));
 
-      setUser((prev) => ({
-        ...prev,
-        ...updatedData,
-      }));
+// Dashboard ke liye updated name save karo
+localStorage.setItem("userName", updatedUser.name);
+
+setUser((prev) => ({
+  ...prev,
+  ...updatedData,
+}));
 
       setIsEditing(false);
       setSelectedFile(null);

@@ -33,7 +33,7 @@ html {
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100%;
 
   font-family: "Poppins", sans-serif;
 
@@ -53,6 +53,9 @@ body {
       transparent 40%
     );
 
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -61,6 +64,8 @@ body {
 
 #root {
   min-height: 100vh;
+  height: auto;
+  overflow: visible;
 }
 
 /* ========================================

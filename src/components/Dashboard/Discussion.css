@@ -1,24 +1,43 @@
 /* =========================================
    DOUBTIFY — DISCUSSION ROOM
    Premium Dark Navy + Violet + Cyan
+   Fixed Layout + Internal Chat Scrolling
 ========================================= */
 
-/* MAIN CONTAINER */
+/* =========================================
+   GLOBAL PAGE FIX
+========================================= */
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
 
 .discussion-container {
-  position: relative;
+  position: fixed;
+  inset: 0;
   isolation: isolate;
 
   width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
 
   box-sizing: border-box;
-  padding: 125px 20px 45px;
+  padding: 110px 20px 16px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  overflow: hidden;
 
   font-family: "Poppins", sans-serif;
   color: #f8fafc;
@@ -42,7 +61,9 @@
 ========================================= */
 
 .heading {
-  margin: 0 0 25px;
+  flex-shrink: 0;
+
+  margin: 0 0 18px;
 
   color: #ffffff;
 
@@ -56,8 +77,6 @@
   text-shadow:
     0 0 25px rgba(139, 92, 246, 0.15);
 }
-
-/* Optional gradient text */
 
 .heading span {
   background: linear-gradient(
@@ -83,9 +102,10 @@
   flex-wrap: wrap;
 
   gap: 12px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 
   max-width: 100%;
+  flex-shrink: 0;
 }
 
 .room-selector button {
@@ -126,8 +146,6 @@
     0 5px 20px rgba(139, 92, 246, 0.10);
 }
 
-/* Active room button */
-
 .room-selector button.active {
   background: linear-gradient(
     135deg,
@@ -144,109 +162,38 @@
 }
 
 /* =========================================
-   POST INPUT BOX
+   CONNECTION STATUS
 ========================================= */
 
-.post-box {
-  display: flex;
-  align-items: stretch;
-
-  gap: 12px;
-
-  width: 65%;
-  max-width: 900px;
-
-  margin-bottom: 22px;
-}
-
-.post-box input {
-  flex: 1;
-  min-width: 0;
-
-  box-sizing: border-box;
-  padding: 15px 18px;
-
-  border: 1px solid rgba(148, 163, 184, 0.20);
-  border-radius: 14px;
-
-  outline: none;
-
-  background: rgba(17, 23, 43, 0.92);
-  color: #f8fafc;
-
-  font-family: inherit;
-  font-size: 14px;
-
-  box-shadow:
-    0 5px 20px rgba(0, 0, 0, 0.12);
-
-  transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.post-box input::placeholder {
-  color: #8490a8;
-}
-
-.post-box input:focus {
-  border-color: #8b5cf6;
-
-  box-shadow:
-    0 0 0 3px rgba(139, 92, 246, 0.12),
-    0 5px 20px rgba(0, 0, 0, 0.12);
-}
-
-.post-box button {
+.discussion-connection {
   flex-shrink: 0;
 
-  padding: 0 26px;
+  text-align: center;
+  font-size: 13px;
 
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 14px;
-
-  background: linear-gradient(
-    135deg,
-    #8b5cf6,
-    #6d4aff 55%,
-    #06b6d4
-  );
-
-  color: #ffffff;
-
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 6px 20px rgba(139, 92, 246, 0.18);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    filter 0.25s ease;
+  margin: 8px 0 14px;
 }
 
-.post-box button:hover {
-  transform: translateY(-2px);
-
-  filter: brightness(1.08);
-
-  box-shadow:
-    0 10px 25px rgba(139, 92, 246, 0.28);
+.discussion-connection.connected {
+  color: #16a34a;
 }
 
-.post-box button:active {
-  transform: scale(0.98);
+.discussion-connection.connecting {
+  color: #ca8a04;
+}
+
+.discussion-connection.disconnected {
+  color: #dc2626;
 }
 
 /* =========================================
    CHAT AREA
+   Only this area scrolls
 ========================================= */
 
 .doubt-list {
+  order: 1;
+
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -256,15 +203,22 @@
   width: 65%;
   max-width: 900px;
 
-  height: 65vh;
-  min-height: 300px;
-  max-height: 700px;
+  /* Fill remaining available space */
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  max-height: none;
 
   box-sizing: border-box;
   padding: 24px;
 
+  margin: 0;
+
   overflow-x: hidden;
   overflow-y: auto;
+
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 
   border: 1px solid rgba(139, 92, 246, 0.18);
   border-radius: 22px;
@@ -286,7 +240,7 @@
   scrollbar-color: rgba(139, 92, 246, 0.55) transparent;
 }
 
-/* Scrollbar */
+/* Chat scrollbar */
 
 .doubt-list::-webkit-scrollbar {
   width: 6px;
@@ -321,6 +275,8 @@
   max-width: 80%;
   min-width: 0;
 
+  flex-shrink: 0;
+
   box-sizing: border-box;
   padding: 15px;
 
@@ -331,7 +287,7 @@
   overflow-wrap: anywhere;
 }
 
-/* MY MESSAGE */
+/* Own messages */
 
 .doubt-card.right {
   align-self: flex-end;
@@ -352,7 +308,7 @@
     0 8px 25px rgba(109, 74, 255, 0.15);
 }
 
-/* OTHER USER MESSAGE */
+/* Other users' messages */
 
 .doubt-card.left {
   align-self: flex-start;
@@ -400,10 +356,6 @@
   min-width: 0;
 }
 
-/* =========================================
-   MESSAGE TEXT
-========================================= */
-
 .message {
   margin: 0;
 
@@ -419,7 +371,7 @@
 }
 
 /* =========================================
-   REACTIONS
+   REACTION BUTTONS
 ========================================= */
 
 .reactions {
@@ -535,6 +487,8 @@
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
   padding: 4px;
 
   border: none;
@@ -583,6 +537,8 @@
 .typing-text {
   align-self: flex-start;
 
+  flex-shrink: 0;
+
   margin: 0 0 12px;
 
   color: #a78bfa;
@@ -591,6 +547,135 @@
   font-weight: 500;
 
   opacity: 0.9;
+}
+
+/* =========================================
+   INPUT BAR
+   Always visible below the chat
+========================================= */
+
+.post-box {
+  order: 2;
+
+  display: flex;
+  align-items: stretch;
+
+  gap: 12px;
+
+  width: 65%;
+  max-width: 900px;
+
+  flex: 0 0 auto;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  margin: 14px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Input field */
+
+.post-box input {
+  flex: 1;
+  min-width: 0;
+
+  box-sizing: border-box;
+  padding: 15px 18px;
+
+  border: 1px solid rgba(148, 163, 184, 0.20);
+  border-radius: 14px;
+
+  outline: none;
+
+  background: rgba(17, 23, 43, 0.96);
+  color: #f8fafc;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  box-shadow:
+    0 5px 20px rgba(0, 0, 0, 0.12);
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.post-box input::placeholder {
+  color: #8490a8;
+}
+
+.post-box input:focus {
+  border-color: #8b5cf6;
+
+  box-shadow:
+    0 0 0 3px rgba(139, 92, 246, 0.12),
+    0 5px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Send button */
+
+.post-box button {
+  flex-shrink: 0;
+
+  padding: 0 26px;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    #8b5cf6,
+    #6d4aff 55%,
+    #06b6d4
+  );
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 20px rgba(139, 92, 246, 0.18);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.post-box button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 10px 25px rgba(139, 92, 246, 0.28);
+}
+
+.post-box button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.post-box button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   CONNECTION AND INPUT FOCUS
+========================================= */
+
+.room-selector button:focus-visible,
+.post-box button:focus-visible,
+.reactions button:focus-visible,
+.delete-btn:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
 }
 
 /* =========================================
@@ -615,16 +700,12 @@
 
 @media (max-width: 900px) {
   .discussion-container {
-    padding: 115px 20px 35px;
+    padding: 105px 20px 14px;
   }
 
-  .post-box,
-  .doubt-list {
+  .doubt-list,
+  .post-box {
     width: 85%;
-  }
-
-  .doubt-list {
-    height: 62vh;
   }
 
   .doubt-card {
@@ -638,17 +719,17 @@
 
 @media (max-width: 600px) {
   .discussion-container {
-    padding: 100px 12px 25px;
+    padding: 95px 12px 12px;
   }
 
   .heading {
-    font-size: 32px;
-    margin-bottom: 22px;
+    font-size: 30px;
+    margin-bottom: 14px;
   }
 
   .room-selector {
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
 
   .room-selector button {
@@ -656,10 +737,25 @@
     font-size: 12px;
   }
 
+  .discussion-connection {
+    font-size: 12px;
+    margin: 6px 0 12px;
+  }
+
+  .doubt-list,
   .post-box {
     width: 100%;
+  }
+
+  .doubt-list {
+    gap: 14px;
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .post-box {
     gap: 8px;
-    margin-bottom: 16px;
+    margin-top: 10px;
   }
 
   .post-box input {
@@ -674,24 +770,10 @@
     border-radius: 12px;
   }
 
-  .doubt-list {
-    width: 100%;
-
-    height: 60vh;
-    min-height: 280px;
-
-    padding: 14px;
-    gap: 14px;
-
-    border-radius: 18px;
-  }
-
   .doubt-card {
     gap: 9px;
-
     max-width: 95%;
     padding: 11px;
-
     border-radius: 15px;
   }
 
@@ -730,7 +812,7 @@
   }
 
   .heading {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .room-selector {
@@ -749,19 +831,19 @@
   .doubt-card {
     max-width: 98%;
   }
+
+  .post-box {
+    gap: 6px;
+  }
+
+  .post-box button {
+    padding: 0 12px;
+  }
 }
 
 /* =========================================
    ACCESSIBILITY
 ========================================= */
-
-.room-selector button:focus-visible,
-.post-box button:focus-visible,
-.reactions button:focus-visible,
-.delete-btn:focus-visible {
-  outline: 2px solid #22d3ee;
-  outline-offset: 3px;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .doubt-card {
@@ -774,26 +856,4 @@
   .delete-btn {
     transition: none;
   }
-}
-.discussion-connection {
-  text-align: center;
-  font-size: 13px;
-  margin: 8px 0 14px;
-}
-
-.discussion-connection.connected {
-  color: #16a34a;
-}
-
-.discussion-connection.connecting {
-  color: #ca8a04;
-}
-
-.discussion-connection.disconnected {
-  color: #dc2626;
-}
-
-.post-box button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }

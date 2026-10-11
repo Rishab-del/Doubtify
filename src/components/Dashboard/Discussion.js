@@ -13,7 +13,10 @@ import io from "socket.io-client";
 
 const API_URL = "https://doubtify-0q6d.onrender.com";
 
-// Create one socket connection for this module.
+// =====================================
+// SOCKET CONNECTION
+// =====================================
+
 const socket = io(API_URL, {
   autoConnect: true,
   reconnection: true,
@@ -32,9 +35,15 @@ export default function Discussion() {
   const bottomRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
+  // =====================================
+  // USER DETAILS
+  // =====================================
+
   const storedUser = (() => {
     try {
-      return JSON.parse(localStorage.getItem("user") || "{}");
+      return JSON.parse(
+        localStorage.getItem("user") || "{}"
+      );
     } catch {
       return {};
     }
@@ -53,22 +62,36 @@ export default function Discussion() {
 
   useEffect(() => {
     const handleConnect = () => {
-      console.log("Discussion socket connected:", socket.id);
+      console.log(
+        "Discussion socket connected:",
+        socket.id
+      );
+
       setConnectionStatus("connected");
     };
 
     const handleDisconnect = (reason) => {
-      console.log("Discussion socket disconnected:", reason);
+      console.log(
+        "Discussion socket disconnected:",
+        reason
+      );
+
       setConnectionStatus("disconnected");
     };
 
     const handleConnectError = (error) => {
-      console.error("Discussion socket error:", error.message);
+      console.error(
+        "Discussion socket error:",
+        error.message
+      );
+
       setConnectionStatus("disconnected");
     };
 
     const handleLoadMessages = (messages) => {
-      setDoubts(Array.isArray(messages) ? messages : []);
+      setDoubts(
+        Array.isArray(messages) ? messages : []
+      );
     };
 
     const handleReceiveMessage = (message) => {
@@ -113,7 +136,9 @@ export default function Discussion() {
 
     const handleMessageDeleted = (id) => {
       setDoubts((previous) =>
-        previous.filter((message) => message._id !== id)
+        previous.filter(
+          (message) => message._id !== id
+        )
       );
     };
 
@@ -124,8 +149,14 @@ export default function Discussion() {
     socket.on("load_messages", handleLoadMessages);
     socket.on("receive_message", handleReceiveMessage);
     socket.on("typing", handleTyping);
-    socket.on("reaction_updated", handleReactionUpdated);
-    socket.on("message_deleted", handleMessageDeleted);
+    socket.on(
+      "reaction_updated",
+      handleReactionUpdated
+    );
+    socket.on(
+      "message_deleted",
+      handleMessageDeleted
+    );
 
     if (!socket.connected) {
       socket.connect();
@@ -141,8 +172,14 @@ export default function Discussion() {
       socket.off("load_messages", handleLoadMessages);
       socket.off("receive_message", handleReceiveMessage);
       socket.off("typing", handleTyping);
-      socket.off("reaction_updated", handleReactionUpdated);
-      socket.off("message_deleted", handleMessageDeleted);
+      socket.off(
+        "reaction_updated",
+        handleReactionUpdated
+      );
+      socket.off(
+        "message_deleted",
+        handleMessageDeleted
+      );
 
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
@@ -159,7 +196,7 @@ export default function Discussion() {
       behavior: "smooth",
       block: "end",
     });
-  }, [doubts]);
+  }, [doubts, typingUser]);
 
   // =====================================
   // SEND MESSAGE
@@ -174,7 +211,6 @@ export default function Discussion() {
 
     if (!socket.connected) {
       setConnectionStatus("disconnected");
-
       return;
     }
 
@@ -198,7 +234,7 @@ export default function Discussion() {
   // TYPING
   // =====================================
 
-  const handleTyping = (event) => {
+  const handleTypingInput = (event) => {
     setInput(event.target.value);
 
     if (socket.connected) {
@@ -249,7 +285,11 @@ export default function Discussion() {
       <BackButton />
       <Navbar />
 
-      <h2 className="heading">💬 Discussion Panel</h2>
+      <h2 className="heading">
+        💬 Discussion Panel
+      </h2>
+
+      {/* CONNECTION STATUS — ORIGINAL POSITION */}
 
       <div
         className={`discussion-connection ${connectionStatus}`}
@@ -262,45 +302,11 @@ export default function Discussion() {
           : "🔴 Disconnected. Reconnecting..."}
       </div>
 
-      {/* INPUT */}
-
-      <div className="post-box">
-        <input
-          type="text"
-          placeholder="Ask your doubt..."
-          value={input}
-          onChange={handleTyping}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              handlePost();
-            }
-          }}
-          maxLength={2000}
-        />
-
-        <button
-          type="button"
-          onClick={handlePost}
-          disabled={
-            !input.trim() || connectionStatus !== "connected"
-          }
-        >
-          Send
-        </button>
-      </div>
-
-      {/* TYPING */}
-
-      {typingUser && (
-        <p className="typing-text">
-          {typingUser} is typing...
-        </p>
-      )}
-
-      {/* MESSAGES */}
+      {/* CHAT BOX — NOW ABOVE INPUT */}
 
       <div className="doubt-list">
+        {/* EMPTY STATE */}
+
         {doubts.length === 0 ? (
           <p className="empty">
             No discussions yet 🚀 Start the conversation!
@@ -310,21 +316,32 @@ export default function Discussion() {
             <div
               key={message._id}
               className={`doubt-card ${
-                message.user === username ? "right" : "left"
+                message.user === username
+                  ? "right"
+                  : "left"
               }`}
             >
               <img
-                src={message.avatar || "https://i.pravatar.cc/150?img=3"}
+                src={
+                  message.avatar ||
+                  "https://i.pravatar.cc/150?img=3"
+                }
                 alt=""
                 className="avatar"
                 onError={(event) => {
+                  event.currentTarget.onerror = null;
+
                   event.currentTarget.src =
                     "https://i.pravatar.cc/150?img=3";
                 }}
               />
 
               <div className="content">
-                <p className="message">{message.text}</p>
+                {/* MESSAGE TEXT */}
+
+                <p className="message">
+                  {message.text}
+                </p>
 
                 {/* REACTIONS */}
 
@@ -333,7 +350,10 @@ export default function Discussion() {
                     <button
                       type="button"
                       onClick={() =>
-                        addReaction(message._id, "🔥")
+                        addReaction(
+                          message._id,
+                          "🔥"
+                        )
                       }
                       aria-label="React with fire"
                     >
@@ -343,7 +363,10 @@ export default function Discussion() {
                     <button
                       type="button"
                       onClick={() =>
-                        addReaction(message._id, "❤️")
+                        addReaction(
+                          message._id,
+                          "❤️"
+                        )
                       }
                       aria-label="React with heart"
                     >
@@ -353,7 +376,10 @@ export default function Discussion() {
                     <button
                       type="button"
                       onClick={() =>
-                        addReaction(message._id, "😂")
+                        addReaction(
+                          message._id,
+                          "😂"
+                        )
                       }
                       aria-label="React with laughing face"
                     >
@@ -362,15 +388,17 @@ export default function Discussion() {
                   </div>
                 )}
 
-                {/* SHOW REACTIONS */}
+                {/* EXISTING REACTIONS */}
 
                 {message.reactions?.length > 0 && (
                   <div className="reaction-display">
-                    {message.reactions.map((reaction, index) => (
-                      <span key={index}>
-                        {reaction.emoji}
-                      </span>
-                    ))}
+                    {message.reactions.map(
+                      (reaction, index) => (
+                        <span key={index}>
+                          {reaction.emoji}
+                        </span>
+                      )
+                    )}
                   </div>
                 )}
 
@@ -386,7 +414,8 @@ export default function Discussion() {
                   </span>
 
                   <span className="seen">
-                    Seen by {message.seenBy?.length || 0}
+                    Seen by{" "}
+                    {message.seenBy?.length || 0}
                   </span>
                 </div>
               </div>
@@ -397,8 +426,11 @@ export default function Discussion() {
                 <button
                   type="button"
                   className="delete-btn"
-                  onClick={() => deleteMessage(message._id)}
+                  onClick={() =>
+                    deleteMessage(message._id)
+                  }
                   aria-label="Delete message"
+                  title="Delete message"
                 >
                   🗑
                 </button>
@@ -407,7 +439,45 @@ export default function Discussion() {
           ))
         )}
 
+        {/* TYPING INDICATOR — INSIDE CHAT AT BOTTOM */}
+
+        {typingUser && (
+          <p className="typing-text">
+            {typingUser} is typing...
+          </p>
+        )}
+
         <div ref={bottomRef} />
+      </div>
+
+      {/* INPUT BAR — BELOW THE CHAT BOX */}
+
+      <div className="post-box">
+        <input
+          type="text"
+          placeholder="Ask your doubt..."
+          value={input}
+          onChange={handleTypingInput}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              handlePost();
+            }
+          }}
+          maxLength={2000}
+          disabled={connectionStatus !== "connected"}
+        />
+
+        <button
+          type="button"
+          onClick={handlePost}
+          disabled={
+            !input.trim() ||
+            connectionStatus !== "connected"
+          }
+        >
+          Send
+        </button>
       </div>
     </div>
   );
