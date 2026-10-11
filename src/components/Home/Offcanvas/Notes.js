@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
-
+import React, { useState, useEffect, useCallback } from "react";
 import "./Notes.css";
 import BackButton from "./BackButton";
 import Navbar from "../Navbar";
@@ -34,22 +29,6 @@ const getErrorMessage = (err) => {
   }
 
   return err.message || "Something went wrong.";
-};
-
-// =====================================
-// AUTHENTICATION HEADER
-// =====================================
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    throw new Error("Please log in again.");
-  }
-
-  return {
-    Authorization: `Bearer ${token}`,
-  };
 };
 
 export default function Notes() {
@@ -132,36 +111,33 @@ export default function Notes() {
   // =====================================
   // FETCH NOTES
   // =====================================
+const fetchNotes = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-  const fetchNotes = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/notes`,
-        {
-          headers: getAuthHeaders(),
-          timeout: 30000,
-        }
-      );
-
-      setNotes(
-        Array.isArray(response.data)
-          ? response.data
-          : []
-      );
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-
-      setNotes([]);
-
-      showNotification(
-        "error",
-        "Unable to load notes",
-        getErrorMessage(error)
-      );
-    } finally {
-      setLoading(false);
+    if (!token) {
+      console.error("Login token not found. Please log in again.");
+      return;
     }
-  }, [showNotification]);
+
+    const response = await fetch(`${API_URL}/notes`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch notes");
+    }
+
+    setNotes(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+  }
+};
 
   // =====================================
   // LOAD NOTES ON START
@@ -188,18 +164,7 @@ export default function Notes() {
         return;
       }
 
-      // Check token
-      if (!localStorage.getItem("token")) {
-        showNotification(
-          "error",
-          "Session expired",
-          "Please log in again before uploading notes."
-        );
-
-        return;
-      }
-
-      // Validation errors
+      // Show validation errors
       if (rejectedFiles?.length > 0) {
         const firstError = rejectedFiles[0].errors?.[0];
 
@@ -245,14 +210,13 @@ export default function Notes() {
             // Must match upload.single("file") in Server.js
             formData.append("file", file);
 
-            // Backend should verify this against the JWT user.
+            // Must match req.body.userId in Server.js
             formData.append("userId", userId);
 
             const response = await axios.post(
               `${API_URL}/upload`,
               formData,
               {
-                headers: getAuthHeaders(),
                 timeout: 120000,
 
                 onUploadProgress: (event) => {
@@ -274,30 +238,31 @@ export default function Notes() {
               !response.data?.note
             ) {
               throw new Error(
-                response.data?.message ||
+                response.data?.error ||
+                  response.data?.message ||
                   "The server did not confirm the upload."
               );
             }
 
             successfulUploads++;
-          } catch (error) {
+          } catch (err) {
             console.error(
               `Upload failed for ${file.name}:`,
               {
-                status: error.response?.status,
-                response: error.response?.data,
-                message: error.message,
+                status: err.response?.status,
+                response: err.response?.data,
+                message: err.message,
               }
             );
 
             failedFiles.push({
               name: file.name,
-              message: getErrorMessage(error),
+              message: getErrorMessage(err),
             });
           }
         }
 
-        // Refresh notes after uploads
+        // Refresh notes after upload attempts
         await fetchNotes();
 
         // All successful
@@ -335,13 +300,13 @@ export default function Notes() {
               "Unable to upload your PDFs. Please try again."
           );
         }
-      } catch (error) {
-        console.error("Upload process error:", error);
+      } catch (err) {
+        console.error("Upload process error:", err);
 
         showNotification(
           "error",
           "Upload failed",
-          getErrorMessage(error)
+          getErrorMessage(err)
         );
       } finally {
         setUploading(false);
@@ -377,71 +342,31 @@ export default function Notes() {
   });
 
   // =====================================
-  // OPEN PRIVATE PDF
+  // OPEN PDF
   // =====================================
 
-  const openPDF = async (noteId) => {
-    if (!noteId) {
+  const openPDF = (filePath) => {
+    if (!filePath) {
       showNotification(
         "error",
         "File unavailable",
-        "The PDF note could not be found."
+        "The PDF file path could not be found."
       );
 
       return;
     }
 
-    let pdfUrl = null;
+    const pdfUrl = /^https?:\/\//i.test(filePath)
+      ? filePath
+      : `${API_URL}${
+          filePath.startsWith("/") ? "" : "/"
+        }${filePath}`;
 
-    try {
-      const response = await axios.get(
-        `${API_URL}/notes/file/${noteId}`,
-        {
-          headers: getAuthHeaders(),
-          responseType: "blob",
-          timeout: 60000,
-        }
-      );
-
-      pdfUrl = URL.createObjectURL(
-        new Blob([response.data], {
-          type: "application/pdf",
-        })
-      );
-
-      const newTab = window.open(pdfUrl, "_blank");
-
-      if (!newTab) {
-        URL.revokeObjectURL(pdfUrl);
-
-        showNotification(
-          "error",
-          "Popup blocked",
-          "Please allow popups to open your PDF."
-        );
-
-        return;
-      }
-
-      newTab.opener = null;
-
-      // Allow time for the browser PDF viewer to load.
-      setTimeout(() => {
-        URL.revokeObjectURL(pdfUrl);
-      }, 60000);
-    } catch (error) {
-      console.error("PDF open error:", error);
-
-      if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
-      }
-
-      showNotification(
-        "error",
-        "Unable to open PDF",
-        getErrorMessage(error)
-      );
-    }
+    window.open(
+      pdfUrl,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   // =====================================
@@ -487,7 +412,10 @@ export default function Notes() {
       await axios.delete(
         `${API_URL}/delete-note/${selectedNoteId}`,
         {
-          headers: getAuthHeaders(),
+          data: {
+            userId,
+          },
+
           timeout: 30000,
         }
       );
@@ -507,17 +435,17 @@ export default function Notes() {
         "Note deleted",
         "Your note has been deleted successfully."
       );
-    } catch (error) {
+    } catch (err) {
       console.error("Error deleting note:", {
-        status: error.response?.status,
-        response: error.response?.data,
-        message: error.message,
+        status: err.response?.status,
+        response: err.response?.data,
+        message: err.message,
       });
 
       showNotification(
         "error",
         "Unable to delete note",
-        getErrorMessage(error)
+        getErrorMessage(err)
       );
     } finally {
       setDeleting(false);
@@ -537,6 +465,7 @@ export default function Notes() {
         <div className="dashboard">
           <div className="notes-loading">
             <div className="notes-spinner" />
+
             <p>Loading your notes...</p>
           </div>
         </div>
@@ -567,6 +496,7 @@ export default function Notes() {
 
           <div className="notes-toast-content">
             <h3>{notification.title}</h3>
+
             <p>{notification.message}</p>
           </div>
 
@@ -604,12 +534,14 @@ export default function Notes() {
               <div className="notes-spinner" />
 
               <p className="upload-status">
-                {uploadProgress || "Uploading your PDFs..."}
+                {uploadProgress ||
+                  "Uploading your PDFs..."}
               </p>
             </>
           ) : isDragActive ? (
             <>
               <div className="upload-icon">📂</div>
+
               <p>Drop your PDF files here...</p>
             </>
           ) : (
@@ -658,7 +590,9 @@ export default function Notes() {
                 className="dashboard-card"
                 key={note._id}
               >
-                <div className="note-file-icon">📄</div>
+                <div className="note-file-icon">
+                  📄
+                </div>
 
                 <h2 title={note.title}>
                   {note.title}
@@ -672,7 +606,7 @@ export default function Notes() {
                   <button
                     type="button"
                     className="open-btn"
-                    onClick={() => openPDF(note._id)}
+                    onClick={() => openPDF(note.file)}
                   >
                     Open PDF
                   </button>
@@ -680,7 +614,9 @@ export default function Notes() {
                   <button
                     type="button"
                     className="delete-btns"
-                    onClick={() => openDeleteModal(note._id)}
+                    onClick={() =>
+                      openDeleteModal(note._id)
+                    }
                   >
                     🗑 Delete
                   </button>
@@ -689,20 +625,25 @@ export default function Notes() {
             ))
           ) : (
             <div className="notes-empty-state">
-              <div className="empty-notes-icon">📂</div>
+              <div className="empty-notes-icon">
+                📂
+              </div>
+
               <h3>No notes yet</h3>
             </div>
           )}
         </div>
       </div>
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {/* =================================
+          DELETE CONFIRMATION MODAL
+      ================================= */}
 
       {showDeleteModal && (
         <div
           className="delete-modal-overlay"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) {
               closeDeleteModal();
             }
           }}
@@ -742,7 +683,9 @@ export default function Notes() {
 
             <p id="delete-modal-description">
               Are you sure you want to delete this note?
+
               <br />
+
               <span className="delete-warning">
                 This action cannot be undone.
               </span>
