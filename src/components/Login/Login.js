@@ -52,8 +52,8 @@ export default function Login() {
       }
 
       localStorage.removeItem("currentChatId");
-
-      localStorage.setItem("user", JSON.stringify(data.user));
+localStorage.setItem("token", data.token);
+localStorage.setItem("user", JSON.stringify(data.user));
 
       toast.success("✅ " + data.message);
       navigate("/dashboard");
@@ -120,8 +120,8 @@ export default function Login() {
 
       // Step 3: Store user details
       localStorage.removeItem("currentChatId");
-
-      localStorage.setItem("user", JSON.stringify(data.user));
+localStorage.setItem("token", data.token);
+localStorage.setItem("user", JSON.stringify(data.user));
 
       toast.success("Google Login Successful ✅");
       navigate("/dashboard");
