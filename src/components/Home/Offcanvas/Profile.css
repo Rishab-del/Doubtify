@@ -839,3 +839,200 @@
     transition: none !important;
   }
 }
+/* =====================================
+   DOUBTIFY PREMIUM NOTIFICATION
+===================================== */
+
+.profile-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  width: min(420px, calc(100vw - 32px));
+  padding: 20px;
+
+  background: rgba(15, 15, 30, 0.97);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 18px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 0 30px rgba(139, 92, 246, 0.12);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  animation: profileToastIn 0.3s ease-out;
+}
+
+.profile-toast.success {
+  border-left: 4px solid #34d399;
+}
+
+.profile-toast.error {
+  border-left: 4px solid #fb7185;
+}
+
+.toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+
+  border-radius: 13px;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.profile-toast.success .toast-icon {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+}
+
+.profile-toast.error .toast-icon {
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.12);
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-content h3 {
+  margin: 2px 0 6px;
+
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.toast-content p {
+  margin: 0;
+
+  color: #a7a7bd;
+  font-size: 13px;
+  line-height: 1.6;
+
+  overflow-wrap: anywhere;
+}
+
+.toast-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  color: #a7a7bd;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+
+  font-size: 22px;
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.toast-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Save button loading spinner */
+
+.button-spinner {
+  display: inline-block;
+
+  width: 13px;
+  height: 13px;
+  margin-right: 8px;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+
+  animation: profileSpinner 0.7s linear infinite;
+  vertical-align: middle;
+}
+
+.profile-action-btn:disabled,
+.profile-cancel-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Email field hint */
+
+.profile-field-hint {
+  display: block;
+  margin-top: 7px;
+
+  color: #85859e;
+  font-size: 11px;
+}
+
+/* Animations */
+
+@keyframes profileToastIn {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes profileSpinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mobile responsive */
+
+@media (max-width: 480px) {
+  .profile-toast {
+    top: 16px;
+    right: 16px;
+
+    width: calc(100vw - 32px);
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .toast-content h3 {
+    font-size: 15px;
+  }
+
+  .toast-content p {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-toast {
+    animation: none;
+  }
+
+  .button-spinner {
+    animation-duration: 1.5s;
+  }
+}

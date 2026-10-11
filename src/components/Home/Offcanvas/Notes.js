@@ -1,98 +1,461 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+
 import "./Notes.css";
 import BackButton from "./BackButton";
 import Navbar from "../Navbar";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 
+const API_URL = "https://doubtify-0q6d.onrender.com";
+
+// =====================================
+// ERROR HANDLER
+// =====================================
+
+const getErrorMessage = (err) => {
+  if (err.response?.data?.message) {
+    return err.response.data.message;
+  }
+
+  if (err.response?.data?.error) {
+    return err.response.data.error;
+  }
+
+  if (err.response) {
+    return `Server error (${err.response.status}). Please try again.`;
+  }
+
+  if (err.request) {
+    return "Server se response nahi mila. Please try again.";
+  }
+
+  return err.message || "Something went wrong.";
+};
+
+// =====================================
+// AUTHENTICATION HEADER
+// =====================================
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("Please log in again.");
+  }
+
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+};
+
 export default function Notes() {
+  // =====================================
+  // USER
+  // =====================================
+
+  const [userId] = useState(() => {
+    try {
+      const storedUser = JSON.parse(
+        localStorage.getItem("user") || "{}"
+      );
+
+      return storedUser?.id || null;
+    } catch (err) {
+      console.error("Unable to read logged-in user:", err);
+      return null;
+    }
+  });
+
+  // =====================================
+  // STATES
+  // =====================================
+
   const [notes, setNotes] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
 
   // Delete modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  /* =========================
-     FETCH NOTES
-  ========================= */
+  // Notification states
+  const [notification, setNotification] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
 
-  const fetchNotes = async () => {
-    try {
-      const res = await axios.get(
-        "https://doubtify-0q6d.onrender.com/notes"
-      );
+  // =====================================
+  // NOTIFICATION
+  // =====================================
 
-      setNotes(res.data);
-    } catch (err) {
-      console.error("Error fetching notes:", err);
-    }
+  const showNotification = useCallback(
+    (type, title, message) => {
+      setNotification({
+        show: true,
+        type,
+        title,
+        message,
+      });
+    },
+    []
+  );
+
+  const closeNotification = () => {
+    setNotification((prev) => ({
+      ...prev,
+      show: false,
+    }));
   };
 
-  /* =========================
-     LOAD NOTES ON START
-  ========================= */
+  useEffect(() => {
+    if (!notification.show) return;
+
+    const timer = setTimeout(() => {
+      setNotification((prev) => ({
+        ...prev,
+        show: false,
+      }));
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [notification]);
+
+  // =====================================
+  // FETCH NOTES
+  // =====================================
+
+  const fetchNotes = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/notes`,
+        {
+          headers: getAuthHeaders(),
+          timeout: 30000,
+        }
+      );
+
+      setNotes(
+        Array.isArray(response.data)
+          ? response.data
+          : []
+      );
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+
+      setNotes([]);
+
+      showNotification(
+        "error",
+        "Unable to load notes",
+        getErrorMessage(error)
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [showNotification]);
+
+  // =====================================
+  // LOAD NOTES ON START
+  // =====================================
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [fetchNotes]);
 
-  /* =========================
-     PDF UPLOAD
-  ========================= */
+  // =====================================
+  // PDF UPLOAD
+  // =====================================
 
-  const onDrop = async (acceptedFiles) => {
-    for (const file of acceptedFiles) {
-      try {
-        const formData = new FormData();
-
-        formData.append("file", file);
-
-        await axios.post(
-          "https://doubtify-0q6d.onrender.com/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+  const onDrop = useCallback(
+    async (acceptedFiles, rejectedFiles) => {
+      // Check login
+      if (!userId) {
+        showNotification(
+          "error",
+          "Login required",
+          "Please log in before uploading notes."
         );
-      } catch (err) {
-        console.error("Error uploading PDF:", err);
+
+        return;
       }
-    }
 
-    // Refresh notes after upload
-    fetchNotes();
-  };
+      // Check token
+      if (!localStorage.getItem("token")) {
+        showNotification(
+          "error",
+          "Session expired",
+          "Please log in again before uploading notes."
+        );
 
-  /* =========================
-     DROPZONE
-  ========================= */
+        return;
+      }
+
+      // Validation errors
+      if (rejectedFiles?.length > 0) {
+        const firstError = rejectedFiles[0].errors?.[0];
+
+        let message = "Please select a valid PDF file.";
+
+        if (firstError?.code === "file-too-large") {
+          message = "PDF size must not exceed 10 MB.";
+        } else if (
+          firstError?.code === "file-invalid-type"
+        ) {
+          message = "Only PDF files are allowed.";
+        }
+
+        showNotification(
+          "error",
+          "Invalid file",
+          rejectedFiles.length > 1
+            ? `${rejectedFiles.length} file(s) rejected. ${message}`
+            : message
+        );
+      }
+
+      if (!acceptedFiles || acceptedFiles.length === 0) {
+        return;
+      }
+
+      setUploading(true);
+
+      let successfulUploads = 0;
+      const failedFiles = [];
+
+      try {
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          const file = acceptedFiles[i];
+
+          setUploadProgress(
+            `Uploading ${i + 1} of ${acceptedFiles.length}: ${file.name}`
+          );
+
+          try {
+            const formData = new FormData();
+
+            // Must match upload.single("file") in Server.js
+            formData.append("file", file);
+
+            // Backend should verify this against the JWT user.
+            formData.append("userId", userId);
+
+            const response = await axios.post(
+              `${API_URL}/upload`,
+              formData,
+              {
+                headers: getAuthHeaders(),
+                timeout: 120000,
+
+                onUploadProgress: (event) => {
+                  if (event.total) {
+                    const percent = Math.round(
+                      (event.loaded * 100) / event.total
+                    );
+
+                    setUploadProgress(
+                      `Uploading ${file.name}: ${percent}%`
+                    );
+                  }
+                },
+              }
+            );
+
+            if (
+              response.data?.success === false ||
+              !response.data?.note
+            ) {
+              throw new Error(
+                response.data?.message ||
+                  "The server did not confirm the upload."
+              );
+            }
+
+            successfulUploads++;
+          } catch (error) {
+            console.error(
+              `Upload failed for ${file.name}:`,
+              {
+                status: error.response?.status,
+                response: error.response?.data,
+                message: error.message,
+              }
+            );
+
+            failedFiles.push({
+              name: file.name,
+              message: getErrorMessage(error),
+            });
+          }
+        }
+
+        // Refresh notes after uploads
+        await fetchNotes();
+
+        // All successful
+        if (
+          successfulUploads > 0 &&
+          failedFiles.length === 0
+        ) {
+          showNotification(
+            "success",
+            "Upload successful!",
+            successfulUploads === 1
+              ? "Your PDF has been uploaded successfully."
+              : `${successfulUploads} PDFs uploaded successfully.`
+          );
+        }
+
+        // Partial success
+        else if (
+          successfulUploads > 0 &&
+          failedFiles.length > 0
+        ) {
+          showNotification(
+            "error",
+            "Partially uploaded",
+            `${successfulUploads} uploaded successfully; ${failedFiles.length} failed. ${failedFiles[0].message}`
+          );
+        }
+
+        // All failed
+        else {
+          showNotification(
+            "error",
+            "Upload failed",
+            failedFiles[0]?.message ||
+              "Unable to upload your PDFs. Please try again."
+          );
+        }
+      } catch (error) {
+        console.error("Upload process error:", error);
+
+        showNotification(
+          "error",
+          "Upload failed",
+          getErrorMessage(error)
+        );
+      } finally {
+        setUploading(false);
+        setUploadProgress("");
+      }
+    },
+    [userId, fetchNotes, showNotification]
+  );
+
+  // =====================================
+  // DROPZONE
+  // =====================================
 
   const {
     getRootProps,
     getInputProps,
     isDragActive,
+    open,
   } = useDropzone({
     onDrop,
+
     accept: {
       "application/pdf": [".pdf"],
     },
+
+    multiple: true,
+
+    maxSize: 10 * 1024 * 1024,
+
+    disabled: uploading,
+
+    noClick: true,
   });
 
-  /* =========================
-     OPEN DELETE MODAL
-  ========================= */
+  // =====================================
+  // OPEN PRIVATE PDF
+  // =====================================
+
+  const openPDF = async (noteId) => {
+    if (!noteId) {
+      showNotification(
+        "error",
+        "File unavailable",
+        "The PDF note could not be found."
+      );
+
+      return;
+    }
+
+    let pdfUrl = null;
+
+    try {
+      const response = await axios.get(
+        `${API_URL}/notes/file/${noteId}`,
+        {
+          headers: getAuthHeaders(),
+          responseType: "blob",
+          timeout: 60000,
+        }
+      );
+
+      pdfUrl = URL.createObjectURL(
+        new Blob([response.data], {
+          type: "application/pdf",
+        })
+      );
+
+      const newTab = window.open(pdfUrl, "_blank");
+
+      if (!newTab) {
+        URL.revokeObjectURL(pdfUrl);
+
+        showNotification(
+          "error",
+          "Popup blocked",
+          "Please allow popups to open your PDF."
+        );
+
+        return;
+      }
+
+      newTab.opener = null;
+
+      // Allow time for the browser PDF viewer to load.
+      setTimeout(() => {
+        URL.revokeObjectURL(pdfUrl);
+      }, 60000);
+    } catch (error) {
+      console.error("PDF open error:", error);
+
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+
+      showNotification(
+        "error",
+        "Unable to open PDF",
+        getErrorMessage(error)
+      );
+    }
+  };
+
+  // =====================================
+  // OPEN DELETE MODAL
+  // =====================================
 
   const openDeleteModal = (id) => {
     setSelectedNoteId(id);
     setShowDeleteModal(true);
   };
 
-  /* =========================
-     CLOSE DELETE MODAL
-  ========================= */
+  // =====================================
+  // CLOSE DELETE MODAL
+  // =====================================
 
   const closeDeleteModal = () => {
     if (deleting) return;
@@ -101,18 +464,32 @@ export default function Notes() {
     setSelectedNoteId(null);
   };
 
-  /* =========================
-     CONFIRM DELETE NOTE
-  ========================= */
+  // =====================================
+  // CONFIRM DELETE NOTE
+  // =====================================
 
   const confirmDeleteNote = async () => {
     if (!selectedNoteId || deleting) return;
+
+    if (!userId) {
+      showNotification(
+        "error",
+        "Login required",
+        "Please log in again to delete notes."
+      );
+
+      return;
+    }
 
     try {
       setDeleting(true);
 
       await axios.delete(
-        `https://doubtify-0q6d.onrender.com/delete-note/${selectedNoteId}`
+        `${API_URL}/delete-note/${selectedNoteId}`,
+        {
+          headers: getAuthHeaders(),
+          timeout: 30000,
+        }
       );
 
       // Remove deleted note from UI
@@ -122,56 +499,157 @@ export default function Notes() {
         )
       );
 
-      // Close modal
       setShowDeleteModal(false);
       setSelectedNoteId(null);
-    } catch (err) {
-      console.error("Error deleting note:", err);
 
-      window.alert(
-        "Unable to delete this note. Please try again."
+      showNotification(
+        "success",
+        "Note deleted",
+        "Your note has been deleted successfully."
+      );
+    } catch (error) {
+      console.error("Error deleting note:", {
+        status: error.response?.status,
+        response: error.response?.data,
+        message: error.message,
+      });
+
+      showNotification(
+        "error",
+        "Unable to delete note",
+        getErrorMessage(error)
       );
     } finally {
       setDeleting(false);
     }
   };
 
-  /* =========================
-     RENDER UI
-  ========================= */
+  // =====================================
+  // LOADING UI
+  // =====================================
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <BackButton />
+
+        <div className="dashboard">
+          <div className="notes-loading">
+            <div className="notes-spinner" />
+            <p>Loading your notes...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // =====================================
+  // MAIN UI
+  // =====================================
 
   return (
     <>
       <Navbar />
       <BackButton />
 
+      {/* NOTIFICATION */}
+
+      {notification.show && (
+        <div
+          className={`notes-toast ${notification.type}`}
+          role="status"
+          aria-live="polite"
+        >
+          <div className="notes-toast-icon">
+            {notification.type === "success" ? "✓" : "!"}
+          </div>
+
+          <div className="notes-toast-content">
+            <h3>{notification.title}</h3>
+            <p>{notification.message}</p>
+          </div>
+
+          <button
+            type="button"
+            className="notes-toast-close"
+            onClick={closeNotification}
+            aria-label="Close notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <div className="dashboard">
-        {/* Dashboard Title */}
+        {/* DASHBOARD TITLE */}
 
         <h1 className="dashboard-title">
           My Notes 📘
         </h1>
 
-        {/* ======================
-            PDF UPLOAD BOX
-        ====================== */}
+        {/* PDF UPLOAD BOX */}
 
         <div
           {...getRootProps()}
-          className="upload-box"
+          className={`upload-box ${
+            isDragActive ? "drag-active" : ""
+          } ${uploading ? "uploading" : ""}`}
+          aria-label="PDF upload area"
         >
           <input {...getInputProps()} />
 
-          {isDragActive ? (
-            <p>Drop the PDF here...</p>
+          {uploading ? (
+            <>
+              <div className="notes-spinner" />
+
+              <p className="upload-status">
+                {uploadProgress || "Uploading your PDFs..."}
+              </p>
+            </>
+          ) : isDragActive ? (
+            <>
+              <div className="upload-icon">📂</div>
+              <p>Drop your PDF files here...</p>
+            </>
           ) : (
-            <p>+ Drag / Click to Upload</p>
+            <>
+              <div className="upload-icon">📄</div>
+
+              <h3>Upload your study notes</h3>
+
+              <p>
+                Drag and drop PDF files here, or choose files
+                from your device.
+              </p>
+
+              <button
+                type="button"
+                className="open-btn"
+                onClick={open}
+              >
+                + Choose PDF Files
+              </button>
+
+              <p className="upload-status">
+                PDF files only · Maximum 10 MB per file
+              </p>
+            </>
           )}
         </div>
 
-        {/* ======================
-            NOTES GRID
-        ====================== */}
+        {/* NOTES COUNT */}
+
+        <div className="notes-section-header">
+          <h2>Your Documents</h2>
+
+          <span className="notes-count">
+            {notes.length}{" "}
+            {notes.length === 1 ? "file" : "files"}
+          </span>
+        </div>
+
+        {/* NOTES GRID */}
 
         <div className="dashboard-grid">
           {notes.length > 0 ? (
@@ -180,29 +658,21 @@ export default function Notes() {
                 className="dashboard-card"
                 key={note._id}
               >
-                {/* Note Title */}
+                <div className="note-file-icon">📄</div>
 
-                <h2>
-                  📄 {note.title}
+                <h2 title={note.title}>
+                  {note.title}
                 </h2>
 
-                {/* File Size */}
-
-                <p>{note.size} MB</p>
-
-                {/* Action Buttons */}
+                <p>
+                  {Number(note.size || 0).toFixed(2)} MB
+                </p>
 
                 <div className="btn-group">
                   <button
                     type="button"
                     className="open-btn"
-                    onClick={() =>
-                      window.open(
-                        `https://doubtify-0q6d.onrender.com${note.file}`,
-                        "_blank",
-                        "noopener,noreferrer"
-                      )
-                    }
+                    onClick={() => openPDF(note._id)}
                   >
                     Open PDF
                   </button>
@@ -210,9 +680,7 @@ export default function Notes() {
                   <button
                     type="button"
                     className="delete-btns"
-                    onClick={() =>
-                      openDeleteModal(note._id)
-                    }
+                    onClick={() => openDeleteModal(note._id)}
                   >
                     🗑 Delete
                   </button>
@@ -220,22 +688,21 @@ export default function Notes() {
               </div>
             ))
           ) : (
-            <p className="empty-text">
-              No notes uploaded yet 📂
-            </p>
+            <div className="notes-empty-state">
+              <div className="empty-notes-icon">📂</div>
+              <h3>No notes yet</h3>
+            </div>
           )}
         </div>
       </div>
 
-      {/* =================================
-          PREMIUM DELETE CONFIRMATION MODAL
-      ================================= */}
+      {/* DELETE CONFIRMATION MODAL */}
 
       {showDeleteModal && (
         <div
           className="delete-modal-overlay"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) {
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
               closeDeleteModal();
             }
           }}
@@ -247,7 +714,7 @@ export default function Notes() {
             aria-labelledby="delete-modal-title"
             aria-describedby="delete-modal-description"
           >
-            {/* Close Button */}
+            {/* CLOSE BUTTON */}
 
             <button
               type="button"
@@ -259,31 +726,29 @@ export default function Notes() {
               ×
             </button>
 
-            {/* Warning Icon */}
+            {/* WARNING ICON */}
 
             <div className="delete-modal-icon">
               <span>!</span>
             </div>
 
-            {/* Heading */}
+            {/* HEADING */}
 
             <h2 id="delete-modal-title">
               Delete this note?
             </h2>
 
-            {/* Description */}
+            {/* DESCRIPTION */}
 
             <p id="delete-modal-description">
               Are you sure you want to delete this note?
-
               <br />
-
               <span className="delete-warning">
                 This action cannot be undone.
               </span>
             </p>
 
-            {/* Action Buttons */}
+            {/* ACTION BUTTONS */}
 
             <div className="delete-modal-actions">
               <button
@@ -315,7 +780,7 @@ export default function Notes() {
               </button>
             </div>
 
-            {/* Footer */}
+            {/* FOOTER */}
 
             <div className="delete-modal-footer">
               <span className="delete-footer-dot" />

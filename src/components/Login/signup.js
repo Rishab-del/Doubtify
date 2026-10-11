@@ -101,7 +101,7 @@ const handleSignup = async (e) => {
         "Signup Successful 🎉"
       );
 
-      navigate("/login");
+      navigate("/home");
     } else {
       toast.error(data.message);
     }

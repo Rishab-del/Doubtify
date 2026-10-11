@@ -1,15 +1,12 @@
 import axios from "axios";
 import "./Profile.css";
 import BackButton from "./BackButton";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 const API_URL = "https://doubtify-0q6d.onrender.com";
 
 export default function Profile() {
-  const storedUser = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  );
-
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = storedUser?.id;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -27,9 +24,48 @@ export default function Profile() {
   });
 
   const [image, setImage] = useState(null);
-  const [imageChanged, setImageChanged] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const [notification, setNotification] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
+
+  // =====================================
+  // CUSTOM NOTIFICATION
+  // =====================================
+
+  const showNotification = useCallback((type, title, message) => {
+    setNotification({
+      show: true,
+      type,
+      title,
+      message,
+    });
+  }, []);
+
+  const closeNotification = () => {
+    setNotification((prev) => ({
+      ...prev,
+      show: false,
+    }));
+  };
+
+  useEffect(() => {
+    if (!notification.show) return;
+
+    const timer = setTimeout(() => {
+      setNotification((prev) => ({
+        ...prev,
+        show: false,
+      }));
+    }, 3500);
+
+    return () => clearTimeout(timer);
+  }, [notification]);
 
   // =====================================
   // FETCH PROFILE
@@ -41,6 +77,13 @@ export default function Profile() {
     const fetchProfile = async () => {
       if (!userId) {
         setLoading(false);
+
+        showNotification(
+          "error",
+          "Login required",
+          "Please log in again to access your profile."
+        );
+
         return;
       }
 
@@ -62,15 +105,18 @@ export default function Profile() {
         });
 
         if (res.data.profilePic) {
-          setImage(
-            `${API_URL}${res.data.profilePic}`
-          );
+          setImage(`${API_URL}${res.data.profilePic}`);
         }
       } catch (err) {
-        if (!cancelled) {
-          console.error("Profile fetch failed:", err);
-          alert("Unable to load profile.");
-        }
+        if (cancelled) return;
+
+        console.error("Profile fetch failed:", err);
+
+        showNotification(
+          "error",
+          "Unable to load profile",
+          "Please check your connection and try again."
+        );
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -83,7 +129,7 @@ export default function Profile() {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, showNotification]);
 
   // =====================================
   // INPUT CHANGE
@@ -108,23 +154,29 @@ export default function Profile() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Please select a valid image.");
+      showNotification(
+        "error",
+        "Invalid image",
+        "Please select a valid image file."
+      );
+
       e.target.value = "";
       return;
     }
 
-    // Limit image size to 5 MB.
     if (file.size > 5 * 1024 * 1024) {
-      alert("Image size should be less than 5 MB.");
+      showNotification(
+        "error",
+        "Image too large",
+        "Please choose an image smaller than 5 MB."
+      );
+
       e.target.value = "";
       return;
     }
 
     setSelectedFile(file);
-
     setImage(URL.createObjectURL(file));
-
-    setImageChanged(true);
     setIsEditing(true);
   };
 
@@ -145,9 +197,7 @@ export default function Profile() {
     );
 
     if (res.data.profilePic) {
-      setImage(
-        `${API_URL}${res.data.profilePic}`
-      );
+      setImage(`${API_URL}${res.data.profilePic}`);
     }
   };
 
@@ -157,7 +207,22 @@ export default function Profile() {
 
   const handleSave = async () => {
     if (!userId) {
-      alert("Please log in again.");
+      showNotification(
+        "error",
+        "Login required",
+        "Please log in again to update your profile."
+      );
+
+      return;
+    }
+
+    if (!user.name.trim()) {
+      showNotification(
+        "error",
+        "Name required",
+        "Please enter your name before saving."
+      );
+
       return;
     }
 
@@ -168,30 +233,54 @@ export default function Profile() {
         await uploadProfilePic();
       }
 
-      await axios.put(
+      const updatedData = {
+        name: user.name.trim(),
+        exam: user.exam.trim(),
+        className: user.className.trim(),
+        city: user.city.trim(),
+        phone: user.phone.trim(),
+        college: user.college.trim(),
+      };
+
+      const res = await axios.put(
         `${API_URL}/api/user/profile/${userId}`,
-        user
+        updatedData
       );
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          ...storedUser,
-          ...user,
-        })
-      );
+      if (res.status !== 200) {
+        throw new Error("Profile update failed");
+      }
+
+      const updatedUser = {
+        ...storedUser,
+        ...user,
+        ...updatedData,
+      };
+
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      setUser((prev) => ({
+        ...prev,
+        ...updatedData,
+      }));
 
       setIsEditing(false);
-      setImageChanged(false);
       setSelectedFile(null);
 
-      alert("Profile updated successfully! ✅");
+      showNotification(
+        "success",
+        "Profile updated!",
+        "Your personal information has been saved successfully."
+      );
     } catch (err) {
       console.error("Profile update failed:", err);
 
-      alert(
+      showNotification(
+        "error",
+        "Update failed",
         err.response?.data?.message ||
-          "Profile update failed. Please try again."
+          err.message ||
+          "Something went wrong. Please try again."
       );
     } finally {
       setSaving(false);
@@ -202,35 +291,42 @@ export default function Profile() {
   // CANCEL EDITING
   // =====================================
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
+    if (saving) return;
+
     setIsEditing(false);
-    setImageChanged(false);
     setSelectedFile(null);
 
-    // Reload the saved profile to discard unsaved changes.
-    if (userId) {
-      axios
-        .get(`${API_URL}/api/user/profile/${userId}`)
-        .then((res) => {
-          setUser({
-            name: res.data.name || "",
-            email: res.data.email || "",
-            exam: res.data.exam || "",
-            className: res.data.className || "",
-            city: res.data.city || "",
-            phone: res.data.phone || "",
-            college: res.data.college || "",
-          });
+    if (!userId) return;
 
-          setImage(
-            res.data.profilePic
-              ? `${API_URL}${res.data.profilePic}`
-              : null
-          );
-        })
-        .catch((err) => {
-          console.error("Unable to reload profile:", err);
-        });
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/user/profile/${userId}`
+      );
+
+      setUser({
+        name: res.data.name || "",
+        email: res.data.email || "",
+        exam: res.data.exam || "",
+        className: res.data.className || "",
+        city: res.data.city || "",
+        phone: res.data.phone || "",
+        college: res.data.college || "",
+      });
+
+      setImage(
+        res.data.profilePic
+          ? `${API_URL}${res.data.profilePic}`
+          : null
+      );
+    } catch (err) {
+      console.error("Unable to reload profile:", err);
+
+      showNotification(
+        "error",
+        "Unable to reset changes",
+        "Please refresh the page and try again."
+      );
     }
   };
 
@@ -259,24 +355,45 @@ export default function Profile() {
     <>
       <BackButton />
 
+      {/* PREMIUM NOTIFICATION */}
+
+      {notification.show && (
+        <div
+          className={`profile-toast ${notification.type}`}
+          role="status"
+          aria-live="polite"
+        >
+          <div className="toast-icon">
+            {notification.type === "success" ? "✓" : "!"}
+          </div>
+
+          <div className="toast-content">
+            <h3>{notification.title}</h3>
+            <p>{notification.message}</p>
+          </div>
+
+          <button
+            type="button"
+            className="toast-close"
+            onClick={closeNotification}
+            aria-label="Close notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <div className="profile-container">
         {/* LEFT SIDEBAR */}
 
         <aside className="profile-sidebar">
-          {/* Profile Photo */}
-
           <div className="avatar">
             {image ? (
-              <img
-                src={image}
-                alt="Profile"
-              />
+              <img src={image} alt="Profile" />
             ) : (
               <span>👤</span>
             )}
           </div>
-
-          {/* Upload Photo */}
 
           <label
             className="upload-btn"
@@ -292,8 +409,6 @@ export default function Profile() {
               hidden
             />
           </label>
-
-          {/* Sidebar Navigation */}
 
           <nav className="profile-navigation">
             <button
@@ -327,8 +442,6 @@ export default function Profile() {
         {/* RIGHT CONTENT */}
 
         <main className="profile-content">
-          {/* PROFILE DETAILS */}
-
           {activeTab === "profile" && (
             <>
               <div className="profile-header">
@@ -340,7 +453,7 @@ export default function Profile() {
                   </p>
                 </div>
 
-                {!isEditing && !imageChanged ? (
+                {!isEditing ? (
                   <button
                     type="button"
                     className="profile-action-btn"
@@ -356,7 +469,14 @@ export default function Profile() {
                       onClick={handleSave}
                       disabled={saving}
                     >
-                      {saving ? "Saving..." : "✓ Save"}
+                      {saving ? (
+                        <>
+                          <span className="button-spinner" />
+                          Saving...
+                        </>
+                      ) : (
+                        "✓ Save"
+                      )}
                     </button>
 
                     <button
@@ -393,10 +513,13 @@ export default function Profile() {
                     type="email"
                     name="email"
                     value={user.email}
-                    onChange={handleChange}
-                    disabled={!isEditing || saving}
-                    placeholder="Enter your email"
+                    disabled
+                    placeholder="Your email address"
                   />
+
+                  <small className="profile-field-hint">
+                    Email address cannot be changed here.
+                  </small>
                 </div>
 
                 <div className="field">
