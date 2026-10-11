@@ -11,8 +11,6 @@ const cors = require("cors");
 const OpenAI = require("openai");
 const { Server } = require("socket.io");
 
-const jwt = require("jsonwebtoken");
-
 const User = require("./models/user");
 const Chat = require("./models/Chat");
 const Note = require("./models/Notes");
@@ -29,37 +27,6 @@ console.log(
 );
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
-/* =========================
-   AUTHENTICATION MIDDLEWARE
-========================= */
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      success: false,
-      message: "Authentication required. Please log in.",
-    });
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired token. Please log in again.",
-      });
-    }
-
-    req.user = {
-      id: decoded.id,
-    };
-
-    next();
-  });
-}
 
 /* =========================
    DB CONNECTION
@@ -124,6 +91,7 @@ try {
   throw err;
 }
 // Serve uploaded files
+app.use("/uploads", express.static(uploadDir));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -305,17 +273,11 @@ app.post("/signup", async (req, res) => {
       phone,
       college,
     });
-    const token = jwt.sign(
-  { id: user._id.toString() },
-  JWT_SECRET,
-  { expiresIn: "7d" }
-);
 
     res.json({
       success: true,
       message:
         "Account created successfully",
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -350,24 +312,24 @@ app.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.json({ success: false, message: "Invalid credentials" });
     }
-    const token = jwt.sign( { id: user._id.toString() },JWT_SECRET,
-{ expiresIn: "7d" }
-);
 
 
-  res.json({
+    res.json({
   success: true,
   message: "Login successful",
-  token,
   user: {
     id: user._id,
+
     name: user.name,
     email: user.email,
+
     exam: user.exam,
     className: user.className,
+
     city: user.city,
     phone: user.phone,
     college: user.college,
+
     profilePic: user.profilePic,
   },
 });
@@ -482,15 +444,19 @@ app.post(
    FILE UPLOAD -> NOTES
 ========================= */
 
+// Upload PDF and associate it with a user
+/* =========================
+   FILE UPLOAD -> NOTES
+========================= */
+
 app.post(
   "/upload",
-  authenticateToken,
   upload.single("file"),
   async (req, res) => {
     let savedFilePath = null;
 
     try {
-      const userId = req.user.id;
+      const { userId } = req.body;
 
       if (
         !userId ||
@@ -585,136 +551,78 @@ app.use((err, req, res, next) => {
   });
 });
 // Fetch only the logged-in user's notes
-app.get("/notes", authenticateToken, async (req, res) => {
+app.get("/notes/:userId", async (req, res) => {
   try {
+    const { userId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid userId",
+      });
+    }
+
     const notes = await Note.find({
-      userId: req.user.id,
+      userId: userId,
     }).sort({ createdAt: -1 });
 
     res.json(notes);
   } catch (err) {
-    console.error("Fetch notes error:", err);
+    console.log("Fetch notes error:", err);
 
     res.status(500).json({
       success: false,
-      message: "Failed to fetch notes.",
+      error: "Failed to fetch notes",
     });
   }
 });
 
 // Delete only a note belonging to the specified user
-app.delete(
-  "/delete-note/:id",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      const userId = req.user.id;
+app.delete("/delete-note/:id", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const { id } = req.params;
 
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid note ID.",
-        });
-      }
-
-      const note = await Note.findOne({
-        _id: id,
-        userId,
-      });
-
-      if (!note) {
-        return res.status(404).json({
-          success: false,
-          message: "Note not found or access denied.",
-        });
-      }
-
-      const filename = path.basename(note.file);
-      const filePath = path.join(uploadDir, filename);
-
-      // Delete the note from MongoDB.
-      await Note.deleteOne({ _id: note._id });
-
-      // Delete the physical PDF if it exists.
-      try {
-        await fs.promises.unlink(filePath);
-      } catch (fileError) {
-        if (fileError.code !== "ENOENT") {
-          console.error(
-            "Unable to delete physical PDF:",
-            fileError
-          );
-        }
-      }
-
-      return res.json({
-        success: true,
-        message: "Note deleted successfully.",
-      });
-    } catch (err) {
-      console.error("Delete note error:", err);
-
-      return res.status(500).json({
+    if (
+      !userId ||
+      !mongoose.Types.ObjectId.isValid(userId) ||
+      !mongoose.Types.ObjectId.isValid(id)
+    ) {
+      return res.status(400).json({
         success: false,
-        message: "Delete failed.",
+        message: "Valid userId and note ID are required",
       });
     }
-  }
-);
 
-app.get(
-  "/notes/file/:id",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      const note = await Note.findOne({
-        _id: req.params.id,
-        userId: req.user.id,
-      });
+    const note = await Note.findOne({
+      _id: id,
+      userId: userId,
+    });
 
-      if (!note) {
-        return res.status(404).json({
-          success: false,
-          message: "Note not found.",
-        });
-      }
-
-      const filename = path.basename(note.file);
-      const filePath = path.join(uploadDir, filename);
-
-      if (!fs.existsSync(filePath)) {
-        return res.status(404).json({
-          success: false,
-          message: "PDF file is no longer available.",
-        });
-      }
-
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader(
-        "Content-Disposition",
-        "inline; filename*=UTF-8''" +
-          encodeURIComponent(note.title)
-      );
-
-      return res.sendFile(filePath);
-    } catch (err) {
-      console.error("PDF access error:", err);
-
-      if (err.name === "CastError") {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid note ID.",
-        });
-      }
-
-      return res.status(500).json({
+    if (!note) {
+      return res.status(404).json({
         success: false,
-        message: "Unable to open PDF.",
+        message: "Note not found or you do not own this note",
       });
     }
+
+    await Note.deleteOne({ _id: note._id });
+
+    res.json({
+      success: true,
+      message: "Note deleted successfully",
+    });
+  } catch (err) {
+    console.log("Delete note error:", err);
+
+    res.status(500).json({
+      success: false,
+      error: "Delete failed",
+    });
   }
-);
+});
+
+
 
 /* =========================
    AI CHAT (ASK-AI)
@@ -1007,16 +915,9 @@ if (!user) {
   user.profilePic = profilePic;
   await user.save();
 }
-const token = jwt.sign(
-  { id: user._id.toString() },
-  JWT_SECRET,
-  { expiresIn: "7d" }
-);
 
     res.json({
       success: true,
-      token,
-      message: "Google login successful",
       user: {
         id: user._id,
         name: user.name,
