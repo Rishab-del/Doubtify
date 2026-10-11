@@ -5,6 +5,8 @@ const http = require("http");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 const cors = require("cors");
 const OpenAI = require("openai");
 const { Server } = require("socket.io");
@@ -50,6 +52,8 @@ app.use(
   })
 );
 app.use(express.json());
+// Serve uploaded files
+app.use("/uploads", express.static(uploadDir));
 
 /* =========================
    OPENAI / OPENROUTER CLIENT
@@ -71,13 +75,57 @@ const razorpay = new Razorpay({
 /* =========================
    FILE UPLOAD (MULTER)
 ========================= */
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
-});
-const upload = multer({ storage });
 
-app.use("/uploads", express.static("uploads"));
+const uploadDir = path.resolve(__dirname, "uploads");
+
+// Create directory if it does not exist
+try {
+  fs.mkdirSync(uploadDir, { recursive: true });
+
+  console.log("Current working directory:", process.cwd());
+  console.log("Upload directory:", uploadDir);
+  console.log(
+    "Upload directory exists:",
+    fs.existsSync(uploadDir)
+  );
+} catch (err) {
+  console.error("Unable to create upload directory:", err);
+  throw err;
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+
+  filename: function (req, file, cb) {
+    const safeName = path
+      .basename(file.originalname)
+      .replace(/[^a-zA-Z0-9._-]/g, "_");
+
+    cb(null, `${Date.now()}-${safeName}`);
+  },
+});
+
+const upload = multer({
+  storage,
+
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+
+  fileFilter: (req, file, cb) => {
+    const isPdf =
+      file.mimetype === "application/pdf" &&
+      path.extname(file.originalname).toLowerCase() === ".pdf";
+
+    if (!isPdf) {
+      return cb(new Error("Only PDF files are allowed."));
+    }
+
+    cb(null, true);
+  },
+});
 
 
 /* =========================
@@ -397,45 +445,111 @@ app.post(
 ========================= */
 
 // Upload PDF and associate it with a user
-app.post("/upload", upload.single("file"), async (req, res) => {
-  try {
-    const { userId } = req.body;
+/* =========================
+   FILE UPLOAD -> NOTES
+========================= */
 
-    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({
+app.post(
+  "/upload",
+  upload.single("file"),
+  async (req, res) => {
+    let savedFilePath = null;
+
+    try {
+      const { userId } = req.body;
+
+      if (
+        !userId ||
+        !mongoose.Types.ObjectId.isValid(userId)
+      ) {
+        if (req.file) {
+          fs.unlink(req.file.path, () => {});
+        }
+
+        return res.status(400).json({
+          success: false,
+          message: "Valid userId is required.",
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: "Please upload a PDF.",
+        });
+      }
+
+      savedFilePath = req.file.path;
+
+      console.log("PDF received:", req.file.originalname);
+      console.log("PDF saved at:", req.file.path);
+      console.log("PDF size:", req.file.size);
+
+      const note = await Note.create({
+        title: req.file.originalname,
+        file: `/uploads/${req.file.filename}`,
+        size: Number(
+          (req.file.size / (1024 * 1024)).toFixed(2)
+        ),
+        userId,
+      });
+
+      console.log("Note saved in MongoDB:", note._id);
+
+      return res.status(201).json({
+        success: true,
+        message: "PDF uploaded successfully.",
+        note,
+      });
+    } catch (err) {
+      console.error("PDF upload failed:", err);
+
+      // Remove uploaded file if saving the note failed
+      if (savedFilePath) {
+        fs.unlink(savedFilePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error(
+              "Unable to remove uploaded file:",
+              unlinkErr
+            );
+          }
+        });
+      }
+
+      return res.status(500).json({
         success: false,
-        message: "Valid userId is required",
+        error: "Upload failed.",
+        message: err.message,
       });
     }
+  }
+);
 
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Please upload a PDF",
-      });
-    }
+// Handle Multer errors for this endpoint
+app.use((err, req, res, next) => {
+  if (req.path !== "/upload") {
+    return next(err);
+  }
 
-    const note = await Note.create({
-      title: req.file.originalname,
-      file: `/uploads/${req.file.filename}`,
-      size: Number((req.file.size / (1024 * 1024)).toFixed(2)),
-      userId: userId,
-    });
+  console.error("Upload middleware error:", err);
 
-    res.status(201).json({
-      success: true,
-      note,
-    });
-  } catch (err) {
-    console.log("Upload error:", err);
+  if (err instanceof multer.MulterError) {
+    const status = err.code === "LIMIT_FILE_SIZE" ? 413 : 400;
 
-    res.status(500).json({
+    return res.status(status).json({
       success: false,
-      error: "Upload failed",
+      message:
+        err.code === "LIMIT_FILE_SIZE"
+          ? "PDF must not exceed 10 MB."
+          : err.message,
     });
   }
-});
 
+  return res.status(400).json({
+    success: false,
+    message: err.message || "Unable to process uploaded file.",
+  });
+});
 // Fetch only the logged-in user's notes
 app.get("/notes/:userId", async (req, res) => {
   try {
