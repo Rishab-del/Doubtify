@@ -556,163 +556,38 @@
     transition: none;
   }
 }
-/* ========================================
-   DOUBTIFY — PREMIUM TOAST NOTIFICATION
-======================================== */
-
-/* Toast Container */
-.Toastify__toast-container {
-  width: 390px !important;
-  max-width: calc(100vw - 32px);
-  font-family: "Poppins", sans-serif !important;
-}
-
-/* Main Toast Box */
-.Toastify__toast {
+.password-container {
   position: relative;
-  overflow: hidden;
-
-  min-height: 68px !important;
-  padding: 12px 14px !important;
-
-  border: 1px solid rgba(139, 92, 246, 0.35) !important;
-  border-radius: 16px !important;
-
-  background: linear-gradient(
-    135deg,
-    rgba(24, 29, 53, 0.98),
-    rgba(13, 17, 35, 0.98)
-  ) !important;
-
-  color: #f8fafc !important;
-
-  box-shadow:
-    0 15px 40px rgba(0, 0, 0, 0.35),
-    0 0 25px rgba(139, 92, 246, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
-
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  animation: doubtifyToastEnter 0.4s ease both;
+  width: 100%;
 }
 
-/* Success Toast */
-.Toastify__toast--success {
-  border-color: rgba(52, 211, 153, 0.35) !important;
+.password-container input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 45px;
 }
 
-/* Success Icon */
-.Toastify__toast--success .Toastify__toast-icon svg {
-  fill: #34d399 !important;
-  filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.3));
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  color: #ffffff;
 }
-
-/* Toast Message */
-.Toastify__toast-body {
-  padding: 5px 4px !important;
-  margin: 0 !important;
-
-  color: #e2e8f0 !important;
-
-  font-family: "Poppins", sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 500;
-  line-height: 1.6 !important;
-}
-
-/* Close Button */
-.Toastify__close-button {
-  align-self: flex-start !important;
-
-  margin-top: 2px;
-
-  color: #94a3b8 !important;
-  opacity: 0.8 !important;
-
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease,
-    opacity 0.2s ease;
-}
-
-.Toastify__close-button:hover {
-  color: #ffffff !important;
-  opacity: 1 !important;
-  transform: scale(1.1);
-}
-
-/* Progress Bar */
-.Toastify__progress-bar {
-  height: 4px !important;
-
-  background: linear-gradient(
-    90deg,
-    #8b5cf6,
-    #22d3ee
-  ) !important;
-
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.35);
-}
-
-/* Success Progress Bar */
-.Toastify__progress-bar--success {
-  background: linear-gradient(
-    90deg,
-    #34d399,
-    #22d3ee
-  ) !important;
-}
-
-/* Error Toast */
-.Toastify__toast--error {
-  border-color: rgba(248, 113, 113, 0.4) !important;
-}
-
-.Toastify__toast--error .Toastify__toast-icon svg {
-  fill: #f87171 !important;
-}
-
-/* Info Toast */
-.Toastify__toast--info {
-  border-color: rgba(34, 211, 238, 0.35) !important;
-}
-
-/* Entry Animation */
-@keyframes doubtifyToastEnter {
-  from {
-    opacity: 0;
-    transform: translateX(25px) scale(0.97);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-
-/* Mobile Responsive */
-@media (max-width: 480px) {
-  .Toastify__toast-container {
-    width: calc(100vw - 24px) !important;
-
-    left: 12px !important;
-    right: 12px !important;
-  }
-
-  .Toastify__toast {
-    min-height: 60px !important;
-    border-radius: 13px !important;
-  }
-
-  .Toastify__toast-body {
-    font-size: 12px !important;
-  }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .Toastify__toast {
-    animation: none !important;
-  }
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 45%;
+  transform: translateY(-65%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  color: #ffffff;
 }
