@@ -775,3 +775,25 @@
     transition: none;
   }
 }
+.discussion-connection {
+  text-align: center;
+  font-size: 13px;
+  margin: 8px 0 14px;
+}
+
+.discussion-connection.connected {
+  color: #16a34a;
+}
+
+.discussion-connection.connecting {
+  color: #ca8a04;
+}
+
+.discussion-connection.disconnected {
+  color: #dc2626;
+}
+
+.post-box button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
