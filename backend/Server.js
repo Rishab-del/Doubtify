@@ -52,8 +52,6 @@ app.use(
   })
 );
 app.use(express.json());
-// Serve uploaded files
-app.use("/uploads", express.static(uploadDir));
 
 /* =========================
    OPENAI / OPENROUTER CLIENT
@@ -92,6 +90,8 @@ try {
   console.error("Unable to create upload directory:", err);
   throw err;
 }
+// Serve uploaded files
+app.use("/uploads", express.static(uploadDir));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
