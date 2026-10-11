@@ -166,12 +166,26 @@ export default function Signup() {
         }),
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get("content-type");
 
-      if (!response.ok || !data.success) {
-        toast.error(data.message || "Invalid or expired OTP.");
-        return;
-      }
+if (!contentType || !contentType.includes("application/json")) {
+  const errorText = await response.text();
+
+  console.error("OTP API returned non-JSON:", {
+    status: response.status,
+    response: errorText,
+  });
+
+  toast.error(`OTP API error: HTTP ${response.status}`);
+  return;
+}
+
+const data = await response.json();
+
+if (!response.ok || !data.success) {
+  toast.error(data.message || "Unable to send OTP.");
+  return;
+}
 
       if (isEmail) {
         setEmailVerified(true);

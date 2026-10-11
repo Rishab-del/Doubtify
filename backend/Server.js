@@ -20,6 +20,13 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 const app = express();
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Doubtify backend is running",
+    otpRoutesAvailable: true,
+  });
+});
 
 console.log(
   "OPENROUTER_API_KEY:",
@@ -98,14 +105,14 @@ function hashOtp(otp, destination, purpose) {
     .update(`${destination}:${purpose}:${otp}`)
     .digest("hex");
 }
-/* =========================
-   SEND EMAIL OTP
-========================= */
+
 /* =========================
    SEND EMAIL OTP
 ========================= */
 
 app.post("/otp/send", async (req, res) => {
+  console.log("OTP SEND ROUTE HIT:", req.body);
+
   try {
     const { type, destination, purpose } = req.body;
 
@@ -249,6 +256,7 @@ app.post("/otp/send", async (req, res) => {
 ========================= */
 
 app.post("/otp/verify", async (req, res) => {
+  console.log("OTP VERIFY ROUTE HIT:", req.body);
   try {
     const { type, destination, otp, purpose } = req.body;
 
