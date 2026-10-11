@@ -7,30 +7,6 @@ import axios from "axios";
 
 const API_URL = "https://doubtify-0q6d.onrender.com";
 
-// =====================================
-// ERROR HANDLER
-// =====================================
-
-const getErrorMessage = (err) => {
-  if (err.response?.data?.message) {
-    return err.response.data.message;
-  }
-
-  if (err.response?.data?.error) {
-    return err.response.data.error;
-  }
-
-  if (err.response) {
-    return `Server error (${err.response.status}). Please try again.`;
-  }
-
-  if (err.request) {
-    return "Server se response nahi mila. Please try again.";
-  }
-
-  return err.message || "Something went wrong.";
-};
-
 export default function Notes() {
   // =====================================
   // USER
@@ -43,8 +19,7 @@ export default function Notes() {
       );
 
       return storedUser?.id || null;
-    } catch (err) {
-      console.error("Unable to read logged-in user:", err);
+    } catch {
       return null;
     }
   });
@@ -103,7 +78,7 @@ export default function Notes() {
         ...prev,
         show: false,
       }));
-    }, 5000);
+    }, 3500);
 
     return () => clearTimeout(timer);
   }, [notification]);
@@ -111,33 +86,33 @@ export default function Notes() {
   // =====================================
   // FETCH NOTES
   // =====================================
-const fetchNotes = async () => {
-  try {
-    const token = localStorage.getItem("token");
 
-    if (!token) {
-      console.error("Login token not found. Please log in again.");
+  const fetchNotes = useCallback(async () => {
+    if (!userId) {
+      setNotes([]);
+      setLoading(false);
       return;
     }
 
-    const response = await fetch(`${API_URL}/notes`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await axios.get(
+        `${API_URL}/notes/${encodeURIComponent(userId)}`
+      );
 
-    const data = await response.json();
+      setNotes(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching notes:", err);
 
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to fetch notes");
+      showNotification(
+        "error",
+        "Unable to load notes",
+        err.response?.data?.message ||
+          "Please check your connection and try again."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setNotes(Array.isArray(data) ? data : []);
-  } catch (error) {
-    console.error("Error fetching notes:", error);
-  }
-};
+  }, [userId, showNotification]);
 
   // =====================================
   // LOAD NOTES ON START
@@ -152,8 +127,7 @@ const fetchNotes = async () => {
   // =====================================
 
   const onDrop = useCallback(
-    async (acceptedFiles, rejectedFiles) => {
-      // Check login
+    async (acceptedFiles) => {
       if (!userId) {
         showNotification(
           "error",
@@ -164,37 +138,14 @@ const fetchNotes = async () => {
         return;
       }
 
-      // Show validation errors
-      if (rejectedFiles?.length > 0) {
-        const firstError = rejectedFiles[0].errors?.[0];
-
-        let message = "Please select a valid PDF file.";
-
-        if (firstError?.code === "file-too-large") {
-          message = "PDF size must not exceed 10 MB.";
-        } else if (
-          firstError?.code === "file-invalid-type"
-        ) {
-          message = "Only PDF files are allowed.";
-        }
-
-        showNotification(
-          "error",
-          "Invalid file",
-          rejectedFiles.length > 1
-            ? `${rejectedFiles.length} file(s) rejected. ${message}`
-            : message
-        );
-      }
-
-      if (!acceptedFiles || acceptedFiles.length === 0) {
+      if (acceptedFiles.length === 0) {
         return;
       }
 
       setUploading(true);
 
       let successfulUploads = 0;
-      const failedFiles = [];
+      let failedUploads = 0;
 
       try {
         for (let i = 0; i < acceptedFiles.length; i++) {
@@ -207,69 +158,29 @@ const fetchNotes = async () => {
           try {
             const formData = new FormData();
 
-            // Must match upload.single("file") in Server.js
             formData.append("file", file);
-
-            // Must match req.body.userId in Server.js
             formData.append("userId", userId);
 
-            const response = await axios.post(
+            await axios.post(
               `${API_URL}/upload`,
-              formData,
-              {
-                timeout: 120000,
-
-                onUploadProgress: (event) => {
-                  if (event.total) {
-                    const percent = Math.round(
-                      (event.loaded * 100) / event.total
-                    );
-
-                    setUploadProgress(
-                      `Uploading ${file.name}: ${percent}%`
-                    );
-                  }
-                },
-              }
+              formData
             );
-
-            if (
-              response.data?.success === false ||
-              !response.data?.note
-            ) {
-              throw new Error(
-                response.data?.error ||
-                  response.data?.message ||
-                  "The server did not confirm the upload."
-              );
-            }
 
             successfulUploads++;
           } catch (err) {
             console.error(
-              `Upload failed for ${file.name}:`,
-              {
-                status: err.response?.status,
-                response: err.response?.data,
-                message: err.message,
-              }
+              `Error uploading ${file.name}:`,
+              err
             );
 
-            failedFiles.push({
-              name: file.name,
-              message: getErrorMessage(err),
-            });
+            failedUploads++;
           }
         }
 
-        // Refresh notes after upload attempts
+        // Refresh notes after upload
         await fetchNotes();
 
-        // All successful
-        if (
-          successfulUploads > 0 &&
-          failedFiles.length === 0
-        ) {
+        if (successfulUploads > 0 && failedUploads === 0) {
           showNotification(
             "success",
             "Upload successful!",
@@ -277,37 +188,19 @@ const fetchNotes = async () => {
               ? "Your PDF has been uploaded successfully."
               : `${successfulUploads} PDFs uploaded successfully.`
           );
-        }
-
-        // Partial success
-        else if (
-          successfulUploads > 0 &&
-          failedFiles.length > 0
-        ) {
+        } else if (successfulUploads > 0 && failedUploads > 0) {
           showNotification(
             "error",
             "Partially uploaded",
-            `${successfulUploads} uploaded successfully; ${failedFiles.length} failed. ${failedFiles[0].message}`
+            `${successfulUploads} uploaded successfully; ${failedUploads} failed.`
           );
-        }
-
-        // All failed
-        else {
+        } else {
           showNotification(
             "error",
             "Upload failed",
-            failedFiles[0]?.message ||
-              "Unable to upload your PDFs. Please try again."
+            "Unable to upload your PDFs. Please try again."
           );
         }
-      } catch (err) {
-        console.error("Upload process error:", err);
-
-        showNotification(
-          "error",
-          "Upload failed",
-          getErrorMessage(err)
-        );
       } finally {
         setUploading(false);
         setUploadProgress("");
@@ -327,17 +220,12 @@ const fetchNotes = async () => {
     open,
   } = useDropzone({
     onDrop,
-
     accept: {
       "application/pdf": [".pdf"],
     },
-
     multiple: true,
-
     maxSize: 10 * 1024 * 1024,
-
     disabled: uploading,
-
     noClick: true,
   });
 
@@ -356,11 +244,9 @@ const fetchNotes = async () => {
       return;
     }
 
-    const pdfUrl = /^https?:\/\//i.test(filePath)
+    const pdfUrl = filePath.startsWith("http")
       ? filePath
-      : `${API_URL}${
-          filePath.startsWith("/") ? "" : "/"
-        }${filePath}`;
+      : `${API_URL}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
 
     window.open(
       pdfUrl,
@@ -415,8 +301,6 @@ const fetchNotes = async () => {
           data: {
             userId,
           },
-
-          timeout: 30000,
         }
       );
 
@@ -436,16 +320,13 @@ const fetchNotes = async () => {
         "Your note has been deleted successfully."
       );
     } catch (err) {
-      console.error("Error deleting note:", {
-        status: err.response?.status,
-        response: err.response?.data,
-        message: err.message,
-      });
+      console.error("Error deleting note:", err);
 
       showNotification(
         "error",
         "Unable to delete note",
-        getErrorMessage(err)
+        err.response?.data?.message ||
+          "Please try again."
       );
     } finally {
       setDeleting(false);
@@ -465,7 +346,6 @@ const fetchNotes = async () => {
         <div className="dashboard">
           <div className="notes-loading">
             <div className="notes-spinner" />
-
             <p>Loading your notes...</p>
           </div>
         </div>
@@ -482,7 +362,7 @@ const fetchNotes = async () => {
       <Navbar />
       <BackButton />
 
-      {/* NOTIFICATION */}
+      {/* PREMIUM NOTIFICATION */}
 
       {notification.show && (
         <div
@@ -496,7 +376,6 @@ const fetchNotes = async () => {
 
           <div className="notes-toast-content">
             <h3>{notification.title}</h3>
-
             <p>{notification.message}</p>
           </div>
 
@@ -534,14 +413,12 @@ const fetchNotes = async () => {
               <div className="notes-spinner" />
 
               <p className="upload-status">
-                {uploadProgress ||
-                  "Uploading your PDFs..."}
+                {uploadProgress || "Uploading your PDFs..."}
               </p>
             </>
           ) : isDragActive ? (
             <>
               <div className="upload-icon">📂</div>
-
               <p>Drop your PDF files here...</p>
             </>
           ) : (
@@ -563,9 +440,7 @@ const fetchNotes = async () => {
                 + Choose PDF Files
               </button>
 
-              <p className="upload-status">
-                PDF files only · Maximum 10 MB per file
-              </p>
+              <small>PDF files only · Maximum 10 MB per file</small>
             </>
           )}
         </div>
@@ -576,8 +451,7 @@ const fetchNotes = async () => {
           <h2>Your Documents</h2>
 
           <span className="notes-count">
-            {notes.length}{" "}
-            {notes.length === 1 ? "file" : "files"}
+            {notes.length} {notes.length === 1 ? "file" : "files"}
           </span>
         </div>
 
@@ -614,9 +488,7 @@ const fetchNotes = async () => {
                   <button
                     type="button"
                     className="delete-btns"
-                    onClick={() =>
-                      openDeleteModal(note._id)
-                    }
+                    onClick={() => openDeleteModal(note._id)}
                   >
                     🗑 Delete
                   </button>
@@ -625,9 +497,7 @@ const fetchNotes = async () => {
             ))
           ) : (
             <div className="notes-empty-state">
-              <div className="empty-notes-icon">
-                📂
-              </div>
+              <div className="empty-notes-icon">📂</div>
 
               <h3>No notes yet</h3>
             </div>
@@ -636,7 +506,7 @@ const fetchNotes = async () => {
       </div>
 
       {/* =================================
-          DELETE CONFIRMATION MODAL
+          PREMIUM DELETE CONFIRMATION MODAL
       ================================= */}
 
       {showDeleteModal && (
