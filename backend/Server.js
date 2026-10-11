@@ -16,6 +16,8 @@ const Discussion = require("./models/Discussion");
 const Event = require("./models/Events");
 const Doubt = require("./models/Doubt");
 const Razorpay = require("razorpay");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 const app = express();
 
@@ -26,14 +28,23 @@ console.log(
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
 
+
 /* =========================
    DB CONNECTION
 ========================= */
 if (process.env.MONGO_URL) {
   mongoose
-    .connect(process.env.MONGO_URL)
-    .then(() => console.log("MongoDB connected"))
-    .catch((err) => console.log("MongoDB connection error:", err));
+  .connect(process.env.MONGO_URL, {
+    serverSelectionTimeoutMS: 15000,
+  })
+  .then(() => {
+    console.log("MongoDB connected successfully");
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err.name);
+    console.error("Error message:", err.message);
+    console.error("Error code:", err.code);
+  });
 }
 
 /* =========================
@@ -51,6 +62,327 @@ app.use(
 );
 app.use(express.json());
 
+/* =========================
+   EMAIL OTP CONFIGURATION
+========================= */
+/* =========================
+   EMAIL OTP CONFIGURATION
+========================= */
+
+const otpStore = new Map();
+
+const OTP_SECRET = process.env.OTP_SECRET;
+
+// Email transporter
+const emailTransporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_APP_PASSWORD,
+  },
+});
+
+// Generate a 6-digit OTP
+function generateOtp() {
+  return crypto.randomInt(100000, 1000000).toString();
+}
+
+// Hash OTP before storing it
+function hashOtp(otp, destination, purpose) {
+  if (!OTP_SECRET) {
+    throw new Error("OTP_SECRET is missing in environment variables.");
+  }
+
+  return crypto
+    .createHmac("sha256", OTP_SECRET)
+    .update(`${destination}:${purpose}:${otp}`)
+    .digest("hex");
+}
+/* =========================
+   SEND EMAIL OTP
+========================= */
+/* =========================
+   SEND EMAIL OTP
+========================= */
+
+app.post("/otp/send", async (req, res) => {
+  try {
+    const { type, destination, purpose } = req.body;
+
+    // 1. Check environment configuration
+    if (
+      !process.env.EMAIL_USER ||
+      !process.env.EMAIL_APP_PASSWORD ||
+      !OTP_SECRET
+    ) {
+      console.error("OTP configuration is incomplete.");
+
+      return res.status(500).json({
+        success: false,
+        message: "Email OTP service is not configured.",
+      });
+    }
+
+    // 2. Allow email OTP for signup only
+    if (type !== "email" || purpose !== "signup") {
+      return res.status(400).json({
+        success: false,
+        message: "Email signup OTP is currently supported.",
+      });
+    }
+
+    // 3. Normalize email
+    const email = String(destination || "")
+      .trim()
+      .toLowerCase();
+
+    // 4. Validate email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address.",
+      });
+    }
+
+    // 5. Check if email is already registered
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already registered. Please log in.",
+      });
+    }
+
+    // 6. Check resend cooldown
+    const key = `signup:email:${email}`;
+    const previous = otpStore.get(key);
+    const now = Date.now();
+
+    if (previous && now - previous.sentAt < 60_000) {
+      const remainingSeconds = Math.ceil(
+        (60_000 - (now - previous.sentAt)) / 1000
+      );
+
+      return res.status(429).json({
+        success: false,
+        message: `Please wait ${remainingSeconds} seconds before requesting another OTP.`,
+      });
+    }
+
+    // 7. Generate OTP
+    const otp = generateOtp();
+
+    // 8. Save OTP hash temporarily
+    otpStore.set(key, {
+      hash: hashOtp(otp, email, "signup"),
+      expiresAt: now + 5 * 60 * 1000,
+      sentAt: now,
+      attempts: 0,
+      verified: false,
+    });
+
+    // 9. Send email
+    try {
+      const result = await emailTransporter.sendMail({
+        from: {
+          name: "Doubtify",
+          address: process.env.EMAIL_USER,
+        },
+        to: email,
+        subject: "Your Doubtify Email Verification Code",
+        text: [
+          `Hello,`,
+          ``,
+          `Your Doubtify email verification OTP is: ${otp}`,
+          ``,
+          `This OTP expires in 5 minutes.`,
+          `Do not share this code with anyone.`,
+          ``,
+          `If you did not request this code, please ignore this email.`,
+          ``,
+          `Team Doubtify`,
+        ].join("\n"),
+      });
+
+      console.log("OTP email accepted by mail server:", {
+        messageId: result.messageId,
+        accepted: result.accepted,
+        rejected: result.rejected,
+      });
+    } catch (mailError) {
+      // Remove OTP if email delivery fails
+      otpStore.delete(key);
+
+      console.error("Email OTP delivery failed:", {
+        message: mailError.message,
+        code: mailError.code,
+        response: mailError.response,
+      });
+
+      return res.status(502).json({
+        success: false,
+        message: "Unable to send OTP email. Please try again later.",
+      });
+    }
+
+    // 10. Send success response
+    return res.status(200).json({
+      success: true,
+      message: "OTP sent to your email. Please check your inbox and spam folder.",
+    });
+
+  } catch (err) {
+    console.error("OTP send error:", err.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to send OTP.",
+    });
+  }
+});
+/* =========================
+   VERIFY EMAIL OTP
+========================= */
+/* =========================
+   VERIFY EMAIL OTP
+========================= */
+
+app.post("/otp/verify", async (req, res) => {
+  try {
+    const { type, destination, otp, purpose } = req.body;
+
+    // 1. Check OTP configuration
+    if (!process.env.OTP_SECRET) {
+      console.error("OTP_SECRET is missing.");
+
+      return res.status(500).json({
+        success: false,
+        message: "OTP verification service is not configured.",
+      });
+    }
+
+    // 2. Allow email signup verification only
+    if (type !== "email" || purpose !== "signup") {
+      return res.status(400).json({
+        success: false,
+        message: "Email signup OTP verification is currently supported.",
+      });
+    }
+
+    // 3. Normalize input
+    const email = String(destination || "")
+      .trim()
+      .toLowerCase();
+
+    const enteredOtp = String(otp || "").trim();
+
+    // 4. Validate email and OTP format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address.",
+      });
+    }
+
+    if (!/^\d{6}$/.test(enteredOtp)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 6-digit OTP.",
+      });
+    }
+
+    // 5. Retrieve OTP record
+    const key = `signup:email:${email}`;
+    const record = otpStore.get(key);
+
+    if (!record) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP not found. Please request a new OTP.",
+      });
+    }
+
+    // 6. Check expiration
+    if (Date.now() >= record.expiresAt) {
+      otpStore.delete(key);
+
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired. Please request a new one.",
+      });
+    }
+
+    // 7. Prevent repeated verification after success
+    if (record.verified) {
+      return res.json({
+        success: true,
+        message: "Email already verified successfully.",
+      });
+    }
+
+    // 8. Limit incorrect attempts
+    if (record.attempts >= 5) {
+      otpStore.delete(key);
+
+      return res.status(429).json({
+        success: false,
+        message: "Too many incorrect attempts. Request a new OTP.",
+      });
+    }
+
+    // 9. Hash the entered OTP
+    record.attempts += 1;
+
+    const enteredHash = hashOtp(
+      enteredOtp,
+      email,
+      "signup"
+    );
+
+    // 10. Compare hashes safely
+    const storedBuffer = Buffer.from(record.hash, "hex");
+    const enteredBuffer = Buffer.from(enteredHash, "hex");
+
+    const valid =
+      storedBuffer.length === enteredBuffer.length &&
+      crypto.timingSafeEqual(storedBuffer, enteredBuffer);
+
+    if (!valid) {
+      if (record.attempts >= 5) {
+        otpStore.delete(key);
+
+        return res.status(429).json({
+          success: false,
+          message: "Too many incorrect attempts. Request a new OTP.",
+        });
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: `Invalid OTP. ${5 - record.attempts} attempts remaining.`,
+      });
+    }
+
+    // 11. Mark email as verified
+    record.verified = true;
+
+    otpStore.set(key, record);
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully.",
+    });
+
+  } catch (err) {
+    console.error("OTP verification error:", err.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "OTP verification failed.",
+    });
+  }
+});
 /* =========================
    OPENAI / OPENROUTER CLIENT
 ========================= */
@@ -187,11 +519,14 @@ io.on("connection", async (socket) => {
 /* =========================
    SIGNUP / LOGIN
 ========================= */
+/* =========================
+   SIGNUP
+========================= */
+
 app.post("/signup", async (req, res) => {
   try {
     const {
       name,
-      email,
       password,
       exam,
       className,
@@ -200,25 +535,50 @@ app.post("/signup", async (req, res) => {
       college,
     } = req.body;
 
-    const existingUser = await User.findOne({
-      email,
-    });
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
 
-    if (existingUser) {
-      return res.json({
+    if (!name || !email || !password) {
+      return res.status(400).json({
         success: false,
-        message: "Email already exists",
+        message: "Name, email and password are required.",
       });
     }
 
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
+    // Check email verification
+    const verificationKey = `signup:email:${email}`;
+    const verification = otpStore.get(verificationKey);
 
+    if (
+      !verification ||
+      !verification.verified ||
+      Date.now() > verification.expiresAt
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify your email before signing up.",
+      });
+    }
+
+    // Check existing account
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already exists. Please log in.",
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
     const user = await User.create({
-      name,
+      name: name.trim(),
       email,
       password: hashedPassword,
-
       exam,
       className,
       city,
@@ -226,10 +586,12 @@ app.post("/signup", async (req, res) => {
       college,
     });
 
-    res.json({
+    // Consume the verified OTP
+    otpStore.delete(verificationKey);
+
+    return res.status(201).json({
       success: true,
-      message:
-        "Account created successfully",
+      message: "Account created successfully",
       user: {
         id: user._id,
         name: user.name,
@@ -242,11 +604,11 @@ app.post("/signup", async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    console.error("Signup error:", err);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Signup failed",
+      message: "Signup failed.",
     });
   }
 });
@@ -443,6 +805,7 @@ app.get("/notes/:userId", async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({
+        success: false,
         message: "Invalid userId",
       });
     }
@@ -456,6 +819,7 @@ app.get("/notes/:userId", async (req, res) => {
     console.log("Fetch notes error:", err);
 
     res.status(500).json({
+      success: false,
       error: "Failed to fetch notes",
     });
   }
@@ -505,6 +869,7 @@ app.delete("/delete-note/:id", async (req, res) => {
     });
   }
 });
+
 
 
 /* =========================

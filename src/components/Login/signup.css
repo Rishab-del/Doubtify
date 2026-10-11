@@ -452,3 +452,50 @@
     transition: none;
   }
 }
+/* OTP section */
+.otp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin: 8px 0 14px;
+}
+
+/* Send OTP button */
+.otp-send-button {
+  width: 100%;
+}
+
+/* OTP input and verify button container */
+.otp-verify-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  box-sizing: border-box;
+  border: 1px solid rgba(153, 102, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(10, 12, 30, 0.45);
+}
+
+/* OTP input */
+.otp-verify-box input {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+/* Verify button */
+.otp-verify-button {
+  width: 100%;
+  margin: 0;
+}
+
+/* Disabled buttons */
+.otp-verify-button:disabled,
+.otp-send-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
