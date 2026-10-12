@@ -6,8 +6,36 @@ import React, { useState, useEffect, useCallback } from "react";
 const API_URL = "https://doubtify-0q6d.onrender.com";
 
 export default function Profile() {
-  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = storedUser?.id;
+  const storedUser = (() => {
+  try {
+    const rawUser = localStorage.getItem("user");
+
+    if (
+      !rawUser ||
+      rawUser === "undefined" ||
+      rawUser === "null"
+    ) {
+      return {};
+    }
+
+    const parsedUser = JSON.parse(rawUser);
+
+    if (
+      !parsedUser ||
+      typeof parsedUser !== "object" ||
+      Array.isArray(parsedUser)
+    ) {
+      return {};
+    }
+
+    return parsedUser;
+  } catch (error) {
+    console.error("Error parsing user in Profile:", error);
+    return {};
+  }
+})();
+
+const userId = storedUser.id || storedUser._id || null;
 
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");

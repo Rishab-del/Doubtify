@@ -38,16 +38,33 @@ export default function Notes() {
   // =====================================
 
   const [userId] = useState(() => {
-    try {
-      const storedUser = JSON.parse(
-        localStorage.getItem("user") || "{}"
-      );
+  try {
+    const rawUser = localStorage.getItem("user");
 
-      return storedUser?.id || storedUser?._id || null;
-    } catch {
+    if (
+      !rawUser ||
+      rawUser === "undefined" ||
+      rawUser === "null"
+    ) {
       return null;
     }
-  });
+
+    const storedUser = JSON.parse(rawUser);
+
+    if (
+      !storedUser ||
+      typeof storedUser !== "object" ||
+      Array.isArray(storedUser)
+    ) {
+      return null;
+    }
+
+    return storedUser.id || storedUser._id || null;
+  } catch (error) {
+    console.error("Error reading user in Notes:", error);
+    return null;
+  }
+});
 
   // =====================================
   // STATES

@@ -13,9 +13,36 @@ export default function MyDoubts() {
   const [selectedDoubtId, setSelectedDoubtId] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  const user = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  );
+  const user = (() => {
+  try {
+    const storedUser = localStorage.getItem("user");
+
+    if (
+      !storedUser ||
+      storedUser === "undefined" ||
+      storedUser === "null"
+    ) {
+      return {};
+    }
+
+    const parsedUser = JSON.parse(storedUser);
+
+    if (
+      !parsedUser ||
+      typeof parsedUser !== "object" ||
+      Array.isArray(parsedUser)
+    ) {
+      return {};
+    }
+
+    return parsedUser;
+  } catch (error) {
+    console.error("Error parsing user in MyDoubts:", error);
+    return {};
+  }
+})();
+
+const userId = user?.id || user?._id;
 
   const userId = user?.id || user?._id;
 

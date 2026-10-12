@@ -18,11 +18,28 @@ import {
 } from "recharts";
 
 export default function Progress() {
-  const storedUser = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  );
+  const storedUser = (() => {try {
+    const rawUser = localStorage.getItem("user");
+    if (!rawUser ||rawUser === "undefined" ||rawUser === "null") {
+      return {};
+    }
+    const parsedUser = JSON.parse(rawUser);
+    if (
+      !parsedUser ||
+      typeof parsedUser !== "object" ||
+      Array.isArray(parsedUser)
+    ) {
+      return {};
+    }
 
-  const userId = storedUser?.id;
+    return parsedUser;
+  } catch (error) {
+    console.error("Error parsing user in Progress:", error);
+    return {};
+  }
+})();
+
+  const userId = storedUser?.id || storedUser?._id || null;
 
   const [progress, setProgress] = useState({
     streak: 0,

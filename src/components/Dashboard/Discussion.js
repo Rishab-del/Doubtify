@@ -40,14 +40,35 @@ export default function Discussion() {
   // =====================================
 
   const storedUser = (() => {
-    try {
-      return JSON.parse(
-        localStorage.getItem("user") || "{}"
-      );
-    } catch {
+  try {
+    const rawUser = localStorage.getItem("user");
+
+    if (
+      !rawUser ||
+      rawUser === "undefined" ||
+      rawUser === "null"
+    ) {
       return {};
     }
-  })();
+
+    const parsedUser = JSON.parse(rawUser);
+
+    if (
+      !parsedUser ||
+      typeof parsedUser !== "object" ||
+      Array.isArray(parsedUser)
+    ) {
+      return {};
+    }
+
+    return parsedUser;
+  } catch (error) {
+    console.error("Error reading user in Discussion:", error);
+    return {};
+  }
+})();
+
+const username = storedUser?.name || "Anonymous";
 
   const username = storedUser?.name || "Anonymous";
 

@@ -14,25 +14,47 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://doubtify-0q6d.onrender.com";
 
+// Safely read user data from localStorage
+const getStoredUser = () => {
+  try {
+    const storedUser = localStorage.getItem("user");
+
+    if (
+      !storedUser ||
+      storedUser === "undefined" ||
+      storedUser === "null"
+    ) {
+      return null;
+    }
+
+    const user = JSON.parse(storedUser);
+
+    if (!user || typeof user !== "object" || Array.isArray(user)) {
+      return null;
+    }
+
+    return user;
+  } catch (error) {
+    console.error("Unable to read saved user:", error);
+    return null;
+  }
+};
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // Get the name saved from the Profile page
+  // Initialize the user's name from saved data
   const [userName, setUserName] = useState(() => {
+    const user = getStoredUser();
+
+    if (user?.name) {
+      return user.name;
+    }
+
     try {
-      const storedUser = localStorage.getItem("user");
-
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-
-        if (user?.name) {
-          return user.name;
-        }
-      }
-
       return localStorage.getItem("userName") || "User";
     } catch (error) {
-      console.error("Unable to read saved user:", error);
+      console.error("Unable to read saved username:", error);
       return "User";
     }
   });
@@ -42,27 +64,26 @@ export default function Dashboard() {
 
     const fetchProfile = async () => {
       try {
-        // Read the latest name saved by the Profile page
-        const storedUser = localStorage.getItem("user");
+        // Read the latest user data from localStorage
+        const user = getStoredUser();
 
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-
-          if (user?.name && isMounted) {
-            setUserName(user.name);
-          }
+        if (user?.name && isMounted) {
+          setUserName(user.name);
         }
 
-        const savedName = localStorage.getItem("userName");
+        let savedName = null;
+
+        try {
+          savedName = localStorage.getItem("userName");
+        } catch (error) {
+          console.error("Unable to read saved username:", error);
+        }
 
         if (savedName && isMounted) {
           setUserName(savedName);
         }
 
-        /*
-         * Replace "/profile" below if your backend
-         * uses a different profile-fetching endpoint.
-         */
+        // Fetch the latest profile from the backend
         const response = await fetch(`${API_URL}/profile`, {
           method: "GET",
           credentials: "include",
@@ -81,32 +102,40 @@ export default function Dashboard() {
 
         const data = await response.json();
 
-        if (!isMounted || !data.success || !data.user?.name) {
+        if (
+          !isMounted ||
+          !data?.success ||
+          !data?.user?.name
+        ) {
           return;
         }
 
         const latestName = data.user.name;
 
+        // Update the displayed username
         setUserName(latestName);
 
-        localStorage.setItem("userName", latestName);
+        // Save the latest username
+        try {
+          localStorage.setItem("userName", latestName);
+        } catch (error) {
+          console.error("Unable to save username:", error);
+        }
 
-        // Update the cached user without deleting other properties
-        const currentUser = localStorage.getItem("user");
+        // Update cached user without deleting other properties
+        const currentUser = getStoredUser();
 
         if (currentUser) {
           try {
-            const parsedUser = JSON.parse(currentUser);
-
             localStorage.setItem(
               "user",
               JSON.stringify({
-                ...parsedUser,
+                ...currentUser,
                 name: latestName,
               })
             );
           } catch (error) {
-            console.error("Unable to update cached user:", error);
+            console.error("Unable to update saved user:", error);
           }
         }
       } catch (error) {

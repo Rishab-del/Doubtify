@@ -30,9 +30,34 @@ export default function Calendar() {
     date: "",
   });
 
-  const user = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  );
+  const user = (() => {
+  try {
+    const storedUser = localStorage.getItem("user");
+
+    if (
+      !storedUser ||
+      storedUser === "undefined" ||
+      storedUser === "null"
+    ) {
+      return {};
+    }
+
+    const parsedUser = JSON.parse(storedUser);
+
+    if (
+      !parsedUser ||
+      typeof parsedUser !== "object" ||
+      Array.isArray(parsedUser)
+    ) {
+      return {};
+    }
+
+    return parsedUser;
+  } catch (error) {
+    console.error("Error parsing user in Calendar:", error);
+    return {};
+  }
+})();
 
   const userId = user?.id || user?._id;
 

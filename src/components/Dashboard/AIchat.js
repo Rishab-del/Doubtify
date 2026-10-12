@@ -20,8 +20,26 @@ import "katex/dist/katex.min.css";
 
 export default function AIchat() {
   const [messages, setMessages] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = user?.id || user?._id;
+  const [user, setUser] = useState(() => {
+  try {
+    const storedUser = localStorage.getItem("user");
+
+    if (
+      !storedUser ||
+      storedUser === "undefined" ||
+      storedUser === "null"
+    ) {
+      return {};
+    }
+
+    return JSON.parse(storedUser);
+  } catch (error) {
+    console.error("Error parsing saved user:", error);
+    return {};
+  }
+});
+
+const userId = user?.id || user?._id;
 
   console.log("User:", user);
 
